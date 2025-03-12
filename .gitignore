@@ -1,0 +1,27 @@
+# Thư mục hệ thống của Visual Studio
+.vs/
+.vscode/
+
+# File biên dịch của .NET
+bin/
+obj/
+
+# Các gói thư viện không cần commit
+packages/
+node_modules/
+*.nupkg
+*.snupkg
+
+# Cấu hình người dùng (không cần thiết cho Git)
+*.user
+*.suo
+*.csproj.user
+*.sln.docstates
+
+# File Debug
+*.pdb
+
+# File log và cache
+*.log
+*.tmp
+*.cache
