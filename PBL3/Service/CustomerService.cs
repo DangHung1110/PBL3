@@ -1,4 +1,5 @@
-﻿using MySqlConnector;
+﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using MySqlConnector;
 using PBL3.Models;
 using System.Data;
 namespace PBL3.Service
@@ -34,7 +35,7 @@ namespace PBL3.Service
             }
             return DS;
         }
-        public String Login(String Name,String Pass)
+        public string Login(String Name,String Pass)
         {
             using var conn = GetConnection();
             conn.Open();
@@ -52,6 +53,12 @@ namespace PBL3.Service
             }
 
 
+        }
+        public List<object> getData(string IDCustomer)
+        {
+            using var conn = GetConnection();
+            conn.Open();
+            var cmd = new MySqlCommand("SELECT ");
         }
     }
 }

@@ -2,18 +2,18 @@
 {
     public class Customer
     {
-        private string IDCustomer;
+        private string ID;
         private string Name;
         private string Address;
         private string Phone;
         private string Pass;
         public string GetID()
         {
-            return this.IDCustomer;
+            return this.ID;
         }
         public void SetID(string ID)
         {
-            this.IDCustomer = ID;
+            this.ID = ID;
         }
         public string GetName()
         {
