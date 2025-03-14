@@ -1,5 +1,21 @@
 <script>
+import { computed } from "vue";
+import { useRoute } from "vue-router";
+import Login from "../components/Login.vue";
+import Register from "../components/Register.vue";
 
+export default {
+  components: { Login, Register },
+  setup() {
+    const route = useRoute();
+
+    // Kiểm tra nếu đang ở trang login hoặc register
+    const showLogin = computed(() => route.path === "/login");
+    const showRegister = computed(() => route.path === "/register");
+
+    return { showLogin, showRegister };
+  },
+};
 </script>
 
 <template>
@@ -15,9 +31,10 @@
         </div>
       </div>
     </div>
-    <router-view></router-view>
     <div class="content"></div>
     <div class="footer"></div>
+    <Login v-if="showLogin" />
+    <Register v-if="showRegister" />
   </div>
 </template>
 
