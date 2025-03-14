@@ -27,6 +27,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<CustomerService>();
+builder.Services.AddScoped<AuthService>();
+
 
 var app = builder.Build();
 

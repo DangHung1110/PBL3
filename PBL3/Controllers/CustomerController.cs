@@ -15,21 +15,8 @@ namespace PBL3.Controllers
         {
             _customerservice = Customerservice;
         }
-        [HttpPost("login")]
-       public IActionResult Login([FromBody] JsonElement jsonElement)
-        {
-            string name =jsonElement.GetProperty("Name").GetString();
-            string pass =jsonElement.GetProperty("Pass").GetString();
-            var Customerid = _customerservice.Login(name, pass);
-            if(Customerid!=null)
-            {
-                return Ok(new {Message="LoginSuccessful",IDCustomer=Customerid});
-            }
-            else
-            {
-                return Unauthorized(new { Message = "Invalid Message or Password" });
-            }
-        }
+        
+       
     }
 
 
