@@ -21,7 +21,7 @@ export default {
 <template>
   <div class="container">
     <div class="navbar">
-      <div class="logo"></div>
+      <div class="logo">Grap food</div>
       <div class="home-page"></div>
       <div class="login">
         <i class="fas fa-user"></i>
@@ -70,6 +70,12 @@ export default {
 
 .boder-login div {
 
+}
+
+.loginn, 
+.register {
+  cursor: pointer;
+  position: relative;
   height: 30px;
   width: 100%;
   border-radius: 8px;
@@ -78,13 +84,6 @@ export default {
   justify-content: center;
   align-items: center;
   cursor: pointer;
-}
-
-.login i {
-
-  cursor: pointer;
-  position: relative;
-  font-size: 20px;
 }
 
 .login i:hover + .boder-login,

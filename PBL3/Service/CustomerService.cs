@@ -35,30 +35,29 @@ namespace PBL3.Service
             }
             return DS;
         }
-        public string Login(String Name,String Pass)
+        public string Login(string Name, string Pass)
         {
             using var conn = GetConnection();
             conn.Open();
             var cmd = new MySqlCommand("SELECT IDCustomer FROM CUSTOMER WHERE NAME=@Name AND PASS=@Pass", conn);
             cmd.Parameters.AddWithValue("@Name", Name);
             cmd.Parameters.AddWithValue("@Pass", Pass);
-            var Result = cmd.ExecuteScalar();
-            if(Result.ToString()!=null)
-            {
-                return Result.ToString();
-            }
-            else
-            {
-                return null;
-            }
+    
+            var result = cmd.ExecuteScalar();
 
+    // Kiểm tra nếu result là null
+            if (result != null)
+            {
+                return result.ToString();
+            }
+            return null;
+        }
 
-        }
-        public List<object> getData(string IDCustomer)
-        {
-            using var conn = GetConnection();
-            conn.Open();
-            var cmd = new MySqlCommand("SELECT ");
-        }
+        // public List<object> getData(string IDCustomer)
+        // {
+        //     using var conn = GetConnection();
+        //     conn.Open();
+        //     var cmd = new MySqlCommand("SELECT ");
+        // }
     }
 }
