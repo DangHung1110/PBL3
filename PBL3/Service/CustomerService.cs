@@ -35,6 +35,7 @@ namespace PBL3.Service
             }
             return DS;
         }
+
         public string Login(string Name, string Pass)
         {
             using var conn = GetConnection();
@@ -58,6 +59,13 @@ namespace PBL3.Service
         //     using var conn = GetConnection();
         //     conn.Open();
         //     var cmd = new MySqlCommand("SELECT ");
-        // }
+        // 
+       
+        /*public List<object> getData(string IDCustomer)
+        {
+            using var conn = GetConnection();
+            conn.Open();
+            var cmd = new MySqlCommand("SELECT ");
+        }*/
     }
 }
