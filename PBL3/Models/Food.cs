@@ -4,6 +4,7 @@
     {  private string ID;
        private string Name;
        private int Price;
+       private string IDRes
        public string getID()
         {
             return this.ID;

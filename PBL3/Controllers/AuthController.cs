@@ -2,6 +2,7 @@
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using PBL3.Service;
+using PBL3.Models;
 namespace PBL3.Controllers
 {
     [Route("api/auth")]
@@ -28,5 +29,35 @@ namespace PBL3.Controllers
                 return Unauthorized(new { Message = "Invalid Message or Password" });
             }
         }
+        [HttpPost("restaurant/login")]
+        public IActionResult Login2([FromBody] JsonElement jsonElement)
+        {
+            string name = jsonElement.GetProperty("Name").GetString();
+            string pass = jsonElement.GetProperty("Pass").GetString();
+            var Resid = _authservice.Login2(name, pass);
+            if (Resid!= null)
+            {
+                return Ok(new { Message = "LoginSuccessful", IDRes = Resid });
+            }
+            else
+            {
+                return Unauthorized(new { Message = "Invalid Message or Password" });
+            }
+        }
+        [HttpPost("customer/signup")]
+        public IActionResult Signup([FromBody] Customer customer)
+        {
+            int Check = _authservice.SignUp(customer);
+            if(Check==0)
+            {
+                return Ok(new { Message = "SignUpSuccessful" });
+            }
+            else
+            {
+                return BadRequest(new { Message = "SignUpFail", ErrorCode = Check });
+            }
+
+        }
+       
     }
 }

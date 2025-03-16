@@ -1,20 +1,24 @@
-﻿namespace PBL3.Models
+﻿using System.Text.Json.Serialization;
+
+namespace PBL3.Models
 {
     public class Customer
     {
+        [JsonInclude]
+        [JsonPropertyName("IDCustomer")]
         private string ID;
-        private string Name;
-        private string Address;
-        private string Phone;
-        private string Pass;
         public string GetID()
         {
             return this.ID;
         }
+
         public void SetID(string ID)
         {
             this.ID = ID;
         }
+        [JsonInclude]
+        [JsonPropertyName("Name")]
+        private string Name;
         public string GetName()
         {
             return this.Name;
@@ -23,6 +27,9 @@
         {
             this.Name = Name;
         }
+        [JsonInclude]
+        [JsonPropertyName("Address")]
+        private string Address;
         public string GetAddress()
         {
             return this.Address;
@@ -31,6 +38,9 @@
         {
             this.Address = Address;
         }
+        [JsonInclude]
+        [JsonPropertyName("Phone")]
+        private string Phone;
         public string GetPhone()
         {
             return this.Phone;
@@ -39,6 +49,9 @@
         {
             this.Phone = Phone;
         }
+        [JsonInclude]
+        [JsonPropertyName("Pass")]
+        private string Pass;
         public string GetPass()
         {
             return this.Pass;
@@ -47,5 +60,11 @@
         {
             this.Pass = Pass;
         }
+
+
+
+
+
+
     }
 }

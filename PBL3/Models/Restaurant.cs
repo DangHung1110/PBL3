@@ -7,7 +7,7 @@
         private string Address;
         private string Phone;
         private string Pass;
-        private List<string>Menu;
+        private List<Food>Menu;
         public string GetID()
         {
             return this.ID;
@@ -48,7 +48,7 @@
         {
             this.Pass = Pass;
         }
-        public List<string>getFoodsList()
+        public List<Food>getFoodsList()
         {
             return this.Menu;
         }
