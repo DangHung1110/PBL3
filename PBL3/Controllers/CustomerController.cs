@@ -16,7 +16,7 @@ namespace PBL3.Controllers
         }
 
         // API đăng nhập
-        [HttpPost("login")]
+        /*HttpPost("login")]
         public IActionResult Login([FromBody] JsonElement jsonElement)
         {
             try
@@ -53,5 +53,6 @@ namespace PBL3.Controllers
                 return StatusCode(500, new { Message = "Internal Server Error", Error = ex.Message });
             }
         }   
+    }*/
     }
 }

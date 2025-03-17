@@ -15,7 +15,7 @@ namespace PBL3.Service
         {
             return new MySqlConnection(_iconfiguration.GetConnectionString("DefaultConnection"));
         }
-        public List<Customer>GetAll()
+        /*public List<Customer>GetAll()
         {
             List<Customer> DS = new List<Customer>();
             using var conn = GetConnection();
@@ -34,25 +34,9 @@ namespace PBL3.Service
                 DS.Add(x);
             }
             return DS;
-        }
+        }*/
 
-        public string Login(string Name, string Pass)
-        {
-            using var conn = GetConnection();
-            conn.Open();
-            var cmd = new MySqlCommand("SELECT IDCustomer FROM CUSTOMER WHERE NAME=@Name AND PASS=@Pass", conn);
-            cmd.Parameters.AddWithValue("@Name", Name);
-            cmd.Parameters.AddWithValue("@Pass", Pass);
-    
-            var result = cmd.ExecuteScalar();
-
-    // Kiểm tra nếu result là null
-            if (result != null)
-            {
-                return result.ToString();
-            }
-            return null;
-        }
+        
 
         // public List<object> getData(string IDCustomer)
         // {

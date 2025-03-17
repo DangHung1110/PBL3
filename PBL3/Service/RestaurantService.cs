@@ -12,6 +12,7 @@ namespace PBL3.Service
         {
             return new MySqlConnection(_iconfiguration.GetConnectionString("DefaultConneciton"));
         }
+        
        
 
     }

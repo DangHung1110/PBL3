@@ -3,18 +3,24 @@
 namespace PBL3.Models
 {
     public class Customer
-    {
+    {   
         [JsonInclude]
         [JsonPropertyName("IDCustomer")]
-        private string ID;
-        public string GetID()
+        private static string ID="0";
+        
+           
+        
+        public static string GetID()
         {
-            return this.ID;
+            return ID;
         }
 
-        public void SetID(string ID)
+        public static void SetID()
         {
-            this.ID = ID;
+            int cc = Convert.ToInt32(ID);
+            cc++;
+            ID = cc.ToString();
+            
         }
         [JsonInclude]
         [JsonPropertyName("Name")]

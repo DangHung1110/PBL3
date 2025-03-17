@@ -4,8 +4,17 @@
     {  private string ID;
        private string Name;
        private int Price;
-       private string IDRes
-       public string getID()
+       private string IDRes;
+       public string getIDRes()
+        {
+            return this.IDRes;
+        }
+        public void setIDRes(string IDRes)
+        {
+            this.IDRes = IDRes;
+        }
+
+        public string getID()
         {
             return this.ID;
         }

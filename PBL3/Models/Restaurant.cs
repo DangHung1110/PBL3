@@ -2,19 +2,21 @@
 {
     public class Restaurant
     {
-        private string ID;
+        private static string ID="0";
         private string Name;
         private string Address;
         private string Phone;
         private string Pass;
         private List<Food>Menu;
-        public string GetID()
+        public static string GetID()
         {
-            return this.ID;
+            return ID;
         }
-        public void SetID(string ID)
+        public static void SetID()
         {
-            this.ID = ID;
+            int cc = Convert.ToInt32(ID);
+            cc++;
+            ID = cc.ToString();
         }
         public string GetName()
         {
