@@ -49,7 +49,7 @@
 </template>
 
 <script setup>
-import { ref, watchEffect } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 
 const router = useRouter();
@@ -75,18 +75,20 @@ const navigateTo = (path) => {
   router.push(path);
 };
 
-// Lấy dữ liệu user từ localStorage khi app khởi động
-const fetchUserData = () => {
+// Hàm kiểm tra đăng nhập
+const checkLogin = () => {
   const storedUsername = localStorage.getItem("username");
   isLoggedIn.value = !!storedUsername;
   username.value = storedUsername || "";
 };
 
-// Theo dõi thay đổi trong localStorage
-watchEffect(fetchUserData);
+// Khi có thay đổi trong localStorage, cập nhật UI ngay lập tức
+onMounted(() => {
+  checkLogin();
+  window.addEventListener("storage", checkLogin);
+});
 
 </script>
-
 
 <style scoped>
 

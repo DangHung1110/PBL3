@@ -11,19 +11,40 @@ const routes = [
         path: "/",
         component: HomeView,
         children: [
-          { path: "login", component: Login }, // Login sẽ load như modal trong Home
-          { path: "register", component: Register }, // Register cũng thế
-          { path: "/drinklist", component: DrinksList},
-          { path: "/foodlist", component: FoodList},
+          { path: "login", component: Login }, 
+          { path: "register", component: Register },
+          { path: "drinklist", component: DrinksList }, // Mặc định cho khách chưa đăng nhập
+          { path: "foodlist", component: FoodList },
         ],
     },
-    { path: "/customer/:username", component: HomeView }, // Trỏ về Home.vue
+    { path: "/customer/:username", component: HomeView, children: [
+        { path: "drinklist", component: DrinksList }, // Dành cho user đã đăng nhập
+        { path: "foodlist", component: FoodList },
+    ]},
     { path: "/restaurant/dashboard", component: RestaurantDashboard }, // Trang nhà hàng
- ];
+];
 
 const router = createRouter({
     history: createWebHistory(),
     routes,
+});
+
+// Trước khi chuyển route, kiểm tra xem user đã đăng nhập chưa
+router.beforeEach((to, from, next) => {
+    const username = localStorage.getItem("username"); // Kiểm tra user đã đăng nhập chưa
+
+    if (username) {
+        // Nếu user đăng nhập và đang truy cập drinklist/foodlist ở root → Điều hướng đến /customer/:username/
+        if (to.path === "/drinklist") {
+            return next(`/customer/${username}/drinklist`);
+        }
+        if (to.path === "/foodlist") {
+            return next(`/customer/${username}/foodlist`);
+        }
+    }
+
+    // Nếu chưa đăng nhập hoặc đường dẫn hợp lệ, tiếp tục bình thường
+    next();
 });
 
 export default router;

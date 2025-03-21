@@ -40,23 +40,27 @@ export default {
     const errorMessage = ref("");
 
     const handleLogin = async () => {
-      const response = await login(username.value, password.value, role.value);
-      if (response) {
-        console.log("Đăng nhập thành công!", response);
+  const response = await login(username.value, password.value, role.value);
+  if (response) {
+    console.log("Đăng nhập thành công!", response);
 
-        // Lưu thông tin đăng nhập vào localStorage
-        localStorage.setItem("role", role.value);
-        localStorage.setItem("username", username.value);
+    // Lưu thông tin đăng nhập vào localStorage
+    localStorage.setItem("role", role.value);
+    localStorage.setItem("username", username.value);
 
-        if (role.value === "user") {
-          router.push(`/customer/${username.value}`);
-        } else if (role.value === "restaurant") {
-          router.push("/restaurant/dashboard");
-        }
-      } else {
-        errorMessage.value = "Sai tên đăng nhập hoặc mật khẩu!";
-      }
-    };
+    // 🔥 Phát sự kiện để Vue nhận biết có sự thay đổi
+    window.dispatchEvent(new Event("storage"));
+
+    if (role.value === "user") {
+      router.push(`/customer/${username.value}`);
+    } else if (role.value === "restaurant") {
+      router.push("/restaurant/dashboard");
+    }
+  } else {
+    errorMessage.value = "Sai tên đăng nhập hoặc mật khẩu!";
+  }
+};
+
 
     const handleLogout = () => {
       // Xóa dữ liệu đăng nhập
