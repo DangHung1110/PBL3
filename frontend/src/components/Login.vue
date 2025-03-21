@@ -3,7 +3,6 @@
     <div class="modal-content">
       <h2>Đăng nhập</h2>
       <form @submit.prevent="handleLogin" class="login-form">
-        <!-- Chọn vai trò -->
         <div class="input-wrapper">
           <select v-model="role" class="input-field">
             <option value="user">Người dùng</option>
@@ -41,23 +40,42 @@ export default {
     const errorMessage = ref("");
 
     const handleLogin = async () => {
-      const response = await login(username.value, password.value);
+      const response = await login(username.value, password.value, role.value);
       if (response) {
         console.log("Đăng nhập thành công!", response);
-        router.push("/home"); // Điều hướng sau khi đăng nhập thành công
+
+        // Lưu thông tin đăng nhập vào localStorage
+        localStorage.setItem("role", role.value);
+        localStorage.setItem("username", username.value);
+
+        if (role.value === "user") {
+          router.push(`/customer/${username.value}`);
+        } else if (role.value === "restaurant") {
+          router.push("/restaurant/dashboard");
+        }
       } else {
         errorMessage.value = "Sai tên đăng nhập hoặc mật khẩu!";
       }
+    };
+
+    const handleLogout = () => {
+      // Xóa dữ liệu đăng nhập
+      localStorage.removeItem("role");
+      localStorage.removeItem("username");
+
+      // Chuyển về trang đăng nhập
+      router.push("/login");
     };
 
     const closeModal = () => {
       router.push("/");
     };
 
-    return { role, username, password, handleLogin, closeModal, errorMessage };
+    return { role, username, password, handleLogin, handleLogout, errorMessage, closeModal };
   },
 };
 </script>
+
 
 <style>
 /* Modal overlay */

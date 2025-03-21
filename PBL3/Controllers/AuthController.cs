@@ -14,41 +14,57 @@ namespace PBL3.Controllers
         {
             _authservice = authservice;
         }
-        [HttpPost("customer/login")]
+        // [HttpPost("customer/login")]
+        // public IActionResult Login([FromBody] JsonElement jsonElement)
+        // {
+        //     string name = jsonElement.GetProperty("Name").GetString();
+        //     string pass = jsonElement.GetProperty("Pass").GetString();
+        //     var Customerid = _authservice.Login(name, pass);
+        //     if (Customerid != null)
+        //     {
+        //         return Ok(new { Message = "LoginSuccessful", IDCustomer = Customerid });
+        //     }
+        //     else
+        //     {
+        //         return Unauthorized(new { Message = "Invalid Message or Password" });
+        //     }
+        // }
+        // [HttpPost("restaurant/login")]
+        // public IActionResult Login2([FromBody] JsonElement jsonElement)
+        // {
+        //     string name = jsonElement.GetProperty("Name").GetString();
+        //     string pass = jsonElement.GetProperty("Pass").GetString();
+        //     var Resid = _authservice.Login2(name, pass);
+        //     if (Resid!= null)
+        //     {
+        //         return Ok(new { Message = "LoginSuccessful", IDRes = Resid });
+        //     }
+        //     else
+        //     {
+        //         return Unauthorized(new { Message = "Invalid Message or Password" });
+        //     }
+        // }
+
+        [HttpPost("login")]
         public IActionResult Login([FromBody] JsonElement jsonElement)
         {
             string name = jsonElement.GetProperty("Name").GetString();
             string pass = jsonElement.GetProperty("Pass").GetString();
-            var Customerid = _authservice.Login(name, pass);
-            if (Customerid != null)
+            string role = jsonElement.GetProperty("Role").GetString(); // Xác định đăng nhập từ đâu
+
+            var userId = _authservice.Login(name, pass, role);
+            if (userId != null)
             {
-                return Ok(new { Message = "LoginSuccessful", IDCustomer = Customerid });
+                return Ok(new { Message = "Login Successful", UserID = userId, Role = role });
             }
-            else
-            {
-                return Unauthorized(new { Message = "Invalid Message or Password" });
-            }
+                return Unauthorized(new { Message = "Invalid Credentials" });
         }
-        [HttpPost("restaurant/login")]
-        public IActionResult Login2([FromBody] JsonElement jsonElement)
+
+        [HttpPost("restaurant/signup")]
+        public IActionResult SignUp2([FromBody] Restaurant restaurant)
         {
-            string name = jsonElement.GetProperty("Name").GetString();
-            string pass = jsonElement.GetProperty("Pass").GetString();
-            var Resid = _authservice.Login2(name, pass);
-            if (Resid!= null)
-            {
-                return Ok(new { Message = "LoginSuccessful", IDRes = Resid });
-            }
-            else
-            {
-                return Unauthorized(new { Message = "Invalid Message or Password" });
-            }
-        }
-        [HttpPost("customer/signup")]
-        public IActionResult Signup([FromBody] Customer customer)
-        {
-            int Check = _authservice.SignUp(customer);
-            if(Check==0)
+            int Check = _authservice.Signup2(restaurant);
+            if(Check==0) 
             {
                 return Ok(new { Message = "SignUpSuccessful" });
             }
@@ -56,8 +72,6 @@ namespace PBL3.Controllers
             {
                 return BadRequest(new { Message = "SignUpFail", ErrorCode = Check });
             }
-
         }
-       
     }
 }
