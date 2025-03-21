@@ -9,9 +9,11 @@
           </div>
           <div class="Name">GRAP FOOD</div>
         </div>
+
         <div class="home-page">
-          <button class="category food">🍔 Đồ ăn</button>
-          <button class="category drink">🥤 Đồ uống</button>
+          <!-- Nút điều hướng đến các route -->
+          <button class="category food" @click="navigateTo('/foodlist')">🍔 Đồ ăn</button>
+          <button class="category drink" @click="navigateTo('/drinklist')">🥤 Đồ uống</button>
           <input type="text" placeholder="Tìm kiếm món ăn..." class="search-input">
         </div>
 
@@ -36,16 +38,18 @@
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Nội dung chính của trang -->
-    <router-view></router-view>
-    
+      <div class="content">
+        <router-view></router-view>
+      </div>
+
+      <div class="footer"></div>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, watchEffect, watch } from "vue";
+import { ref, watchEffect } from "vue";
 import { useRouter, useRoute } from "vue-router";
 
 const router = useRouter();
@@ -66,6 +70,11 @@ const handleLogout = () => {
   router.replace("/login");
 };
 
+// Điều hướng đến trang đồ ăn hoặc đồ uống
+const navigateTo = (path) => {
+  router.push(path);
+};
+
 // Lấy dữ liệu user từ localStorage khi app khởi động
 const fetchUserData = () => {
   const storedUsername = localStorage.getItem("username");
@@ -76,14 +85,11 @@ const fetchUserData = () => {
 // Theo dõi thay đổi trong localStorage
 watchEffect(fetchUserData);
 
-// Theo dõi thay đổi của route để cập nhật dữ liệu khi chuyển trang
-watch(route, () => {
-  fetchUserData();
-});
-
 </script>
 
+
 <style scoped>
+
 .container {
   position: relative;
   width: 100vw;
@@ -146,7 +152,7 @@ watch(route, () => {
   border: 2px solid #ccc;
   border-radius: 5px;
   outline: none;
-  width: 200px;
+  width: 300px;
 }
 
 .search-input:focus {
@@ -344,5 +350,25 @@ watch(route, () => {
   color: red;
 }
 
+.content {
+  width: 100%;
+  height: calc(100vh - 70px); 
+  transform: translateY(70px);
+  display: flex;
+  justify-content: flex-end;
+}
 
+.content .content-img {
+  width: 70%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.content-img img {
+  width: 90%;
+  height: 90%;
+  object-fit: cover;
+}
 </style>
