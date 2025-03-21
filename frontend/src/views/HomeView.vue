@@ -45,10 +45,11 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-import { useRouter } from "vue-router";
+import { ref, watchEffect, watch } from "vue";
+import { useRouter, useRoute } from "vue-router";
 
 const router = useRouter();
+const route = useRoute();
 const isLoggedIn = ref(false);
 const username = ref("");
 const dropdownOpen = ref(false);
@@ -62,16 +63,24 @@ const handleLogout = () => {
   localStorage.removeItem("username");
   isLoggedIn.value = false;
   username.value = "";
-  router.replace("/login"); 
+  router.replace("/login");
 };
 
-onMounted(() => {
+// Lấy dữ liệu user từ localStorage khi app khởi động
+const fetchUserData = () => {
   const storedUsername = localStorage.getItem("username");
-  if (storedUsername) {
-    isLoggedIn.value = true;
-    username.value = storedUsername;
-  }
+  isLoggedIn.value = !!storedUsername;
+  username.value = storedUsername || "";
+};
+
+// Theo dõi thay đổi trong localStorage
+watchEffect(fetchUserData);
+
+// Theo dõi thay đổi của route để cập nhật dữ liệu khi chuyển trang
+watch(route, () => {
+  fetchUserData();
 });
+
 </script>
 
 <style scoped>
