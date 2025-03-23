@@ -1,12 +1,11 @@
 ﻿namespace PBL3.Models
 {
     public class Food
-    {
-        private static string ID = "0";
-        private string Name;
-        private int Price;
-        private string IDRes;
-        public string getIDRes()
+    {  private string ID;
+       private string Name;
+       private int Price;
+       private string IDRes;
+       public string getIDRes()
         {
             return this.IDRes;
         }
@@ -15,17 +14,14 @@
             this.IDRes = IDRes;
         }
 
-        public static string getID()
+        public string getID()
         {
-            return ID;
+            return this.ID;
         }
-        public static void setID()
+       public void setID()
         {
-            int cc = Convert.ToInt32(ID);
-            cc++;
-            ID = cc.ToString();
+            this.ID = ID;
         }
-
         public string getName()
         {
             return this.Name;

@@ -73,19 +73,5 @@ namespace PBL3.Controllers
                 return BadRequest(new { Message = "SignUpFail", ErrorCode = Check });
             }
         }
-        [HttpPost("customer/signup")]
-        public IActionResult Signup([FromBody] Customer customer)
-        {
-            int Check = _authservice.SignUp(customer);
-            if (Check == 0)
-            {
-                return Ok(new { Message = "SignUpSuccessful" });
-            }
-            else
-            {
-                return BadRequest(new { Message = "SignUpFail", ErrorCode = Check });
-            }
-
-        }
     }
 }
