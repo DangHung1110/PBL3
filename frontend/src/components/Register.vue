@@ -2,7 +2,7 @@
   <div class="modal">
     <div class="modal-content">
       <h2>Đăng ký</h2>
-      <form>
+      <form @submit.prevent="handleSignup">
         <!-- Chọn vai trò -->
         <div class="input-wrapper">
           <select v-model="role" class="input-field">
@@ -11,25 +11,30 @@
           </select>
         </div>
 
-        <!-- Chỉ hiện khi chọn Nhà hàng -->
+        <!-- Hiển thị thông tin Nhà hàng khi chọn role là "restaurant" -->
         <div v-if="role === 'restaurant'" class="input-wrapper">
-          <input type="text" placeholder="Tên nhà hàng" class="input-field" required />
+          <input v-model="restaurantName" type="text" placeholder="Tên nhà hàng" class="input-field" required />
         </div>
 
         <div class="input-wrapper">
-          <input type="text" placeholder="Tên đăng nhập" class="input-field" required />
+          <input v-model="username" type="text" placeholder="Tên đăng nhập" class="input-field" required />
         </div>
 
         <div class="input-wrapper">
-          <input type="text" placeholder="Số điện thoại" class="input-field" required />
+          <input v-model="phone" type="text" placeholder="Số điện thoại" class="input-field" required />
         </div>
 
         <div class="input-wrapper">
-          <input type="text" placeholder="Địa chỉ" class="input-field" required />
+          <input v-model="address" type="text" placeholder="Địa chỉ" class="input-field" required />
         </div>
 
         <div class="input-wrapper">
-          <input type="password" placeholder="Mật khẩu" class="input-field" required />
+          <input v-model="password" type="password" placeholder="Mật khẩu" class="input-field" required />
+        </div>
+
+        <!-- Chọn ảnh cho Nhà hàng, có thể bỏ qua nếu không cần -->
+        <div v-if="role === 'restaurant'" class="input-wrapper">
+          <input type="file" @change="handleImageUpload" class="input-field" />
         </div>
 
         <button type="submit" class="btn">Đăng ký</button>
@@ -42,15 +47,62 @@
 <script>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import { signup } from "../api/signup.api.js"; // Import API
 
 export default {
   setup() {
     const router = useRouter();
-    const role = ref("user"); // Mặc định là "Người dùng"
+
+    const username = ref("");
+    const phone = ref("");
+    const address = ref("");
+    const password = ref("");
+    const restaurantName = ref("");
+    const imageUrl = ref(null);
+    const role = ref("user");
+
     const closeModal = () => {
       router.push("/");
     };
-    return { closeModal, role };
+
+    const handleImageUpload = (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        // Here, you can convert the file to base64 or upload it to a server and get the URL
+        const reader = new FileReader();
+        reader.onload = () => {
+          imageUrl.value = reader.result; // Save base64 string
+        };
+        reader.readAsDataURL(file);
+      } else {
+        imageUrl.value = null; // No image selected
+      }
+    };
+
+    const handleSignup = async () => {
+    const response = await signup(
+    username.value,
+    password.value,
+    role.value,
+    imageUrl.value,
+    phone.value,
+    address.value,
+    restaurantName.value
+  );
+
+  if (response.success) {
+    console.log("Đăng ký thành công", response);
+      alert("Đăng ký thành công! Mời bạn đăng nhập.");
+
+      router.push("/login");
+  } else {
+    console.error("Đăng ký thất bại", response.message);
+    alert("Đăng ký thất bại. Vui lòng thử lại!");
+    console.error("Chi tiết:", response.message);
+  }
+};
+
+    return { role, username, phone, address, password, restaurantName, imageUrl, handleImageUpload, handleSignup, closeModal,};
   },
 };
 </script>
@@ -127,7 +179,7 @@ select.input-field {
 }
 
 .btn:hover {
-  background:  #cf5803;
+  background: #cf5803;
 }
 
 /* Nút Đóng */

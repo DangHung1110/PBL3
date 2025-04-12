@@ -1,52 +1,102 @@
 <template>
+  <div class="food-list-container">
+    <div class="pagination">
+      <button @click="prevPage" class="arrow-button left">&#8592;</button>
+      <button @click="nextPage" class="arrow-button right">&#8594;</button>
+    </div>
+
     <div class="food-list">
-      <div v-for="food in foods" :key="food.id" class="food-item">
-        <img :src="food.image" alt="food.name" class="food-image" />
+      <div class="food-item" v-for="food in paginatedFoods" :key="food.id">
+        <img
+          :src="food.image"
+          class="food-image"
+          alt="Food Image"
+          @error="handleImageError"
+        />
         <div class="food-info">
-          <h3 class="food-name">{{ food.restaurant }} - {{ food.name }}</h3>
-          <p class="food-price">Giá: {{ food.price }}k</p>
+          <div class="food-name">{{ food.name }}</div>
+          <div class="food-shop">{{ food.restaurantId }}</div>
+          <div class="bottom-info">
+            <div class="food-price">Giá: {{ food.price }}đ</div>
+            <div class="food-discount">Giảm giá: {{ food.discount }}%</div>
+          </div>
         </div>
       </div>
     </div>
-  </template>
-  
-  <script setup>
-  import { ref } from "vue";
-  
-  const foods = ref([
-  { id: 1, name: "Pizza Phô Mai", shop: "Italian Pizza", price: 120000, image: "../assets/doAn" },
-  { id: 2, name: "Bánh Mì Thịt", shop: "Bánh Mì Sài Gòn", price: 30000, image: "../assets/doAn" },
-  { id: 3, name: "Cơm Gà", shop: "Cơm Gà Hội An", price: 50000, image: "../assets/doAn" },
-  { id: 4, name: "Bún Bò Huế", shop: "Quán Huế", price: 45000, image: "../assets/doAn" },
-  { id: 5, name: "Phở Bò", shop: "Phở Hà Nội", price: 40000, image: "../assets/doAn" },
-  { id: 6, name: "Gỏi Cuốn", shop: "Ẩm Thực Việt", price: 25000, image: "../assets/doAn" },
-]);
+  </div>
+</template>
 
-  </script>
+
+<script setup>
+import { ref, onMounted, computed } from "vue";
+import { getDoAn } from "../api/FoodSevice.js";
+
+const foods = ref([]);
+const currentPage = ref(1);
+const foodsPerPage = 6;
+
+onMounted(async () => {
+  const data = await getDoAn();
+  console.log("Dữ liệu đồ ăn:", data);
+  foods.value = data.map(item => ({
+    id: item.idFood,
+    name: item.name,
+    restaurant: item.idRes,
+    price: item.price,
+    discount: item.discount,
+    image: item.url_Image
+  }));
+});
+
+const paginatedFoods = computed(() => {
+  const start = (currentPage.value - 1) * foodsPerPage;
+  return foods.value.slice(start, start + foodsPerPage);
+});
+
+const totalPages = computed(() => {
+  return Math.ceil(foods.value.length / foodsPerPage);
+});
+
+const nextPage = () => {
+  if (currentPage.value < totalPages.value) currentPage.value++;
+};
+
+const prevPage = () => {
+  if (currentPage.value > 1) currentPage.value--;
+};
+
+const formatPrice = (value) => {
+  return value.toLocaleString("vi-VN") + "đ";
+};
+</script>
+
   
 <style scoped>
-  .food-list {
+.food-list-container {
+  position: relative;
+  padding: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.food-list {
   display: grid;
   grid-template-columns: repeat(2, 1fr); /* 2 cột */
-  gap: 16px;
-  width: 100%;
-  max-width: 800px; /* Giới hạn chiều rộng */
-  margin: 0 auto; /* Căn giữa */
-  padding: 20px;
-  transform: translateX(200px);
+  gap: 30px;
+  transform: translateX(100px);
 }
 
 .food-item {
+  width: 400px;
   display: flex;
   align-items: center;
-  width: 100%;
   padding: 16px;
   border-radius: 12px;
   background: #fff;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease-in-out;
   height: 150px;
-  width: calc(100% - 20px);
+  
 }
 
 .food-item:hover {
@@ -64,8 +114,11 @@
 .food-info {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   flex: 1;
+  min-width: 0;
+  word-break: break-word;
+  gap: 4px;
 }
 
 .food-name {
@@ -75,7 +128,7 @@
 
 .food-shop {
   color: gray;
-  font-size: 16px;
+  font-size: 15px;
 }
 
 .food-price {
@@ -83,5 +136,51 @@
   font-size: 18px;
   font-weight: bold;
 }
+
+.food-discount {
+  color: #007bff;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* Pagination Buttons */
+.pagination {
+  position: relative;
+  top: 50%;
+  height: 0;
+  transform: translateX(100px)
+}
+
+
+
+.arrow-button {
+  position: absolute;
+  top: -40px;
+  background-color: white;
+  border: 2px solid #ff5733;
+  color: #ff5733;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.arrow-button:hover {
+  background-color: #ff5733;
+  color: white;
+}
+
+.arrow-button.left {
+  left: -50px;
+}
+
+.arrow-button.right {
+  right: -50px;
+}
 </style>
-  

@@ -39,7 +39,7 @@ export default {
     const password = ref("");
     const errorMessage = ref("");
 
-    const handleLogin = async () => {
+  const handleLogin = async () => {
   const response = await login(username.value, password.value, role.value);
   if (response) {
     console.log("Đăng nhập thành công!", response);
@@ -47,8 +47,11 @@ export default {
     // Lưu thông tin đăng nhập vào localStorage
     localStorage.setItem("role", role.value);
     localStorage.setItem("username", username.value);
+    const parsedUser = JSON.parse(response.userID);
+    localStorage.setItem("IDRes", parsedUser.id);
+    console.log("id", parsedUser.id);
 
-    // 🔥 Phát sự kiện để Vue nhận biết có sự thay đổi
+    //  Phát sự kiện để Vue nhận biết có sự thay đổi
     window.dispatchEvent(new Event("storage"));
 
     if (role.value === "user") {
@@ -56,6 +59,8 @@ export default {
     } else if (role.value === "restaurant") {
       router.push("/restaurant/dashboard");
     }
+
+
   } else {
     errorMessage.value = "Sai tên đăng nhập hoặc mật khẩu!";
   }
@@ -66,6 +71,7 @@ export default {
       // Xóa dữ liệu đăng nhập
       localStorage.removeItem("role");
       localStorage.removeItem("username");
+      localStorage.removeItem("restaurantID");
 
       // Chuyển về trang đăng nhập
       router.push("/login");

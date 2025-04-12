@@ -1,27 +1,58 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "./views/HomeView.vue"; // Trang chính
+import HomeView from "./views/HomeView.vue";
 import Login from "./components/Login.vue";
 import Register from "./components/Register.vue";
 import RestaurantDashboard from "./components/RestaurantDashBBoard.vue";
 import DrinksList from "./components/DrinksList.vue";
 import FoodList from "./components/FoodList.vue";
-
+import RestaurantProduct from "./components/RestaurantProducts.vue";
+import Dashboard from "./components/dashboard.vue"
+import AddFood from "./components/AddFood.vue"
+import Restaurant from "./components/RestaurantList.vue";
 const routes = [
     {
         path: "/",
         component: HomeView,
         children: [
-          { path: "login", component: Login }, 
-          { path: "register", component: Register },
-          { path: "drinklist", component: DrinksList }, // Mặc định cho khách chưa đăng nhập
-          { path: "foodlist", component: FoodList },
+            { path: "", component: Restaurant }, // Trang chính
+            { path: "login", component: Login },
+            { path: "register", component: Register },
+            { path: "drinklist", component: DrinksList },
+            { path: "foodlist", component: FoodList },
         ],
     },
-    { path: "/customer/:username", component: HomeView, children: [
-        { path: "drinklist", component: DrinksList }, // Dành cho user đã đăng nhập
-        { path: "foodlist", component: FoodList },
-    ]},
-    { path: "/restaurant/dashboard", component: RestaurantDashboard }, // Trang nhà hàng
+    {
+        path: "/customer/:username",
+        component: HomeView,
+        children: [
+            { path: "drinklist", component: DrinksList },
+            { path: "foodlist", component: FoodList },
+        ],
+    },
+    {
+        path: "/restaurant/dashboard", // Trang Dashboard chính
+        name: 'Dashboard',
+        component: RestaurantDashboard,
+        children: [
+            {
+                path: '', 
+                name: 'DashboardHome',
+                component: Dashboard, 
+            },
+            {
+                path: 'product', // Trang sản phẩm
+                name: 'Product',
+                component: RestaurantProduct,
+                children: [ 
+                    {
+                        path:'addFood', // Thêm món ăn
+                        name: 'AddFood',
+                        component: AddFood,
+                    }
+                ]
+            }
+        ]
+    },
 ];
 
 const router = createRouter({
