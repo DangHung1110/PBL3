@@ -1,60 +1,106 @@
 <template>
-  <div class="drink-list">
-    <div v-for="drink in drinks" :key="drink.id" class="drink-item">
-      <img :src="drink.image" alt="Drink Image" class="drink-image" />
-      <div class="drink-info">
-        <h3 class="drink-name">{{ drink.name }}</h3>
-        <p class="drink-shop">{{ drink.shop }}</p>
-        <p class="drink-price">Giá: {{ drink.price }}đ</p>
+  <div class="food-list-container">
+    <div class="pagination">
+      <button @click="prevPage" class="arrow-button left">&#8592;</button>
+      <button @click="nextPage" class="arrow-button right">&#8594;</button>
+    </div>
+
+    <div class="food-list">
+      <div class="food-item" v-for="drink in paginatedDrinks" :key="drink.id">
+        <img
+          :src="drink.image"
+          class="food-image"
+          alt="Drink Image"
+          @error="handleImageError"
+        />
+        <div class="food-info">
+          <div class="food-name">{{ drink.name }}</div>
+          <div class="food-shop">{{ drink.restaurantId }}</div>
+          <div class="bottom-info">
+            <div class="food-price">Giá: {{ drink.price }}đ</div>
+            <div class="food-discount">Giảm giá: {{ drink.discount }}%</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted, computed } from "vue";
+import { getDoUong } from "../api/FoodSevice.js"; // 👈 gọi đúng API đồ uống
 
-// Dữ liệu giả, sau này sẽ lấy từ database
-const drinks = ref([
-  { id: 1, name: "Trà Sữa Matcha", shop: "Tea House", price: 35000, image: "https://via.placeholder.com/150" },
-  { id: 2, name: "Cà Phê Sữa", shop: "Coffee King", price: 25000, image: "https://via.placeholder.com/150" },
-  { id: 3, name: "Nước Cam", shop: "Fresh Juice", price: 30000, image: "https://via.placeholder.com/150" },
-  { id: 4, name: "Trà Sữa Matcha", shop: "Tea House", price: 35000, image: "https://via.placeholder.com/150" },
-  { id: 5, name: "Cà Phê Sữa", shop: "Coffee King", price: 25000, image: "https://via.placeholder.com/150" },
-  { id: 6, name: "Nước Cam", shop: "Fresh Juice", price: 30000, image: "https://via.placeholder.com/150" },
-]);
+const drinks = ref([]);
+const currentPage = ref(1);
+const drinksPerPage = 6;
+
+onMounted(async () => {
+  const data = await getDoUong(); // 👈 gọi API đồ uống
+  console.log("Dữ liệu đồ uống:", data);
+  drinks.value = data.map(item => ({
+    id: item.idFood,
+    name: item.name,
+    restaurantId: item.idRes,
+    price: item.price,
+    discount: item.discount,
+    image: item.url_Image
+  }));
+});
+
+const paginatedDrinks = computed(() => {
+  const start = (currentPage.value - 1) * drinksPerPage;
+  return drinks.value.slice(start, start + drinksPerPage);
+});
+
+const totalPages = computed(() => {
+  return Math.ceil(drinks.value.length / drinksPerPage);
+});
+
+const nextPage = () => {
+  if (currentPage.value < totalPages.value) currentPage.value++;
+};
+
+const prevPage = () => {
+  if (currentPage.value > 1) currentPage.value--;
+};
+
+const handleImageError = (event) => {
+  event.target.src = "https://via.placeholder.com/120"; // ảnh mặc định khi lỗi
+};
 </script>
 
 <style scoped>
-.drink-list {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr); /* 2 cột */
-  gap: 16px;
-  width: 100%;
-  max-width: 800px; /* Giới hạn chiều rộng */
-  margin: 0 auto; /* Căn giữa */
+.food-list-container {
+  position: relative;
   padding: 20px;
-  transform: translateX(200px);
+  max-width: 1000px;
+  margin: 0 auto;
 }
 
-.drink-item {
+.food-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
+  transform: translateX(100px);
+}
+
+.food-item {
+  width: 400px;
   display: flex;
   align-items: center;
-  width: 100%;
   padding: 16px;
   border-radius: 12px;
   background: #fff;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease-in-out;
   height: 150px;
-  width: calc(100% - 20px);
 }
 
-.drink-item:hover {
+.food-item:hover {
   transform: scale(1.02);
 }
 
-.drink-image {
+.food-image {
   width: 120px;
   height: 120px;
   border-radius: 12px;
@@ -62,26 +108,73 @@ const drinks = ref([
   margin-right: 20px;
 }
 
-.drink-info {
+.food-info {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   flex: 1;
+  min-width: 0;
+  word-break: break-word;
+  gap: 4px;
 }
 
-.drink-name {
+.food-name {
   font-size: 22px;
   font-weight: bold;
 }
 
-.drink-shop {
+.food-shop {
   color: gray;
-  font-size: 16px;
+  font-size: 15px;
 }
 
-.drink-price {
+.food-price {
   color: #ff5733;
   font-size: 18px;
   font-weight: bold;
+}
+
+.food-discount {
+  color: #007bff;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.pagination {
+  position: relative;
+  top: 50%;
+  height: 0;
+  transform: translateX(100px);
+}
+
+.arrow-button {
+  position: absolute;
+  top: -40px;
+  background-color: white;
+  border: 2px solid #ff5733;
+  color: #ff5733;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.arrow-button:hover {
+  background-color: #ff5733;
+  color: white;
+}
+
+.arrow-button.left {
+  left: -50px;
+}
+
+.arrow-button.right {
+  right: -50px;
 }
 </style>

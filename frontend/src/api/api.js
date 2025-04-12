@@ -7,7 +7,7 @@ export const login = async (username, password, role) => {
     const response = await axios.post(`${API_URL}/login`, {
       Name: username,
       Pass: password,
-      Role: role, // Gửi role lên server để xác định bảng
+      Role: role,
     });
     return response.data;
   } catch (error) {

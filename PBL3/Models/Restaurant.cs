@@ -2,57 +2,31 @@
 {
     public class Restaurant
     {
-        private static string ID="0";
-        private string Name;
-        private string Address;
-        private string Phone;
-        private string Pass;
-        private List<Food>Menu;
-        public static string GetID()
+        private static int _idCounter = 0;
+
+        // Trả về ID có dạng "RES001", "RES002"...
+        public static string ID => "RES" + (_idCounter + 1).ToString("D3");
+
+        public static void SetNextID()
         {
-            return ID;
+            _idCounter++;
         }
-        public static void SetID()
+        public string IDRes { get; set; } = ID; // Tạo ID duy nhất
+        public string Name { get; set; }
+        public string Address { get; set; }
+        public string Phone { get; set; }
+        public string Pass { get; set; }
+        public List<Food> Menu { get; set; }
+        public string Url_Image { get; set; }
+
+        public Restaurant()
         {
-            int cc = Convert.ToInt32(ID);
-            cc++;
-            ID = cc.ToString();
+            Menu = new List<Food>();
         }
-        public string GetName()
+
+        public List<Food> GetFoodsList()
         {
-            return this.Name;
-        }
-        public void SetName(string Name)
-        {
-            this.Name= Name;
-        }
-        public string GetAddress()
-        {
-            return this.Address;
-        }
-        public void SetAddress(string Address)
-        {
-            this.Address=Address;
-        }
-        public string GetPhone()
-        {
-            return this.Phone;
-        }
-        public void SetPhone(string Phone)
-        {
-            this.Phone = Phone;
-        }
-        public string GetPass()
-        {
-            return this.Pass;
-        }
-        public void SetPass(string Pass)
-        {
-            this.Pass = Pass;
-        }
-        public List<Food>getFoodsList()
-        {
-            return this.Menu;
+            return Menu;
         }
     }
 }
