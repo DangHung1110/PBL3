@@ -48,6 +48,7 @@ export const addFood = async (foodData) => {
     formData.append('Price', foodData.price);
     formData.append('Discount', foodData.discount);
     formData.append('Category', foodData.category);
+    formData.append('Quantity', foodData.quantity);
     formData.append('IDRes', foodData.idRes);
     formData.append('Url_Image', foodData.image); // phải đúng key backend mong đợi
   
@@ -55,3 +56,22 @@ export const addFood = async (foodData) => {
     return response.data;
 };
   
+export const GetFoodById = async (id) => {
+    try {
+      const response = await axios.get(`http://localhost:5299/api/restaurant/GetFoodById/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error("Lỗi khi gọi API lấy món ăn:", error);
+      throw error;
+    }
+}
+
+export const GetRestaurantById = async (IDRes) => {
+    try {
+        const response = await axios.get(`http://localhost:5299/api/Restaurant/GetRestaurantById/${IDRes}`);
+        return response.data;
+    } catch (error) {
+        console.error("Lỗi khi gọi API lấy nhà hàng:", error);
+        throw error;
+    }
+}

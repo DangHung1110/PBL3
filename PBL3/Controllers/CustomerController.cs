@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PBL3.Service;
 using System.Text.Json;
+using PBL3.Models;
 
 namespace PBL3.Controllers
 {
@@ -54,5 +55,39 @@ namespace PBL3.Controllers
             }
         }   
     }*/
+    [HttpPost("order")]
+        public async Task<IActionResult> Order([FromBody] OrderDetail orderDetail)
+        {
+            try
+            {
+                bool result = await _customerService.Order(orderDetail); //  await
+                if (result)
+                {
+                    return Ok(new { Message = "Order Successful" });
+                }
+                else
+                {
+                    return BadRequest(new { Message = "Order Failed - Validation failed or foreign key mismatch" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "Server Error", Error = ex.Message });
+            }
+        }
+
+        [HttpDelete("order/{idOrder}")]
+        public async Task<IActionResult> DeleteOrderDetail(int idOrder)
+        {
+            bool success = await _customerService.DeleteOrderDetail(idOrder);
+            if (success)
+            {
+                return Ok(new { Message = "Delete successful" });
+            }
+            else
+            {
+                return NotFound(new { Message = "OrderDetail not found or already deleted" });
+            }
+        }
     }
 }

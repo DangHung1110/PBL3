@@ -29,6 +29,11 @@
         </div>
 
         <div class="form-group">
+          <label for="quantity">Số lượng</label>
+          <input type="number" id="quantity" v-model="quantity" min="0" required />
+        </div>
+
+        <div class="form-group">
           <label for="image">Ảnh</label>
           <input type="file" id="image" accept="image/*" @change="handleImageChange" required />
           <img v-if="imagePreview" :src="imagePreview" class="image-preview" />
@@ -50,6 +55,7 @@ const price = ref('');
 const discount = ref('');
 const category = ref('');
 const image = ref(null);
+const quantity = ref(0);
 const imagePreview = ref(null);
 const emit = defineEmits(['close']);
 
@@ -73,6 +79,7 @@ const handleSubmit = async () => {
     price: price.value,
     discount: discount.value,
     category: category.value,
+    quantity: quantity.value,
     image: image.value,
     idRes: ID
   };

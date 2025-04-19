@@ -6,7 +6,7 @@
     </div>
 
     <div class="food-list">
-      <div class="food-item" v-for="food in paginatedFoods" :key="food.id">
+      <div class="food-item" v-for="food in paginatedFoods" :key="food.id" @click="handleFoodDetail(food.id)">
         <img
           :src="food.image"
           class="food-image"
@@ -30,10 +30,12 @@
 <script setup>
 import { ref, onMounted, computed } from "vue";
 import { getDoAn } from "../api/FoodSevice.js";
+import { useRouter } from "vue-router";
 
 const foods = ref([]);
 const currentPage = ref(1);
 const foodsPerPage = 6;
+const router = useRouter();
 
 onMounted(async () => {
   const data = await getDoAn();
@@ -67,6 +69,11 @@ const prevPage = () => {
 
 const formatPrice = (value) => {
   return value.toLocaleString("vi-VN") + "đ";
+};
+
+const handleFoodDetail = (id) => {
+  router.replace(`/oderfood/${id}`);
+  console.log("ID món ăn:", id);
 };
 </script>
 

@@ -6,8 +6,8 @@ using PBL3.Models;
 namespace PBL3.Controllers
 {
     [Route("api/auth")]
-        [ApiController]
-    public class AuthController:ControllerBase
+    [ApiController]
+    public class AuthController : ControllerBase
     {
         private readonly AuthService _authservice;
         public AuthController(AuthService authservice)
@@ -57,14 +57,14 @@ namespace PBL3.Controllers
             {
                 return Ok(new { Message = "Login Successful", UserID = userId, Role = role });
             }
-                return Unauthorized(new { Message = "Invalid Credentials" });
+            return Unauthorized(new { Message = "Invalid Credentials" });
         }
 
         [HttpPost("restaurant/signup")]
         public IActionResult SignUp2([FromBody] Restaurant restaurant)
         {
             int Check = _authservice.Signup2(restaurant);
-            if(Check==0) 
+            if (Check == 0)
             {
                 return Ok(new { Message = "SignUpSuccessful" });
             }

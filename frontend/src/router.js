@@ -9,6 +9,7 @@ import RestaurantProduct from "./components/RestaurantProducts.vue";
 import Dashboard from "./components/dashboard.vue"
 import AddFood from "./components/AddFood.vue"
 import Restaurant from "./components/RestaurantList.vue";
+import OderFood from "./components/OderFood.vue";
 const routes = [
     {
         path: "/",
@@ -19,14 +20,18 @@ const routes = [
             { path: "register", component: Register },
             { path: "drinklist", component: DrinksList },
             { path: "foodlist", component: FoodList },
+            { path: "oderfood", component: OderFood },
+            { path: "oderfood/:id", component: OderFood },
         ],
     },
     {
         path: "/customer/:username",
         component: HomeView,
         children: [
+            { path: "", component: Restaurant }, // Trang chính
             { path: "drinklist", component: DrinksList },
             { path: "foodlist", component: FoodList },
+            { path: "oderfood/:id", component: OderFood },
         ],
     },
     {

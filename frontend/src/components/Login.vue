@@ -71,7 +71,7 @@ export default {
       // Xóa dữ liệu đăng nhập
       localStorage.removeItem("role");
       localStorage.removeItem("username");
-      localStorage.removeItem("restaurantID");
+      localStorage.removeItem("IDRes");
 
       // Chuyển về trang đăng nhập
       router.push("/login");

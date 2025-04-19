@@ -17,6 +17,7 @@
             <th>Loại</th>
             <th>Giá</th>
             <th>KM</th>
+            <th>Số lượng</th>
             <th>Ảnh</th>
             <th>Hành động</th>
           </tr>
@@ -28,6 +29,7 @@
             <td>{{ product.category }}</td>
             <td>{{ product.price }}</td>
             <td>{{ product.discount }}</td>
+            <td>{{ product.quantity }}</td>
             <td><img :src="product.image" alt="product image" class="product-image" /></td>
             <td>
               <button @click="editProduct(product.id)" class="btn-edit">Sửa</button>
@@ -65,7 +67,8 @@ const fetchFoods = async () => {
       category: item.category,
       price: item.price.toLocaleString('vi-VN') + 'đ',
       discount: item.discount + '%',
-      image: item.url_Image
+      image: item.url_Image,
+      quantity: item.quantity
     }));
   } catch (error) {
     console.error("Lỗi khi lấy danh sách món ăn:", error);

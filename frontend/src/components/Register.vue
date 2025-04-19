@@ -97,7 +97,7 @@ export default {
       router.push("/login");
   } else {
     console.error("Đăng ký thất bại", response.message);
-    alert("Đăng ký thất bại. Vui lòng thử lại!");
+    alert("Đăng ký thất bại. Vui lòng thử lại!"); 
     console.error("Chi tiết:", response.message);
   }
 };

@@ -8,5 +8,6 @@
         public int Discount { get; set; }
         public string Category { get; set; }
         public IFormFile Url_Image { get; set; }
+        public int Quantity { get; set; } 
     }
 }
