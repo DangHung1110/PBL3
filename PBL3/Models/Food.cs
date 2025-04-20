@@ -9,5 +9,6 @@
         public int Discount { get; set; }
         public string Category { get; set; }
         public string Url_Image { get; set; }
+        public int Quantity { get; set; }
     }
 }

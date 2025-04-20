@@ -9,3 +9,13 @@ export const getAllRes = async () => {
         throw error;
     }
 }
+
+export const GetRestaurantById = async (IDRes) => {
+    try {
+        const response = await axios.get(`http://localhost:5299/api/Restaurant/GetRestaurantById/${IDRes}`);
+        return response.data;
+    } catch (error) {
+        console.error("Lỗi khi gọi API lấy nhà hàng:", error);
+        throw error;
+    }
+}

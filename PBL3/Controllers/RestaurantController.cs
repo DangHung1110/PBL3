@@ -121,5 +121,26 @@ namespace PBL3.Controllers
             return Ok(restaurants);
         }
 
+        [HttpGet("GetFoodById/{IDFood}")]
+        public IActionResult GetFoodById(string IDFood)
+        {
+            var food = _restaurantservice.GetFoodById(IDFood);
+            if (food == null)
+            {
+                return NotFound(new { Message = "Food not found." });
+            }
+            return Ok(food);
+        }
+
+        [HttpGet("GetRestaurantById/{IDRes}")]
+        public IActionResult GetRestaurantById(string IDRes)
+        {
+            var restaurant = _restaurantservice.GetRestaurantById(IDRes);
+            if (restaurant == null)
+            {
+                return NotFound(new { Message = "Restaurant not found." });
+            }
+            return Ok(restaurant);
+        }
     }
 }

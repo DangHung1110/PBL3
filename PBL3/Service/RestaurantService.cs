@@ -65,8 +65,8 @@ public class RestaurantService
         string imgUrl = ImageDeal(foodUpLoadDTO);
 
         var cmd = new MySqlCommand(@"
-    INSERT INTO FOOD(IDFood, Name, PRICE, IDRes, Discount, Category, Url_Image)
-    VALUES(@IDFood, @Name, @PRICE, @IDRes, @Discount, @Category, @Url_Image)", conn);
+    INSERT INTO FOOD(IDFood, Name, PRICE, IDRes, Discount, Category, Url_Image, Quantity)
+    VALUES(@IDFood, @Name, @PRICE, @IDRes, @Discount, @Category, @Url_Image, @Quantity)", conn);
 
         cmd.Parameters.AddWithValue("@IDFood", newID);
         cmd.Parameters.AddWithValue("@Name", foodUpLoadDTO.Name);
@@ -75,6 +75,7 @@ public class RestaurantService
         cmd.Parameters.AddWithValue("@Discount", foodUpLoadDTO.Discount);
         cmd.Parameters.AddWithValue("@Category", foodUpLoadDTO.Category);
         cmd.Parameters.AddWithValue("@Url_Image", imgUrl);
+        cmd.Parameters.AddWithValue("@Quantity", foodUpLoadDTO.Quantity);
 
         cmd.ExecuteNonQuery();
     }
@@ -97,7 +98,8 @@ public class RestaurantService
                 Price = rd.GetInt32("Price"),
                 Discount = rd.GetInt32("Discount"),
                 Category = rd.GetString("Category"),
-                Url_Image = rd.GetString("Url_Image")
+                Url_Image = rd.GetString("Url_Image"),
+                Quantity = rd.GetInt32("Quantity")
             });
         }
 
@@ -122,7 +124,8 @@ public class RestaurantService
                 Price = rd.GetInt32("Price"),
                 Discount = rd.GetInt32("Discount"),
                 Category = rd.GetString("Category"),
-                Url_Image = rd.GetString("Url_Image")
+                Url_Image = rd.GetString("Url_Image"),
+                Quantity = rd.GetInt32("Quantity")
             });
         }
 
@@ -146,12 +149,13 @@ public class RestaurantService
         using var conn = GetConnection();
         conn.Open();
 
-        var cmd = new MySqlCommand("UPDATE FOOD SET Name = @Name, Price = @Price, Discount = @Discount, Category = @Category WHERE IDFood = @IDFood", conn);
+        var cmd = new MySqlCommand("UPDATE FOOD SET Name = @Name, Price = @Price, Discount = @Discount, Category = @Category, Quantity = @Quantity WHERE IDFood = @IDFood", conn);
         cmd.Parameters.AddWithValue("@IDFood", food.IDFood);
         cmd.Parameters.AddWithValue("@Name", food.Name);
         cmd.Parameters.AddWithValue("@Price", food.Price);
         cmd.Parameters.AddWithValue("@Discount", food.Discount);
         cmd.Parameters.AddWithValue("@Category", food.Category);
+        cmd.Parameters.AddWithValue("@Quantity", food.Quantity);
 
         cmd.ExecuteNonQuery();
     }
@@ -174,31 +178,78 @@ public class RestaurantService
                 Price = rd.GetInt32("Price"),
                 Discount = rd.GetInt32("Discount"),
                 Category = rd.GetString("Category"),
-                Url_Image = rd.GetString("Url_Image")
+                Url_Image = rd.GetString("Url_Image"),
+                Quantity = rd.GetInt32("Quantity")
             });
         }
         return foods;
     }
 
     public List<Restaurant> GetAllRestaurants()
-{
-    var restaurants = new List<Restaurant>();
-    using var conn = GetConnection();
-    conn.Open();
-    var cmd = new MySqlCommand("SELECT * FROM RESTAURANT", conn);
-    using var reader = cmd.ExecuteReader();
-    while (reader.Read())
     {
-        restaurants.Add(new Restaurant
+        var restaurants = new List<Restaurant>();
+        using var conn = GetConnection();
+        conn.Open();
+        var cmd = new MySqlCommand("SELECT * FROM RESTAURANT", conn);
+        using var reader = cmd.ExecuteReader();
+        while (reader.Read())
         {
-            IDRes = reader.GetString("IDRes"),
-            Name = reader.GetString("Name"),
-            Address = reader.GetString("Address"),
-            Phone = reader.GetString("Phone"),
-            Pass = reader.GetString("Pass"),
-            Url_Image = reader.GetString("Url_Image")
-        });
+            restaurants.Add(new Restaurant
+            {
+                IDRes = reader.GetString("IDRes"),
+                Name = reader.GetString("Name"),
+                Address = reader.GetString("Address"),
+                Phone = reader.GetString("Phone"),
+                Pass = reader.GetString("Pass"),
+                Url_Image = reader.GetString("Url_Image")
+            });
+        }
+        return restaurants;
     }
-    return restaurants;
-}
+
+    public Food GetFoodById(string idFood)
+    {
+        using var conn = GetConnection();
+        conn.Open();
+        var cmd = new MySqlCommand("SELECT * FROM FOOD WHERE IDFood = @IDFood", conn);
+        cmd.Parameters.AddWithValue("@IDFood", idFood);
+        using var reader = cmd.ExecuteReader();
+        if (reader.Read())
+        {
+            return new Food
+            {
+                IDFood = reader.GetString("IDFood"),
+                IDRes = reader.GetString("IDRes"),
+                Name = reader.GetString("Name"),
+                Price = reader.GetInt32("Price"),
+                Discount = reader.GetInt32("Discount"),
+                Category = reader.GetString("Category"),
+                Url_Image = reader.GetString("Url_Image"),
+                Quantity = reader.GetInt32("Quantity")
+            };
+        }
+        return null;
+    }
+
+    public Restaurant GetRestaurantById(string idRes)
+    {
+        using var conn = GetConnection();
+        conn.Open();
+        var cmd = new MySqlCommand("SELECT * FROM RESTAURANT WHERE IDRes = @IDRes", conn);
+        cmd.Parameters.AddWithValue("@IDRes", idRes);
+        using var reader = cmd.ExecuteReader();
+        if (reader.Read())
+        {
+            return new Restaurant
+            {
+                IDRes = reader.GetString("IDRes"),
+                Name = reader.GetString("Name"),
+                Address = reader.GetString("Address"),
+                Phone = reader.GetString("Phone"),
+                Pass = reader.GetString("Pass"),
+                Url_Image = reader.GetString("Url_Image")
+            };
+        }
+        return null;
+    }
 }

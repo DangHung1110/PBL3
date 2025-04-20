@@ -15,41 +15,58 @@ namespace PBL3.Service
         {
             return new MySqlConnection(_iconfiguration.GetConnectionString("DefaultConnection"));
         }
-        /*public List<Customer>GetAll()
+        public async Task<bool> Order(OrderDetail order)
         {
-            List<Customer> DS = new List<Customer>();
             using var conn = GetConnection();
-            conn.Open();
-            var cmd = new MySqlCommand("SELECT*FROM Customer", conn);
-            using var reader = cmd.ExecuteReader();
-            while(reader.Read())
+            await conn.OpenAsync();
+
+            // Kiểm tra tính hợp lệ
+            string checkQuery = @"
+        SELECT f.IDFood, c.IDCustomer, r.IDRes 
+        FROM FOOD f
+        JOIN RESTAURANT r ON f.IDRes = r.IDRes
+        JOIN CUSTOMER c ON c.IDCustomer = @idCustomer
+        WHERE f.IDFood = @idFood AND r.IDRes = @idRes
+    ";
+
+            using var checkCmd = new MySqlCommand(checkQuery, conn);
+            checkCmd.Parameters.AddWithValue("@idCustomer", order.IDCustomer);
+            checkCmd.Parameters.AddWithValue("@idFood", order.IDFood);
+            checkCmd.Parameters.AddWithValue("@idRes", order.IDRes);
+
+            using var reader = await checkCmd.ExecuteReaderAsync();
+            if (!reader.HasRows)
             {
-                Customer x = new Customer();
-                x.SetID(reader.GetString("ID"));
-                x.SetName(reader.GetString("Name"));
-                x.SetAddress(reader.GetString("Address"));
-                x.SetPhone(reader.GetString("Phone"));
-                x.SetPass(reader.GetString("Pass"));
-
-                DS.Add(x);
+                return false;
             }
-            return DS;
-        }*/
+            await reader.CloseAsync();
 
-        
+            string insertQuery = @"
+        INSERT INTO ORDERDETAIL (IDCustomer, IDFood, IDRes)
+        VALUES (@idCustomer, @idFood, @idRes)
+    ";
 
-        // public List<object> getData(string IDCustomer)
-        // {
-        //     using var conn = GetConnection();
-        //     conn.Open();
-        //     var cmd = new MySqlCommand("SELECT ");
-        // 
-       
-        /*public List<object> getData(string IDCustomer)
+            using var insertCmd = new MySqlCommand(insertQuery, conn);
+            insertCmd.Parameters.AddWithValue("@idCustomer", order.IDCustomer);
+            insertCmd.Parameters.AddWithValue("@idFood", order.IDFood);
+            insertCmd.Parameters.AddWithValue("@idRes", order.IDRes);
+
+            var result = await insertCmd.ExecuteNonQueryAsync();
+            return result > 0;
+        }
+
+        public async Task<bool> DeleteOrderDetail(int idOrder)
         {
             using var conn = GetConnection();
-            conn.Open();
-            var cmd = new MySqlCommand("SELECT ");
-        }*/
+            await conn.OpenAsync();
+
+            string query = "DELETE FROM ORDERDETAIL WHERE IDOrder = @idOrder";
+
+            using var cmd = new MySqlCommand(query, conn);
+            cmd.Parameters.AddWithValue("@idOrder", idOrder);
+
+            int affectedRows = await cmd.ExecuteNonQueryAsync();
+            return affectedRows > 0;
+        }
     }
 }
