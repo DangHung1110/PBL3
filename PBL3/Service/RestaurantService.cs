@@ -10,7 +10,8 @@ using System.Data.SqlClient;
 public class RestaurantService
 {
     private readonly string _uploadFolder = "wwwroot/Uploads";
-    private readonly string baseurl = "http://localhost:5000/images/";
+   private readonly string baseurl = "http://localhost:5299/Uploads/";
+
 
     private readonly IConfiguration _iconfiguration;
     public RestaurantService(IConfiguration iconfiguration)
