@@ -92,31 +92,48 @@ onMounted(() => {
 
 <style scoped>
 
+* {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  box-sizing: border-box;
+}
+
 .container {
-  position: relative;
   width: 100vw;
   height: 100vh;
   background: url("https://watermark.lovepik.com/photo/20211118/large/lovepik-gourmet-background-picture_400152283.jpg") no-repeat center center/cover;
+  overflow: hidden;
 }
+
 .navbar {
   width: 100%;
   height: 70px;
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
   position: fixed;
   z-index: 10;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.6);
   color: white;
-  padding: 10px;
+  padding: 0 30px;
+  backdrop-filter: blur(6px);
 }
 
 .navbar .logo {
-  width: 100%;
   display: flex;
-  width: 150px;
-  justify-content: space-around;
-  font-size: 20px;
+  align-items: center;
+  font-size: 22px;
+  font-weight: bold;
+  gap: 10px;
+}
+
+.logo-food i {
+  font-size: 24px;
+  color: #ff7f50;
+}
+
+.Name {
+  letter-spacing: 1px;
+  color: white;
 }
 
 .home-page {
@@ -126,43 +143,47 @@ onMounted(() => {
 }
 
 .category {
-  padding: 10px 15px;
+  padding: 10px 18px;
   border-radius: 8px;
   border: none;
   cursor: pointer;
   font-size: 16px;
+  font-weight: 500;
   transition: 0.3s;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 .food {
-  background-color: #ff7f50; /* Màu cam */
+  background-color: #ff7f50;
   color: white;
 }
 
 .drink {
-  background-color: #4682b4; /* Màu xanh dương */
+  background-color: #4682b4;
   color: white;
 }
 
 .category:hover {
-  opacity: 0.8;
+  transform: scale(1.05);
+  opacity: 0.9;
 }
 
 .search-input {
-  padding: 8px;
+  padding: 8px 14px;
   font-size: 16px;
-  border: 2px solid #ccc;
-  border-radius: 5px;
+  border: none;
+  border-radius: 8px;
   outline: none;
-  width: 300px;
+  width: 280px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  transition: 0.3s;
 }
 
 .search-input:focus {
-  border-color: #ff7f50;
+  border: 2px solid #ff7f50;
 }
 
-/* Định vị khu vực đăng nhập */
-/* Vùng chứa icon đăng nhập */
+/* Login */
 .login {
   position: relative;
   display: flex;
@@ -173,48 +194,41 @@ onMounted(() => {
 
 .login i {
   font-size: 24px;
-  color: #6200ea;
-  transition: 0.3s;
+  color: white;
 }
 
-/* Hộp "Đăng nhập / Đăng ký" */
+/* Hover box login */
 .boder-login {
   position: absolute;
-  top: 100%;
+  top: 110%;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   flex-direction: column;
   gap: 6px;
   align-items: center;
-  padding: 12px 15px;
-  width: 160px; /* Giảm độ rộng để thon hơn */
-  
-  /* Nền mờ giúp nhìn thấy ảnh nền */
-  background: rgba(255, 255, 255, 0.2); 
-  backdrop-filter: blur(10px); /* Làm mờ nền */
+  padding: 14px;
+  width: 180px;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(12px);
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
-  
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.2);
   opacity: 0;
   visibility: hidden;
   transition: 0.3s ease-in-out;
-  z-index: 10;
+  z-index: 20;
 }
 
-/* Khi hover vào icon, hiện hộp */
 .login:hover .boder-login {
   opacity: 1;
   visibility: visible;
 }
 
-/* Nút đăng nhập / đăng ký */
-.loginn,
-.register {
+.loginn, .register {
   text-decoration: none;
-  font-size: 14px;
-  padding: 6px 12px;
+  font-size: 15px;
+  padding: 8px 12px;
   border-radius: 6px;
   transition: 0.3s;
   width: 100%;
@@ -222,7 +236,6 @@ onMounted(() => {
   font-weight: 500;
 }
 
-/* Nút đăng nhập */
 .loginn {
   color: #6200ea;
   border: 1px solid #6200ea;
@@ -234,143 +247,106 @@ onMounted(() => {
   color: white;
 }
 
-/* Nút đăng ký */
 .register {
   color: white;
   background: #ff7f50;
-  border: 1px solid #ff7f50;
+  border: none;
 }
 
 .register:hover {
   background: #e66a3e;
-  border-color: #e66a3e;
 }
 
+/* User menu */
 .user-menu {
-  cursor: pointer;
   position: relative;
+  cursor: pointer;
 }
 
-/* Vùng chứa avatar + tên */
 .user-info {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-weight: bold;
   padding: 8px 12px;
   border-radius: 8px;
-  transition: background 0.3s ease;
+  transition: 0.3s;
+  font-weight: bold;
 }
 
 .user-info:hover {
-  background: rgba(0, 123, 255, 0.1);
+  background-color: rgba(255,255,255,0.1);
 }
 
 .avatar {
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
   background: linear-gradient(135deg, #007bff, #0056b3);
   color: white;
-  border-radius: 50%;
+  font-size: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
-  font-weight: bold;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
 
-/* Dropdown menu */
+/* Dropdown */
 .dropdown-menu {
-  left: 15px;
   position: absolute;
-  top: 50px;
+  top: 120%;
   right: 0;
   background: white;
   border-radius: 10px;
-  width: 250px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  overflow: hidden;
-  opacity: 0;
+  width: 240px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
   transform: translateY(-10px);
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  opacity: 0;
   pointer-events: none;
+  transition: 0.3s;
+  overflow: hidden;
 }
 
-/* Khi hover vào user-menu thì hiển thị dropdown */
 .user-menu:hover .dropdown-menu {
-  opacity: 1;
   transform: translateY(0);
+  opacity: 1;
   pointer-events: auto;
 }
 
-/* Item trong dropdown */
 .dropdown-item {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 16px;
+  padding: 12px 18px;
   font-size: 15px;
-  font-weight: 500;
   color: #333;
   text-decoration: none;
-  transition: background 0.2s ease, color 0.2s ease;
-  cursor: pointer;
+  transition: background 0.2s;
 }
 
-.dropdown-item i {
-  font-size: 18px;
-  color: #007bff;
-}
-
-/* Hover */
 .dropdown-item:hover {
   background: #f0f2f5;
 }
 
-/* Divider (đường kẻ ngăn cách) */
-.divider {
-  height: 1px;
-  background: #e0e0e0;
-  margin: 5px 10px;
-}
-
-/* Logout thiết kế đẹp */
 .logout {
-  width: 100%;
   border: none;
+  background: none;
   color: red;
-  font-weight: 500;
-}
-
-.logout i {
-  color: red;
+  width: 100%;
+  text-align: left;
 }
 
 .logout:hover {
-  background: rgba(255, 0, 0, 0.1);
-  color: red;
+  background: rgba(255,0,0,0.1);
 }
 
+/* Content */
 .content {
   width: 100%;
-  height: calc(100vh - 70px); 
+  height: calc(100vh - 70px);
   transform: translateY(70px);
-  display: flex;
-  justify-content: flex-end;
+  padding: 20px;
+  overflow-y: auto;
+  background: rgba(255,255,255,0.1);
+  backdrop-filter:none;
 }
-
-.content .content-img {
-  width: 70%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.content-img img {
-  width: 90%;
-  height: 90%;
-  object-fit: cover;
-}
-</style>
+ </style>
