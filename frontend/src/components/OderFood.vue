@@ -32,11 +32,28 @@
   </template>
   
   <script setup>
+  import { addOrder } from '../api/order.js';
   import { computed } from 'vue';
   import { onMounted, ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { GetFoodById, GetRestaurantById } from '../api/FoodSevice.js';   
-  const route = useRoute();
+  import { GetFoodById, GetRestaurantById } from '../api/FoodSevice.js';
+ const addToCart = async() => {
+   const senddata={
+    IDFood:route.params.id,
+    IDRes:food.value.idRes,
+    Quantity:quantityToAdd.value,
+    TotalPrice:parseInt(calculatedPrice.value),
+    IDCustomer:localStorage.getItem("IDRes")}
+    console.log(senddata);
+     try {
+    const result = await addOrder(senddata);
+    console.log("Item added to cart:", result);
+    alert("Thêm vào giỏ hàng thành công!");
+  } catch (error) {
+    alert("Đã xảy ra lỗi khi thêm vào giỏ hàng.");
+  }
+  };
+const route = useRoute();
   const router = useRouter();
   const food = ref(null);
   const quantityToAdd = ref(1);
@@ -44,12 +61,6 @@
    const closePopup = () => {
     router.replace(`/customer/:username/foodlist`);
   };
-  
-  const addToCart = () => {
-    // Logic to add item to cart
-    console.log("Item added to cart");
-  };
-  
   onMounted(async () => {
     const foodId = route.params.id;
     const data = await GetFoodById(foodId);

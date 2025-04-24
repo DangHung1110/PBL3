@@ -26,36 +26,30 @@ namespace PBL3.Service
         FROM FOOD f
         JOIN RESTAURANT r ON f.IDRes = r.IDRes
         JOIN CUSTOMER c ON c.IDCustomer = @idCustomer
-        WHERE f.IDFood = @idFood AND r.IDRes = @idRes
-    ";
-
-            using var checkCmd = new MySqlCommand(checkQuery, conn);
-            checkCmd.Parameters.AddWithValue("@idCustomer", order.IDCustomer);
-            checkCmd.Parameters.AddWithValue("@idFood", order.IDFood);
-            checkCmd.Parameters.AddWithValue("@idRes", order.IDRes);
-
-            using var reader = await checkCmd.ExecuteReaderAsync();
+        WHERE f.IDFood = @idFood AND r.IDRes = @idRes";
+    using var checkCmd = new MySqlCommand(checkQuery, conn);
+        checkCmd.Parameters.AddWithValue("@idCustomer", order.IDCustomer);
+checkCmd.Parameters.AddWithValue("@idFood", order.IDFood);
+checkCmd.Parameters.AddWithValue("@idRes", order.IDRes);
+using var reader = await checkCmd.ExecuteReaderAsync();
             if (!reader.HasRows)
             {
                 return false;
             }
             await reader.CloseAsync();
 
-            string insertQuery = @"
-        INSERT INTO ORDERDETAIL (IDCustomer, IDFood, IDRes)
-        VALUES (@idCustomer, @idFood, @idRes)
-    ";
-
-            using var insertCmd = new MySqlCommand(insertQuery, conn);
-            insertCmd.Parameters.AddWithValue("@idCustomer", order.IDCustomer);
-            insertCmd.Parameters.AddWithValue("@idFood", order.IDFood);
-            insertCmd.Parameters.AddWithValue("@idRes", order.IDRes);
-
-            var result = await insertCmd.ExecuteNonQueryAsync();
-            return result > 0;
-        }
-
-        public async Task<bool> DeleteOrderDetail(int idOrder)
+          string insertQuery = @"
+    INSERT INTO ORDERDETAIL (IDCustomer, IDFood, IDRes, Quantity, TotalPrice)
+    VALUES (@idCustomer, @idFood, @idRes, @quantity, @totalPrice)";
+    using var insertCmd = new MySqlCommand(insertQuery,conn);
+insertCmd.Parameters.AddWithValue("@idCustomer", order.IDCustomer);
+insertCmd.Parameters.AddWithValue("@idFood", order.IDFood);
+insertCmd.Parameters.AddWithValue("@idRes", order.IDRes);
+insertCmd.Parameters.AddWithValue("@quantity", order.Quantity);
+insertCmd.Parameters.AddWithValue("@totalPrice", order.TotalPrice);
+var result = await insertCmd.ExecuteNonQueryAsync();
+            return result > 0; }
+            public async Task<bool> DeleteOrderDetail(int idOrder)
         {
             using var conn = GetConnection();
             await conn.OpenAsync();

@@ -71,8 +71,7 @@ namespace PBL3.Controllers
                 }
             }
             catch (Exception ex)
-            {
-                return StatusCode(500, new { Message = "Server Error", Error = ex.Message });
+            {return StatusCode(500, new { Message = "Server Error", Error = ex.Message });
             }
         }
 
