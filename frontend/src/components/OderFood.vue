@@ -23,7 +23,7 @@
 </div>
 
           <div class="popup-actions">
-            <button class="add-to-cart-btn" @click="addToCart">Thêm vào giỏ hàng</button>
+            <button class="add-to-cart-btn" @click="addToCart">Đặt Hàng</button>
           </div>
           <button class="close-btn" @click="closePopup">×</button>
         </div>

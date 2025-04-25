@@ -11,6 +11,7 @@ import AddFood from "./components/AddFood.vue"
 import Restaurant from "./components/RestaurantList.vue";
 import OderFood from "./components/OderFood.vue";
 import CustomerStatistic from "./components/CustomerStatistic.vue";
+import RestaurantOrderList from "./components/RestaurantOderList.vue";
 const routes = [
     {
         path: "/",
@@ -56,6 +57,12 @@ const routes = [
                         component: AddFood,
                     }
                 ]
+            },
+            
+            {
+                path: 'RestaurantOrderList',
+                name: 'RestaurantOrderList',
+                component: RestaurantOrderList,
             }
         ]
     },

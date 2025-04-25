@@ -10,6 +10,7 @@ export const addOrder = async (orderData) => {
     throw error;
   }
 };
+
 export const ThongkeOrder=async (ID)=>{
   try{
     console.log(ID);
@@ -21,8 +22,7 @@ export const ThongkeOrder=async (ID)=>{
   {
     console.error('Error when listing order',error);
     throw error;
-  }
-}
+  }}
 export const DeleteOrder= async (id) => {
   console.log(id);
   const response = await fetch(`http://localhost:5299/api/Customer/DeleteOrderDetail/${id}`, {
@@ -35,3 +35,12 @@ export const DeleteOrder= async (id) => {
 
   return true;
 };
+export const ResOrderList = async (IDRes) => {
+  try {
+    const response = await axios.get(`http://localhost:5299/api/Restaurant/GetOrderDetailsByRestaurant/${IDRes}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error when listing order:', error);
+    throw error;
+  }
+}
