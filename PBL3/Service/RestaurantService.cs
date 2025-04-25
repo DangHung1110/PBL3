@@ -264,6 +264,9 @@ public class RestaurantService
 
             string query = @"
                 SELECT 
+                    IDCustomer,
+                    IDFood,
+                    IDRes,
                     Url_Image,
                     FoodName,
                     RestaurantName,
@@ -283,6 +286,9 @@ public class RestaurantService
                     {
                         orders.Add(new OrderDetailDTO
                         {
+                            IDCustomer = reader.GetString("IDCustomer"),
+                            IDFood = reader.GetString("IDFood"),
+                            IDRes = reader.GetString("IDRes"),
                             Url_Image = reader.GetString("Url_Image"),
                             FoodName = reader.GetString("FoodName"),
                             RestaurantName = reader.GetString("RestaurantName"),

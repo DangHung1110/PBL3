@@ -10,6 +10,7 @@ export const addOrder = async (orderData) => {
     throw error;
   }
 };
+
 export const ThongkeOrder=async (ID)=>{
   try{
     console.log(ID);
@@ -20,6 +21,16 @@ export const ThongkeOrder=async (ID)=>{
   catch(error)
   {
     console.error('Error when listing order',error);
+    throw error;
+  }
+};
+
+export const ResOrderList = async (IDRes) => {
+  try {
+    const response = await axios.get(`http://localhost:5299/api/Restaurant/GetOrderDetailsByRestaurant/${IDRes}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error when listing order:', error);
     throw error;
   }
 }

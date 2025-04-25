@@ -10,9 +10,9 @@
     <!-- Dashboard Content -->
     <div class="main-content">
       <div class="dashboard-overview">
-        <div class="overview-card yellow">Đặt hàng</div>
-        <div class="overview-card blue">Đang ship</div>
-        <div class="overview-card purple">Tổng bài viết</div>
+        <div class="overview-card yellow" @click="viewOderDetail">Đặt hàng</div>
+        <!-- <div class="overview-card blue">Đang ship</div>
+        <div class="overview-card purple">Tổng bài viết</div> -->
       </div>
   
       <h2>Thu nhập 30 ngày gần đây nhất</h2>
@@ -32,6 +32,11 @@
     localStorage.removeItem("username");
     router.replace("/login");  // Điều hướng về trang đăng nhập
   };
+
+  const viewOderDetail = () => {
+    router.push({ name: 'RestaurantOrderList' }); // Điều hướng đến trang chi tiết đơn hàng
+  };
+
   </script>
   
   <style>
