@@ -24,7 +24,8 @@
             <span class="username">{{ username }}</span>
           </div>
           <div v-if="dropdownOpen" class="dropdown-menu">
-            <router-link to="/order-history" class="dropdown-item">📦 Lịch sử đơn đặt hàng</router-link>
+            <!-- Sửa thành button thay vì router-link -->
+            <button @click="openOrderHistoryPopup" class="dropdown-item">📦 Lịch sử đơn đặt hàng</button>
             <button @click="handleLogout" class="dropdown-item logout">🚪 Đăng xuất</button>
           </div>
         </div>
@@ -42,6 +43,24 @@
       <div class="content">
         <router-view></router-view>
       </div>
+      <div v-if="orderHistoryPopupOpen" class="popup">
+  <div class="popup-content" style="max-height: 80vh; overflow-y: auto;">
+    <h2>Lịch sử đơn đặt hàng</h2>
+   <button class="close-button" @click="closeOrderHistoryPopup" aria-label="Đóng popup">
+  <span>&times;</span>
+</button>
+
+    <div class="card-list">
+      <div class="card" v-for="(item, index) in thongkedata" :key="index">
+        <h3>{{ item.FoodName }}</h3>
+        <p><strong>Nhà hàng:</strong> {{ item.RestaurantName }}</p>
+        <img :src="item.Url_image" alt="Ảnh món ăn" style="width: 120px; height: auto; border-radius: 8px;" />
+        <p><strong>Số lượng:</strong> {{ item.Quantity }}</p>
+        <p><strong>Tổng tiền:</strong> {{ item.TotalPrice.toLocaleString() }} VNĐ</p>
+      </div>
+    </div>
+  </div>
+</div>
 
       <div class="footer"></div>
     </div>
@@ -51,12 +70,47 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
+import { ThongkeOrder } from "../api/order.js"; // ⬅️ Thêm dòng này
 
+const orderHistoryPopupOpen = ref(false);
 const router = useRouter();
 const route = useRoute();
 const isLoggedIn = ref(false);
 const username = ref("");
 const dropdownOpen = ref(false);
+
+const thongkedata = ref([]);
+const ID = localStorage.getItem("IDRes");
+
+// Hàm lấy thống kê từ API
+const getThongkeData = async () => {
+  try {
+    if (!ID) {
+      alert("Bạn chưa đăng nhập!");
+      return;
+    }
+    const data = await ThongkeOrder(ID);
+    thongkedata.value = data.map(item => ({
+      FoodName: item.foodName,
+      RestaurantName: item.restaurantName,
+      Quantity: item.quantity,
+      TotalPrice: item.totalPrice,
+      Url_image: item.url_image
+    }));
+  } catch (error) {
+    console.error("Lỗi khi lấy dữ liệu thống kê:", error);
+  }
+};
+
+// Mở popup và gọi API
+const openOrderHistoryPopup = async () => {
+  orderHistoryPopupOpen.value = true;
+  await getThongkeData();
+};
+
+const closeOrderHistoryPopup = () => {
+  orderHistoryPopupOpen.value = false;
+};
 
 const toggleDropdown = () => {
   dropdownOpen.value = !dropdownOpen.value;
@@ -70,25 +124,22 @@ const handleLogout = () => {
   router.replace("/login");
 };
 
-// Điều hướng đến trang đồ ăn hoặc đồ uống
 const navigateTo = (path) => {
   router.push(path);
 };
 
-// Hàm kiểm tra đăng nhập
 const checkLogin = () => {
   const storedUsername = localStorage.getItem("username");
   isLoggedIn.value = !!storedUsername;
   username.value = storedUsername || "";
 };
 
-// Khi có thay đổi trong localStorage, cập nhật UI ngay lập tức
 onMounted(() => {
   checkLogin();
   window.addEventListener("storage", checkLogin);
 });
-
 </script>
+
 
 <style scoped>
 
@@ -97,11 +148,69 @@ onMounted(() => {
   box-sizing: border-box;
 }
 
+ .close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  font-size: 22px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 1000;
+  color: #333;
+  transition: 0.2s ease-in-out;
+}
+
+.close-button:hover {
+  color: #e53935;
+  transform: scale(1.2);
+}
+
+.popup-content {
+   position: relative;
+  background: #fff;
+  border-radius: 16px;
+  padding: 30px;
+  width: 800px;
+  max-height: 85vh;
+  overflow-y: auto;  /* Cho phép cuộn */
+  overflow-x: hidden;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+
+@keyframes fadeIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
 .container {
   width: 100vw;
   height: 100vh;
   background: url("https://watermark.lovepik.com/photo/20211118/large/lovepik-gourmet-background-picture_400152283.jpg") no-repeat center center/cover;
-  overflow: hidden;
+
 }
 
 .navbar {
@@ -291,19 +400,19 @@ onMounted(() => {
 }
 
 /* Dropdown */
+/* Dropdown */
 .dropdown-menu {
   position: absolute;
-  top: 120%;
+  top: 100%;
   right: 0;
-  background: white;
-  border-radius: 10px;
-  width: 240px;
-  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-  transform: translateY(0); /* Không dùng animation khi mở */
-  opacity: 1;               /* Mặc định là hiển thị, điều khiển bằng v-if */
-  pointer-events: auto;
-  transition: 0.3s;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  width: 260px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  z-index: 100;
   overflow: hidden;
+  padding: 10px 0;
+  backdrop-filter: blur(8px);
 }
 
 
@@ -312,27 +421,31 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 18px;
+  padding: 14px 20px;
   font-size: 15px;
+  font-weight: 500;
   color: #333;
-  text-decoration: none;
-  transition: background 0.2s;
+  background-color: transparent;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .dropdown-item:hover {
-  background: #f0f2f5;
+  background-color: #f0f2f5;
+  color: #007bff;
 }
 
 .logout {
-  border: none;
-  background: none;
-  color: red;
-  width: 100%;
-  text-align: left;
+  color: #d32f2f;
 }
 
 .logout:hover {
-  background: rgba(255,0,0,0.1);
+  background-color: rgba(211, 47, 47, 0.1);
+  color: #b71c1c;
 }
 
 /* Content */
@@ -344,5 +457,33 @@ onMounted(() => {
   overflow-y: auto;
   background: rgba(255,255,255,0.1);
   backdrop-filter:none;
+}
+.card-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.card {
+  padding: 16px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #fff8f0, #fefefe);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  text-align: left;
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: scale(1.02);
+}
+
+.card img {
+  margin-top: 10px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  width: 100%;
+  max-width: 200px;
+  height: auto;
 }
  </style>
