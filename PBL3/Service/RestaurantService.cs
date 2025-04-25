@@ -10,7 +10,7 @@ using System.Data.SqlClient;
 public class RestaurantService
 {
     private readonly string _uploadFolder = "wwwroot/Uploads";
-   private readonly string baseurl = "http://localhost:5299/Uploads/";
+    private readonly string baseurl = "http://localhost:5299/Uploads/";
 
 
     private readonly IConfiguration _iconfiguration;
@@ -252,5 +252,48 @@ public class RestaurantService
             };
         }
         return null;
+    }
+    
+    public async Task<List<OrderDetailDTO>> GetOrderDetailsByRestaurant(string idRes)
+    {
+        var orders = new List<OrderDetailDTO>();
+
+        using (var conn = GetConnection())
+        {
+            await conn.OpenAsync();
+
+            string query = @"
+                SELECT 
+                    Url_Image,
+                    FoodName,
+                    RestaurantName,
+                    Quantity,
+                    TotalPrice
+                FROM ORDERDETAIL
+                WHERE IDRes = @idRes
+            ";
+
+            using (var cmd = new MySqlCommand(query, conn))
+            {
+                cmd.Parameters.AddWithValue("@idRes", idRes);
+
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        orders.Add(new OrderDetailDTO
+                        {
+                            Url_Image = reader.GetString("Url_Image"),
+                            FoodName = reader.GetString("FoodName"),
+                            RestaurantName = reader.GetString("RestaurantName"),
+                            Quantity = reader.GetInt32("Quantity"),
+                            TotalPrice = reader.GetInt32("TotalPrice")
+                        });
+                    }
+                }
+            }
+        }
+
+        return orders;
     }
 }

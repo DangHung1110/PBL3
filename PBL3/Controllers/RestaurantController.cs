@@ -142,5 +142,11 @@ namespace PBL3.Controllers
             }
             return Ok(restaurant);
         }
+        [HttpGet("GetOrderDetailsByRestaurant/{idRes}")]
+        public async Task<IActionResult> GetOrderDetailsByRestaurant(string idRes)
+        {
+            var result = await _restaurantservice.GetOrderDetailsByRestaurant(idRes);
+            return Ok(result);
+        }
     }
 }

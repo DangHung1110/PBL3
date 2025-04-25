@@ -4,4 +4,9 @@ public class OrderDetailDTO
     public string IDCustomer { get; set; }
     public string IDFood { get; set; }
     public string IDRes { get; set; }
+    public string Url_Image { get; set; }
+    public string FoodName { get; set; }
+    public string RestaurantName { get; set; }
+    public int Quantity { get; set; }
+    public int TotalPrice { get; set; }
 }
