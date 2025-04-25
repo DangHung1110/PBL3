@@ -40,11 +40,15 @@
  const addToCart = async() => {
    const senddata={
     IDFood:route.params.id,
+    FoodName:food.value.name,
+    RestaurantName:restaurant.value.name,
     IDRes:food.value.idRes,
     Quantity:quantityToAdd.value,
     TotalPrice:parseInt(calculatedPrice.value),
-    IDCustomer:localStorage.getItem("IDRes")}
-    console.log(senddata);
+    Url_image:food.value.url_image,
+    IDCustomer:localStorage.getItem("IDRes")
+    };
+     console.log(senddata);
      try {
     const result = await addOrder(senddata);
     console.log("Item added to cart:", result);
@@ -66,7 +70,8 @@ const route = useRoute();
     const data = await GetFoodById(foodId);
     food.value = {
       ...data,
-      image: data.url_Image
+      image: data.url_Image,
+      url_image: data.url_Image
     };
   
     const resData = await GetRestaurantById(food.value.idRes);
@@ -78,7 +83,7 @@ const route = useRoute();
   const originalPrice = food.value.price || 0;
   const discount = food.value.discount || 0;
   const discountedPrice = originalPrice * (1 - discount / 100);
-  return (discountedPrice * quantityToAdd.value).toFixed(2); // Giữ 2 số lẻ
+  return (discountedPrice * quantityToAdd.value); // Giữ 2 số lẻ
 });
   </script>
   

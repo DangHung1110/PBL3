@@ -8,5 +8,8 @@ namespace PBL3.Models
         public int TotalPrice {get;set;}
         public int Quantity {get;set;}
         public string IDRes { get; set; }
+        public string FoodName { get; set; }
+        public string RestaurantName { get; set; }
+        public string Url_image {get;set;}
     }
 }

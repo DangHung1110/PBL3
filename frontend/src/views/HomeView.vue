@@ -299,18 +299,14 @@ onMounted(() => {
   border-radius: 10px;
   width: 240px;
   box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-  transform: translateY(-10px);
-  opacity: 0;
-  pointer-events: none;
+  transform: translateY(0); /* Không dùng animation khi mở */
+  opacity: 1;               /* Mặc định là hiển thị, điều khiển bằng v-if */
+  pointer-events: auto;
   transition: 0.3s;
   overflow: hidden;
 }
 
-.user-menu:hover .dropdown-menu {
-  transform: translateY(0);
-  opacity: 1;
-  pointer-events: auto;
-}
+
 
 .dropdown-item {
   display: flex;

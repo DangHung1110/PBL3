@@ -88,5 +88,22 @@ namespace PBL3.Controllers
                 return NotFound(new { Message = "OrderDetail not found or already deleted" });
             }
         }
-    }
+        [HttpGet("Thongkeorder/{ID}")]
+        public async Task<IActionResult> GetOrderDetails(string ID)
+        {
+            try
+            {
+                var orderDetails = await _customerService.GetOrderDetails(ID);
+                if (orderDetails != null && orderDetails.Count > 0)
+                {
+                    return Ok(orderDetails);
+                }
+                else
+                {
+                    return NotFound(new { Message = "No order details found for this restaurant" });
+                }
+            }
+            catch (Exception ex)
+            { Console.WriteLine("Lỗi server: " + ex.Message);
+    return StatusCode(500, new { Message = "Server Error", Error = ex.Message }); }}}
 }

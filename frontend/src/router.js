@@ -10,6 +10,7 @@ import Dashboard from "./components/dashboard.vue"
 import AddFood from "./components/AddFood.vue"
 import Restaurant from "./components/RestaurantList.vue";
 import OderFood from "./components/OderFood.vue";
+import CustomerStatistic from "./components/CustomerStatistic.vue";
 const routes = [
     {
         path: "/",
@@ -58,6 +59,11 @@ const routes = [
             }
         ]
     },
+    {path: "/order-history",
+     name: 'OrderHistory',
+     component: CustomerStatistic
+
+    }
 ];
 
 const router = createRouter({

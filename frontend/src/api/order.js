@@ -10,3 +10,16 @@ export const addOrder = async (orderData) => {
     throw error;
   }
 };
+export const ThongkeOrder=async (ID)=>{
+  try{
+    console.log(ID);
+    const response=await axios.get(`http://localhost:5299/api/Customer/Thongkeorder/${ID}`);
+    console.log(response.data);
+    return response.data;
+  }
+  catch(error)
+  {
+    console.error('Error when listing order',error);
+    throw error;
+  }
+}
