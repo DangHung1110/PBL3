@@ -57,6 +57,7 @@
         <img :src="item.Url_image" alt="Ảnh món ăn" style="width: 120px; height: auto; border-radius: 8px;" />
         <p><strong>Số lượng:</strong> {{ item.Quantity }}</p>
         <p><strong>Tổng tiền:</strong> {{ item.TotalPrice.toLocaleString() }} VNĐ</p>
+        <button @click="DeleteFFromOD(item.id)">Xóa đơn đặt hàng</button>
       </div>
     </div>
   </div>
@@ -70,8 +71,8 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import { ThongkeOrder } from "../api/order.js"; // ⬅️ Thêm dòng này
-
+import { ThongkeOrder } from "../api/order.js";
+import {DeleteOrder} from "../api/order.js"
 const orderHistoryPopupOpen = ref(false);
 const router = useRouter();
 const route = useRoute();
@@ -79,9 +80,22 @@ const isLoggedIn = ref(false);
 const username = ref("");
 const dropdownOpen = ref(false);
 
+
 const thongkedata = ref([]);
 const ID = localStorage.getItem("IDRes");
+const DeleteFFromOD=async(id)=>{
+console.log(id);
+  try {    console.log(id);
+      await DeleteOrder(id);
+      await getThongkeData();
+thongkedata.value = thongkedata.value.filter(p => p.id !== id);
 
+      console.log("Xoá thành công");
+    } catch (error) {
+      console.error("Xoá thất bại:", error);
+      alert("Có lỗi xảy ra khi xoá món ăn.");
+    }
+  }
 // Hàm lấy thống kê từ API
 const getThongkeData = async () => {
   try {
@@ -91,12 +105,14 @@ const getThongkeData = async () => {
     }
     const data = await ThongkeOrder(ID);
     thongkedata.value = data.map(item => ({
+      id: item.idOrder,
       FoodName: item.foodName,
       RestaurantName: item.restaurantName,
       Quantity: item.quantity,
       TotalPrice: item.totalPrice,
       Url_image: item.url_image
     }));
+    console.log(thongkedata.value);
   } catch (error) {
     console.error("Lỗi khi lấy dữ liệu thống kê:", error);
   }

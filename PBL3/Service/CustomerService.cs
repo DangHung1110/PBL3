@@ -53,7 +53,7 @@ namespace PBL3.Service
             var result = await insertCmd.ExecuteNonQueryAsync();
             return result > 0;
         }
-        public async Task<bool> DeleteOrderDetail(int idOrder)
+        public async Task<bool> DeleteOrderDetail(int IDOrder)
         {
             using var conn = GetConnection();
             await conn.OpenAsync();
@@ -61,7 +61,7 @@ namespace PBL3.Service
             string query = "DELETE FROM ORDERDETAIL WHERE IDOrder = @idOrder";
 
             using var cmd = new MySqlCommand(query, conn);
-            cmd.Parameters.AddWithValue("@idOrder", idOrder);
+            cmd.Parameters.AddWithValue("@idOrder", IDOrder);
 
             int affectedRows = await cmd.ExecuteNonQueryAsync();
             return affectedRows > 0;

@@ -75,10 +75,10 @@ namespace PBL3.Controllers
             }
         }
 
-        [HttpDelete("order/{idOrder}")]
-        public async Task<IActionResult> DeleteOrderDetail(int idOrder)
+        [HttpDelete("DeleteOrderDetail/{IDOrder}")]
+        public async Task<IActionResult> DeleteOrderDetail(int IDOrder)
         {
-            bool success = await _customerService.DeleteOrderDetail(idOrder);
+            bool success = await _customerService.DeleteOrderDetail(IDOrder);
             if (success)
             {
                 return Ok(new { Message = "Delete successful" });
@@ -105,5 +105,6 @@ namespace PBL3.Controllers
             }
             catch (Exception ex)
             { Console.WriteLine("Lỗi server: " + ex.Message);
-    return StatusCode(500, new { Message = "Server Error", Error = ex.Message }); }}}
+    return StatusCode(500, new { Message = "Server Error", Error = ex.Message }); }}
+}
 }

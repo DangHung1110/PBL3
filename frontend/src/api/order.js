@@ -23,3 +23,15 @@ export const ThongkeOrder=async (ID)=>{
     throw error;
   }
 }
+export const DeleteOrder= async (id) => {
+  console.log(id);
+  const response = await fetch(`http://localhost:5299/api/Customer/DeleteOrderDetail/${id}`, {
+    method: 'DELETE'
+  });
+
+  if (!response.ok) {
+    throw new Error("Xoá món ăn thất bại");
+  }
+
+  return true;
+};
