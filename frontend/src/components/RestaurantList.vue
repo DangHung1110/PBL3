@@ -1,10 +1,27 @@
 <template>
-    <div class="food-list-container">
-      <div class="pagination">
-        <button @click="prevPage" class="arrow-button left">&#8592;</button>
-        <button @click="nextPage" class="arrow-button right">&#8594;</button>
+  <div class="grabfood-container">
+    <div class="overlay"></div> <!-- Thêm lớp overlay mờ -->
+
+    <div class="content">
+      <h1 class="headline">Mang đến cho bạn món ăn ưa thích, nóng hổi và ngon lành</h1>
+      <p class="description">
+        Đặt đồ ăn giao hàng tận nhà nhanh chóng lấp đầy chiếc bụng đói của bạn với những món ngon yêu thích và dịch vụ giao hàng “thần tốc”. GrabFood hiện đang có mặt tại nhiều tỉnh thành ở Việt Nam: Thành phố Hồ Chí Minh, Hà Nội, Đà Nẵng, Vũng Tàu, Bình Dương, Đồng Nai, Cần Thơ, Đà Lạt,…. Chúng tôi đang dần mở rộng thêm nhiều khu vực trong thời gian tới!
+      </p>
+
+      <div class="circle-section">
+        <div class="circle-item">
+          <img src="/GrabFood-DAX-Desktop-Content-1-1.png" alt="Mobile Ordering" class="circle-image" />
+          <h3 class="circle-title">Đặt đồ ăn online chỉ sau vài cú chạm.</h3>
+          <p class="circle-text">GrabFood giao hàng nhanh thần tốc, đảm bảo mang cho bạn bữa ăn nóng hổi và ngon lành, dù bạn đang ở đâu.</p>
+        </div>
+
+        <div class="circle-item">
+          <img src="/GrabFood-DAX-Desktop-Content-3.png" alt="Mobile Ordering" class="circle-image" />
+          <h3 class="circle-title">Đa dạng lựa chọn.</h3>
+          <p class="circle-text">Danh sách đa dạng các món ăn của chúng tôi có thể phục vụ cho mọi nhu cầu ăn uống của bạn.</p>
+        </div>
       </div>
-  
+
       <div class="food-list">
         <div class="food-item" v-for="res in paginatedRestaurants" :key="res.id">
           <img
@@ -19,154 +36,159 @@
           </div>
         </div>
       </div>
-    </div>
-  </template>
-  
-  <script setup>
-  import { ref, onMounted, computed } from 'vue';
-  import  { getAllRes }  from '../api/restaurant.js'; // Import your API function
-  
-  const restaurants = ref([]);
-  const currentPage = ref(1);
-  const resPerPage = 6;
-  
-  onMounted(async () => {
-  try {
-    const data = await getAllRes();
-    console.log('Danh sách nhà hàng:', data);
-    if (Array.isArray(data)) {
-      restaurants.value = data.map(item => ({
-        id: item.idRes,
-        name: item.name,
-        address: item.address,
-        image: item.url_Image
-      }));
-    } else {
-      console.warn('Dữ liệu không hợp lệ:', data);
-    }
-  } catch (error) {
-    console.error('Lỗi khi lấy danh sách nhà hàng:', error);
-  }
-});
 
-  
-  const paginatedRestaurants = computed(() => {
-    const start = (currentPage.value - 1) * resPerPage;
-    return restaurants.value.slice(start, start + resPerPage);
-  });
-  
-  const totalPages = computed(() => {
-    return Math.ceil(restaurants.value.length / resPerPage);
-  });
-  
-  const nextPage = () => {
-    if (currentPage.value < totalPages.value) currentPage.value++;
-  };
-  
-  const prevPage = () => {
-    if (currentPage.value > 1) currentPage.value--;
-  };
-  
-  const handleImageError = (event) => {
-    event.target.src = 'https://via.placeholder.com/120';
-  };
-  </script>
-  
-  <style scoped>
-  .food-list-container {
-    position: relative;
-    padding: 20px;
-    max-width: 1000px;
-    margin: 0 auto;
-  }
-  
-  .food-list {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 30px;
-    transform: translateX(100px);
-  }
-  
-  .food-item {
-    width: 400px;
-    display: flex;
-    align-items: center;
-    padding: 16px;
-    border-radius: 12px;
-    background: #fff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease-in-out;
-    height: 150px;
-  }
-  
-  .food-item:hover {
-    transform: scale(1.02);
-  }
-  
-  .food-image {
-    width: 120px;
-    height: 120px;
-    border-radius: 12px;
-    object-fit: cover;
-    margin-right: 20px;
-  }
-  
-  .food-info {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    flex: 1;
-    min-width: 0;
-    word-break: break-word;
-    gap: 4px;
-  }
-  
-  .food-name {
-    font-size: 22px;
-    font-weight: bold;
-  }
-  
-  .food-shop {
-    color: gray;
-    font-size: 15px;
-  }
-  
-  .pagination {
-    position: relative;
-    top: 50%;
-    height: 0;
-    transform: translateX(100px);
-  }
-  
-  .arrow-button {
-    position: absolute;
-    top: -40px;
-    background-color: white;
-    border: 2px solid #ff5733;
-    color: #ff5733;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    font-size: 22px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-  
-  .arrow-button:hover {
-    background-color: #ff5733;
-    color: white;
-  }
-  
-  .arrow-button.left {
-    left: -50px;
-  }
-  
-  .arrow-button.right {
-    right: -50px;
-  }
-  </style>
-  
+      <!-- Pagination -->
+     
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.grabfood-container {
+  position: relative;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  text-align: center;
+  background: url('/path/to/your/background.png') no-repeat center/cover; /* Background ở đây */
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+/* lớp overlay đen mờ */
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3); /* mờ 50% */
+  z-index: 1;
+}
+
+/* nội dung nằm trên overlay */
+.content {
+  position: relative;
+  z-index: 2;
+}
+
+/* headline */
+.headline {
+  font-size: 32px;
+  font-weight: bold;
+  color: #fff; /* đổi thành trắng */
+  margin-bottom: 16px;
+  text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.7); /* thêm bóng chữ */
+}
+
+/* mô tả */
+.description {
+  font-size: 18px;
+  color: #eee;
+  margin-bottom: 40px;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+  text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.7);
+}
+
+/* Circle Section */
+.circle-section {
+  display: flex;
+  justify-content: center;
+  gap: 50px;
+  margin-bottom: 60px;
+  flex-wrap: wrap;
+}
+
+.circle-item {
+  max-width: 300px;
+  text-align: center;
+}
+
+.circle-image {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.circle-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #fff;
+  text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.7);
+}
+
+.circle-text {
+  font-size: 16px;
+  color: #ddd;
+  text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.7);
+}
+
+/* Food list */
+.food-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+}
+
+.food-item {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  transition: transform 0.3s;
+}
+
+.food-item:hover {
+  transform: translateY(-8px);
+}
+
+.food-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.food-info {
+  padding: 16px;
+  text-align: left;
+}
+
+.food-name {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.food-shop {
+  font-size: 16px;
+  color: #777;
+}
+
+/* Pagination */
+.pagination {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.arrow-button {
+  background-color: #00b14f;
+  border: none;
+  color: white;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  font-size: 24px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.arrow-button:hover {
+  background-color: #008f3f;
+}
+</style>

@@ -1,35 +1,35 @@
-<template>
-    <transition name="popup-fade">
-      <div class="popup-overlay" @click.self="closePopup">
-        <div class="popup-content">
-          <img :src="food?.image" alt="Food Image" class="popup-image" />
-          <div class="popup-text">
-            <h2>{{ food?.name }}</h2>
-            <p><strong>Giảm giá:</strong> {{ food?.discount }}%</p>
-            <p><strong>Giá:</strong>{{food?.price}}</p>
-            <p><strong>Số lượng:</strong> {{ food?.quantity }}</p>
-            <p><strong>Nhà hàng:</strong> {{ restaurant?.name }}</p>
-            <p><strong>Địa chỉ:</strong> {{ restaurant?.address }}</p>
-          </div>
-         <div class="popup-actions">
-  <div class="quantity-control">
-    <button @click="quantityToAdd > 1 && quantityToAdd--">-</button>
-    <input type="number" v-model="quantityToAdd" min="1" :max="food?.quantity" />
-    <button @click="quantityToAdd < food?.quantity && quantityToAdd++">+</button>
-  </div>
-  <p><strong>Tổng giá:</strong> {{ calculatedPrice }} VND</p>
-
-
-</div>
-
-          <div class="popup-actions">
-            <button class="add-to-cart-btn" @click="addToCart">Đặt Hàng</button>
-          </div>
-          <button class="close-btn" @click="closePopup">×</button>
+<template> 
+  <transition name="popup-fade">
+    <div class="popup-overlay" @click.self="closePopup">
+      <div class="popup-content">
+        <img :src="food?.image" alt="Food Image" class="popup-image" />
+        <div class="popup-text">
+          <h2>{{ food?.name }}</h2>
+          <p><strong>Giảm giá:</strong> {{ food?.discount }}%</p>
+          <p><strong>Giá:</strong> {{ food?.price }} VND</p>
+          <p><strong>Số lượng:</strong> {{ food?.quantity }}</p>
+          <p><strong>Nhà hàng:</strong> {{ restaurant?.name }}</p>
+          <p><strong>Địa chỉ:</strong> {{ restaurant?.address }}</p>
         </div>
+
+        <div class="popup-actions">
+          <div class="quantity-control">
+            <button @click="quantityToAdd > 1 && quantityToAdd--">-</button>
+            <input type="number" v-model="quantityToAdd" min="1" :max="food?.quantity" />
+            <button @click="quantityToAdd < food?.quantity && quantityToAdd++">+</button>
+          </div>
+          <p><strong>Tổng giá:</strong> {{ calculatedPrice.toLocaleString() }} VND</p>
+        </div>
+
+        <div class="popup-actions">
+          <button class="add-to-cart-btn" @click="addToCart">Đặt Hàng</button>
+        </div>
+
+        <button class="close-btn" @click="closePopup">×</button>
       </div>
-    </transition>
-  </template>
+    </div>
+  </transition>
+</template>
   
   <script setup>
   import { addOrder } from '../api/order.js';
@@ -88,54 +88,59 @@ const route = useRoute();
   </script>
   
   <style scoped>
-  .popup-overlay {
+.popup-overlay {
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.6);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9999;
+  z-index: 10000;
 }
 
 .popup-content {
-  background-color: #ffffff;
-  padding: 24px;
+  background: linear-gradient(135deg, #ffffff, #f7f7f7);
+  padding: 15px;
   border-radius: 16px;
-  width: 400px;
+  width: 320px; /* ↓ nhỏ lại */
   max-width: 90%;
   position: relative;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
-  animation: scaleIn 0.3s ease-out;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  font-family: 'Segoe UI', sans-serif;
+  gap: 14px; /* ↓ giảm gap */
+  animation: scaleIn 0.35s ease;
+  font-family: 'Poppins', sans-serif;
 }
+
 
 .popup-image {
-  width: 200px;
-  height: 200px;
+  width: 180px;
+  height: 180px;
   object-fit: cover;
-  border-radius: 12px;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
   align-self: center;
+  transition: transform 0.3s ease;
 }
 
+.popup-image:hover {
+  transform: scale(1.05);
+}
 
 .popup-text {
   text-align: center;
 }
 
 .popup-text h2 {
-  font-size: 28px;
+  font-size: 26px;
   margin-bottom: 8px;
-  color: #333;
+  color: #2c3e50;
 }
 
 .popup-text p {
-  margin: 4px 0;
-  font-size: 16px;
+  margin: 6px 0;
+  font-size: 15px;
   color: #555;
 }
 
@@ -143,56 +148,92 @@ const route = useRoute();
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  margin-bottom: 10px;
+  gap: 10px;
 }
 
 .quantity-control button {
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
   border: none;
-  background-color: #f0f0f0;
+  background: #f0f0f0;
   font-size: 20px;
   font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background 0.2s, transform 0.2s;
 }
 
 .quantity-control button:hover {
-  background-color: #ddd;
+  background: #ddd;
+  transform: scale(1.1);
 }
 
 .quantity-control input {
-  width: 60px;
+  width: 65px;
   text-align: center;
-  padding: 6px 10px;
+  padding: 6px;
   border: 1px solid #ccc;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 16px;
-  outline: none;
 }
 
 .popup-actions {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
+}
+
+.popup-actions p {
+  font-size: 18px;
+  font-weight: 600;
+  color: #388e3c;
 }
 
 .add-to-cart-btn {
-  background-color: #ff5722;
-  color: white;
-  font-size: 16px;
-  padding: 10px 24px;
+  background: linear-gradient(135deg, #ff5722, #e64a19);
+  color: #fff;
+font-size: 14px;
+  padding: 8px 20px;
+  border-radius: 10px;
+  padding: 12px 28px;.popup-content {
+  background: linear-gradient(135deg, #ffffff, #f7f7f7);
+
+ 
+  width: 320px; /* ↓ nhỏ lại */
+  max-width: 90%;
+  position: relative;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 14px; /* ↓ giảm gap */
+  animation: scaleIn 0.35s ease;
+  font-family: 'Poppins', sans-serif;
+}
+.popup-content {
+  background: linear-gradient(135deg, #ffffff, #f7f7f7);
+  padding: 20px;
+  border-radius: 16px;
+  width: 320px; /* ↓ nhỏ lại */
+  max-width: 90%;
+  position: relative;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 14px; /* ↓ giảm gap */
+  animation: scaleIn 0.35s ease;
+  font-family: 'Poppins', sans-serif;
+}
+
   border: none;
-  border-radius: 12px;
+  border-radius: 14px;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  transition: background 0.3s, transform 0.2s;
 }
 
 .add-to-cart-btn:hover {
-  background-color: #e64a19;
+
+  background: linear-gradient(135deg, #e64a19, #d84315);
   transform: scale(1.05);
 }
 
@@ -202,24 +243,17 @@ const route = useRoute();
   right: 18px;
   background: transparent;
   border: none;
-  font-size: 28px;
+  font-size: 30px;
   cursor: pointer;
-  color: #999;
+  color: #aaa;
   transition: color 0.2s, transform 0.2s;
 }
 
 .close-btn:hover {
-  color: #ff3b3b;
+  color: #ff5252;
   transform: scale(1.2);
 }
 
-.popup-actions p {
-  font-size: 18px;
-  font-weight: bold;
-  color: #2e7d32;
-}
-
-/* Animation */
 @keyframes scaleIn {
   0% {
     transform: scale(0.85);
@@ -240,6 +274,5 @@ const route = useRoute();
 .popup-fade-leave-to {
   opacity: 0;
 }
-
-  </style>
+</style>
   

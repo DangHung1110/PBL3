@@ -5,7 +5,6 @@
       <div class="navbar">
         <div class="logo">
           <div class="logo-food">
-            <i class="fa-solid fa-utensils"></i>  
           </div>
           <div class="Name">GRAP FOOD</div>
         </div>
@@ -31,13 +30,18 @@
         </div>
 
         <!-- Nếu chưa đăng nhập thì hiển thị phần đăng nhập -->
-        <div v-else class="login">
-          <i class="fas fa-user"></i>
-          <div class="boder-login">
-            <router-link to="/login" class="loginn">Đăng nhập</router-link>
-            <router-link to="/register" class="register">Đăng ký</router-link>
-          </div>
-        </div>
+     <!-- Nếu chưa đăng nhập thì hiển thị phần đăng nhập -->
+<div v-else class="login">
+  <button class="login-button">
+     <font-awesome-icon icon="user" style="font-size: 20px; color: white;"/> 
+  </button>
+  <div class="boder-login">
+    <router-link to="/login" class="loginn">Đăng nhập</router-link>
+    <router-link to="/register" class="register">Đăng ký</router-link>
+  </div>
+</div>
+
+
       </div>
 
       <div class="content">
@@ -69,6 +73,9 @@
 </template>
 
 <script setup>
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faUser } from '@fortawesome/free-solid-svg-icons'
+import { library } from '@fortawesome/fontawesome-svg-core'
 import { ref, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { ThongkeOrder } from "../api/order.js";
@@ -133,6 +140,7 @@ const toggleDropdown = () => {
 };
 
 const handleLogout = () => {
+  localStorage.removeItem("IDRes");
   localStorage.removeItem("role");
   localStorage.removeItem("username");
   isLoggedIn.value = false;
@@ -279,20 +287,42 @@ onMounted(() => {
 }
 
 .food {
-  background-color: #ff7f50;
+  background: linear-gradient(to right, #ff7e5f, #feb47b); /* Cam đào */
+  border: none;
   color: white;
+  padding: 9px 28px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
 }
 
 .drink {
-  background-color: #4682b4;
+  background: linear-gradient(to right, #4facfe, #00f2fe); /* Xanh nước biển */
+  border: none;
   color: white;
+  padding: 9px 28px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
 }
+
+.food:hover, .drink:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+
+
+
 
 .category:hover {
   transform: scale(1.05);
   opacity: 0.9;
 }
-
 .search-input {
   padding: 8px 14px;
   font-size: 16px;
@@ -303,11 +333,9 @@ onMounted(() => {
   box-shadow: 0 2px 6px rgba(0,0,0,0.15);
   transition: 0.3s;
 }
-
 .search-input:focus {
   border: 2px solid #ff7f50;
 }
-
 /* Login */
 .login {
   position: relative;
@@ -315,14 +343,48 @@ onMounted(() => {
   align-items: center;
   gap: 10px;
   cursor: pointer;
+  right: 10px;
+  left: auto;
+}
+/* Nút Nhà Hàng */
+.login-button {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  border-radius: 50%;
+  padding: 0;
+  background-color: transparent; /* Nền trong suốt */
+  color: white; /* Icon màu trắng */
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  transition: 0.3s;
 }
 
-.login i {
-  font-size: 24px;
-  color: white;
+.login-button:hover {
+  background-color: rgba(255, 255, 255, 0.1); /* Khi hover thì hơi mờ nhẹ cho đẹp */
 }
 
-/* Hover box login */
+.login-button:hover {
+  background-color: #2980b9; /* Hover màu đậm hơn chút */
+}
+
+
+.login-button i {
+  font-size: 20px;
+}
+
+.login-button:hover {
+  background: linear-gradient(135deg, #ff5722, #ff7f50);
+  transform: scale(1.05);
+}
+
+/* Hover box */
 .boder-login {
   position: absolute;
   top: 110%;
@@ -350,6 +412,7 @@ onMounted(() => {
   visibility: visible;
 }
 
+/* Link login/register */
 .loginn, .register {
   text-decoration: none;
   font-size: 15px;
@@ -381,6 +444,8 @@ onMounted(() => {
 .register:hover {
   background: #e66a3e;
 }
+
+
 
 /* User menu */
 .user-menu {

@@ -47,8 +47,10 @@ export default {
     // Lưu thông tin đăng nhập vào localStorage
     localStorage.setItem("role", role.value);
     localStorage.setItem("username", username.value);
-    const parsedUser = JSON.parse(response.userID);
-    localStorage.setItem("IDRes", parsedUser.id);
+const parsedUser = JSON.parse(response.userID);
+localStorage.setItem("IDRes", parsedUser.id);
+
+
     console.log("id", parsedUser.id);
 
     //  Phát sự kiện để Vue nhận biết có sự thay đổi
@@ -68,13 +70,15 @@ export default {
 
 
     const handleLogout = () => {
-      // Xóa dữ liệu đăng nhập
-      localStorage.removeItem("role");
-      localStorage.removeItem("username");
-      localStorage.removeItem("IDRes");
+    localStorage.removeItem("role");
+  localStorage.removeItem("username");
+  localStorage.removeItem("IDRes");
+    console.log("Role after remove:", localStorage.getItem("role")); // null
+  console.log("Username after remove:", localStorage.getItem("username")); // null
+  console.log("IDRes after remove:", localStorage.getItem("IDRes")); // nên null
 
-      // Chuyển về trang đăng nhập
-      router.push("/login");
+  router.push("/login");
+  window.location.reload();
     };
 
     const closeModal = () => {

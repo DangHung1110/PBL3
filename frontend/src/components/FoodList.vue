@@ -87,6 +87,9 @@ const handleFoodDetail = (id) => {
 }
 
 .food-list {
+  margin-top: 20px;
+  padding: 20px;
+  border-radius: 12px;
   display: grid;
   grid-template-columns: repeat(2, 1fr); /* 2 cột */
   gap: 30px;
