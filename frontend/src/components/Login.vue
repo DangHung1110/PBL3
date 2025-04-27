@@ -51,6 +51,7 @@ const parsedUser = JSON.parse(response.userID);
 localStorage.setItem("IDRes", parsedUser.id);
 
 
+
     console.log("id", parsedUser.id);
 
     //  Phát sự kiện để Vue nhận biết có sự thay đổi

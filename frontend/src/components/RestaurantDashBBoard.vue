@@ -4,7 +4,7 @@
     <aside class="sidebar">
       <div class="logo">
         <div class="logo-food">
-          <i class="fa-solid fa-utensils"></i>  
+          <i class="fa-solid fa-utensils"></i>
         </div>
         <div class="Name">GRAP FOOD</div>
       </div>
@@ -18,8 +18,7 @@
 
     <!-- Main Content -->
     <div class="main-content">
-      <!-- Nội dung sẽ được thay thế bởi router-view -->
-      <router-view></router-view> <!-- Khi chuyển sang /product sẽ hiển thị trang sản phẩm -->
+      <router-view></router-view>
     </div>
   </div>
 </template>
@@ -27,41 +26,67 @@
 <script setup>
 
 </script>
-
 <style scoped>
 .dashboard-container {
   display: flex;
   height: 100vh;
+  background: #f0f2f5;
 }
 
 .sidebar {
-  width: 250px;
-  background: #f8f9fa;
-  padding: 20px;
+  width: 260px;
+  background: #ffffff;
+  padding: 30px 20px;
   display: flex;
   flex-direction: column;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+  border-top-right-radius: 16px;
+  border-bottom-right-radius: 16px;
 }
 
-.sidebar .logo {
+.logo {
   display: flex;
+  align-items: center;
   gap: 10px;
-  font-size: 20px;
+  font-size: 24px;
   font-weight: bold;
-  margin-bottom: 20px;
+  color: #4caf50;
+  margin-bottom: 40px;
 }
 
-.sidebar .menu {
+.logo-food {
+  font-size: 28px;
+}
+
+.Name {
+  font-family: 'Poppins', sans-serif;
+  letter-spacing: 1px;
+}
+
+.menu {
   display: flex;
   flex-direction: column;
-  justify-content: space-evenly;
+  gap: 15px;
 }
 
-.sidebar .menu a {
+.menu a {
   display: block;
-  padding: 10px;
+  padding: 12px 20px;
   text-decoration: none;
-  color: black;
-  margin: 5px 0;
+  color: #555;
+  font-weight: 500;
+  border-radius: 12px;
+  transition: all 0.3s ease;
 }
 
+.menu a:hover {
+  background-color: #4caf50;
+  color: white;
+}
+
+.main-content {
+  flex: 1;
+  padding: 40px;
+  overflow-y: auto;
+}
 </style>

@@ -57,7 +57,9 @@
 
 /* lớp overlay đen mờ */
 .overlay {
-  position: absolute;
+  position:fixed;
+  width: 100%;
+  height: 120%;
   inset: 0;
   background: rgba(0, 0, 0, 0.3); /* mờ 50% */
   z-index: 1;
@@ -71,7 +73,7 @@
 
 /* headline */
 .headline {
-  font-size: 32px;
+  font-size: 30px;
   font-weight: bold;
   color: #fff; /* đổi thành trắng */
   margin-bottom: 16px;
@@ -80,7 +82,7 @@
 
 /* mô tả */
 .description {
-  font-size: 18px;
+  font-size: 16px;
   color: #eee;
   margin-bottom: 40px;
   max-width: 700px;
@@ -113,7 +115,7 @@
 }
 
 .circle-title {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: bold;
   margin-bottom: 8px;
   color: #fff;
@@ -121,7 +123,7 @@
 }
 
 .circle-text {
-  font-size: 16px;
+  font-size: 14px;
   color: #ddd;
   text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.7);
 }

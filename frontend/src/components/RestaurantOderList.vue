@@ -1,104 +1,93 @@
 <template>
-    <div class="overlay" @click="closePopup">
-      <div class="popup" @click.stop>
-        <h3>Danh sách món ăn đã đặt</h3>
-        <div v-for="(item, index) in orderDetails" :key="index" class="order-item">
-          <img :src="item.imageUrl" alt="food image" class="order-item-image" />
-          <div class="order-item-details">
-            <span class="food-name">{{ item.foodName }}</span>
-            <span class="quantity">{{ item.quantity }} x</span>
-            <span class="price">{{ item.totalPrice.toLocaleString() }} VND</span>
-            <button class="confirm-btn" @click="confirmOrder(item)">Xác nhận</button>
-          </div>
+  <div class="order-list">
+    <h3>Danh sách món ăn đã đặt</h3>
+    <div v-for="(item, index) in orderDetails" :key="index" class="order-item">
+      <img :src="item.imageUrl" alt="food image" class="order-item-image" />
+      <div class="order-item-details">
+        <span class="food-name">{{ item.foodName }}</span>
+        <div class="order-item-extra">
+          <span class="quantity">{{ item.quantity }} x</span>
+          <span class="price">{{ item.totalPrice.toLocaleString() }} VND</span>
         </div>
-  
-        <button class="close-btn" @click="close">Đóng</button>
+        <button class="confirm-btn" @click="confirmOrder(item)">Xác nhận</button>
       </div>
     </div>
-  </template>
-  <script setup>
-  import { ref, onMounted } from 'vue';
-  import { useRouter } from 'vue-router';
-  import { ResOrderList } from '../api/order.js';  
-  const router = useRouter();
-  const orderDetails = ref([]);
-  
-  // Lấy IDRes từ sessionStorage
-  const IDRes = localStorage.getItem("IDRes");
-  console.log(IDRes);
-  
-  onMounted(async () => {
-    try {
-      if (IDRes) {
-        const data = await ResOrderList(IDRes);
-        orderDetails.value = data.map(item => ({
-          foodName: item.foodName,
-          quantity: item.quantity,
-          totalPrice: item.totalPrice,
-          imageUrl: item.url_Image
-        }));
-      }
-    } catch (error) {
-      console.error('Lỗi khi lấy dữ liệu đơn hàng:', error);
-    }
-  });
-  
-  // Đóng popup
-  const close = () => {
-  router.back()
-}
-  
-  // Xác nhận đơn hàng
-  const confirmOrder = (item) => {
-    alert(`Đã xác nhận món: ${item.foodName}`);
-    // TODO: gọi API xác nhận nếu cần
-  };
-  </script>
-<style scoped>
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
+  </div>
+</template>
 
-.popup {
-  background-color: white;
-  padding: 20px;
-  border-radius: 8px;
-  width: 80%;
-  max-width: 500px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  position: relative;
-  max-height: 80vh;
-  overflow-y: auto;
+<script setup>
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { ResOrderList } from '../api/order.js';  
+
+const router = useRouter();
+const orderDetails = ref([]);
+
+// Lấy IDRes từ sessionStorage
+const IDRes = localStorage.getItem("IDRes");
+console.log(IDRes);
+
+onMounted(async () => {
+  try {
+    if (IDRes) {
+      const data = await ResOrderList(IDRes);
+      orderDetails.value = data.map(item => ({
+        foodName: item.foodName,
+        quantity: item.quantity,
+        totalPrice: item.totalPrice,
+        imageUrl: item.url_Image
+      }));
+    }
+  } catch (error) {
+    console.error('Lỗi khi lấy dữ liệu đơn hàng:', error);
+  }
+});
+
+// Xác nhận đơn hàng
+const confirmOrder = (item) => {
+  alert(`Đã xác nhận món: ${item.foodName}`);
+  // TODO: gọi API xác nhận nếu cần
+};
+</script>
+
+<style scoped>
+.order-list {
+  margin: 40px auto;
+  max-width: 800px;
+  font-family: 'Arial', sans-serif;
 }
 
 h3 {
-  margin-top: 0;
   text-align: center;
+  font-size: 2em;
+  color: #333;
+  margin-bottom: 30px;
+  font-weight: 600;
+  letter-spacing: 1px;
 }
 
 .order-item {
   display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  margin: 10px 0;
-  border-bottom: 1px solid #ddd;
-  padding-bottom: 10px;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #eaeaea;
+  padding-bottom: 20px;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.order-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 .order-item-image {
-  width: 60px;
-  height: 60px;
+  width: 80px;
+  height: 80px;
   object-fit: cover;
-  border-radius: 5px;
+  border-radius: 10px;
+  border: 2px solid #f1f1f1;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .order-item-details {
@@ -107,49 +96,55 @@ h3 {
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 5px;
-}
-
-.food-name,
-.quantity,
-.price {
-  font-size: 14px;
+  gap: 15px;
+  color: #333;
 }
 
 .food-name {
   font-weight: bold;
+  font-size: 18px;
+  color: #333;
+  flex: 2;
+}
+
+.order-item-extra {
+  display: flex;
+  gap: 10px;
+  font-size: 14px;
+  color: #888;
+}
+
+.price {
   font-size: 16px;
-  width: 100%;
+  font-weight: bold;
+  color: #2c3e50;
 }
 
 .confirm-btn {
   background-color: #28a745;
   color: white;
   border: none;
-  padding: 5px 10px;
+  padding: 8px 20px;
   border-radius: 5px;
   cursor: pointer;
-  margin-left: auto;
+  font-size: 14px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .confirm-btn:hover {
   background-color: #218838;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
 }
 
-.close-btn {
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  display: block;
-  margin: 20px auto 0;
+.confirm-btn:focus {
+  outline: none;
 }
 
-.close-btn:hover {
-  background-color: #c82333;
+@media (max-width: 600px) {
+  .order-item {
+    flex-direction: column;
+    text-align: center;
+  }
 }
 </style>
-  
-  
