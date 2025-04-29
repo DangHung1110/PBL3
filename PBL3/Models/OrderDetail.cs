@@ -11,5 +11,7 @@ namespace PBL3.Models
         public string FoodName { get; set; }
         public string RestaurantName { get; set; }
         public string Url_image {get;set;}
+        public string Status_Restaurant {get;set;}
+        public string Status_User {get;set;}
         }
 }

@@ -18,20 +18,24 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { ResOrderList } from '../api/order.js';  
+import { ResOrderList, addOrder } from '../api/order.js';  
 
 const router = useRouter();
 const orderDetails = ref([]);
 
-// Lấy IDRes từ sessionStorage
 const IDRes = localStorage.getItem("IDRes");
 console.log(IDRes);
 
+// Đây là phần lấy danh sách món ăn
 onMounted(async () => {
   try {
     if (IDRes) {
       const data = await ResOrderList(IDRes);
       orderDetails.value = data.map(item => ({
+      IDOrder: item.idOrder,
+     IDFood: item.idFood,
+    IDCustomer: item.idCustomer, // thêm
+    RestaurantName: item.restaurantName, // thêm
         foodName: item.foodName,
         quantity: item.quantity,
         totalPrice: item.totalPrice,
@@ -43,12 +47,34 @@ onMounted(async () => {
   }
 });
 
-// Xác nhận đơn hàng
-const confirmOrder = (item) => {
-  alert(`Đã xác nhận món: ${item.foodName}`);
-  // TODO: gọi API xác nhận nếu cần
+// Đây là phần xác nhận đơn hàng
+const confirmOrder = async (item) => {
+  const senddata = {
+    IDOrder: item.IDOrder,
+    IDRes:localStorage.getItem("IDRes"),
+    IDFood:item.IDFood,
+    IDCustomer: item.IDCustomer,
+    restaurantName: item.RestaurantName,
+    foodName: item.foodName,
+    quantity: item.quantity,
+    totalPrice: item.totalPrice,
+    Url_image:item.imageUrl,
+    Status_Restaurant: "confirmed",
+    Status_User: "pending"
+  };
+  console.log(senddata);
+
+  try {
+    const response = await addOrder(senddata);
+    console.log(response);
+    alert("Đơn hàng đã được xác nhận thành công!");
+  } catch (error) {
+    console.error('Lỗi khi xác nhận đơn hàng:', error);
+    alert("Đã xảy ra lỗi trong quá trình xác nhận đơn hàng!");
+  }
 };
 </script>
+
 
 <style scoped>
 .order-list {

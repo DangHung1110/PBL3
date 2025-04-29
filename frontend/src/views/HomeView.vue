@@ -61,6 +61,7 @@
         <img :src="item.Url_image" alt="Ảnh món ăn" style="width: 120px; height: auto; border-radius: 8px;" />
         <p><strong>Số lượng:</strong> {{ item.Quantity }}</p>
         <p><strong>Tổng tiền:</strong> {{ item.TotalPrice.toLocaleString() }} VNĐ</p>
+        <button v-if="item.Status_Restaurant==='confirmed'">Nút xác nhận nhận hàng</button>
         <button @click="DeleteFFromOD(item.id)">Xóa đơn đặt hàng</button>
       </div>
     </div>
@@ -105,6 +106,7 @@ thongkedata.value = thongkedata.value.filter(p => p.id !== id);
   }
 // Hàm lấy thống kê từ API
 const getThongkeData = async () => {
+const ID = localStorage.getItem("IDRes");
   try {
     if (!ID) {
       alert("Bạn chưa đăng nhập!");
@@ -112,6 +114,7 @@ const getThongkeData = async () => {
     }
     const data = await ThongkeOrder(ID);
     thongkedata.value = data.map(item => ({
+      Status_Restaurant:item.status_Restaurant,
       id: item.idOrder,
       FoodName: item.foodName,
       RestaurantName: item.restaurantName,

@@ -264,6 +264,7 @@ public class RestaurantService
 
             string query = @"
                 SELECT 
+                    IDOrder,
                     IDCustomer,
                     IDFood,
                     IDRes,
@@ -285,7 +286,7 @@ public class RestaurantService
                     while (await reader.ReadAsync())
                     {
                         orders.Add(new OrderDetailDTO
-                        {
+                        {    IDOrder= reader.GetInt32("IDOrder"),
                             IDCustomer = reader.GetString("IDCustomer"),
                             IDFood = reader.GetString("IDFood"),
                             IDRes = reader.GetString("IDRes"),

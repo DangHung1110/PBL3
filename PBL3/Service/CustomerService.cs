@@ -16,7 +16,7 @@ namespace PBL3.Service
             return new MySqlConnection(_iconfiguration.GetConnectionString("DefaultConnection"));
         }
         public async Task<bool> Order(OrderDetail order)
-        {
+        {   try{
             using var conn = GetConnection();
             await conn.OpenAsync();
 
@@ -36,11 +36,11 @@ namespace PBL3.Service
             {
                 return false;
             }
-            await reader.CloseAsync();
-
-            string insertQuery = @"
-    INSERT INTO ORDERDETAIL (IDCustomer, IDFood, IDRes, Quantity, TotalPrice,FoodName,RestaurantName,Url_image)
-    VALUES (@idCustomer, @idFood, @idRes, @quantity, @totalPrice, @foodName, @restaurantName, @url_image)";
+         await reader.DisposeAsync();
+            if(order.Status_Restaurant=="pending")
+            {string insertQuery = @"
+    INSERT INTO ORDERDETAIL (IDCustomer, IDFood, IDRes, Quantity, TotalPrice,FoodName,RestaurantName,Url_image,Status_Restaurant,Status_User)
+    VALUES (@idCustomer, @idFood, @idRes, @quantity, @totalPrice, @foodName, @restaurantName, @url_image,@Status_Restaurant,@Status_User)";
             using var insertCmd = new MySqlCommand(insertQuery, conn);
             insertCmd.Parameters.AddWithValue("@idCustomer", order.IDCustomer);
             insertCmd.Parameters.AddWithValue("@idFood", order.IDFood);
@@ -50,10 +50,26 @@ namespace PBL3.Service
               insertCmd.Parameters.AddWithValue("@foodName", order.FoodName);
                 insertCmd.Parameters.AddWithValue("@restaurantName", order.RestaurantName);
                 insertCmd.Parameters.AddWithValue("@url_image", order.Url_image);
+                insertCmd.Parameters.AddWithValue("@Status_Restaurant", order.Status_Restaurant);
+                insertCmd.Parameters.AddWithValue("@Status_User", order.Status_User);
             var result = await insertCmd.ExecuteNonQueryAsync();
-            return result > 0;
+            return result > 0;}
+            else
+            { string changequery="UPDATE ORDERDETAIL SET Status_Restaurant = @Status_Restaurant WHERE IDOrder= @IDOrder";
+                using var changeCmd = new MySqlCommand(changequery, conn);
+                changeCmd.Parameters.AddWithValue("@Status_Restaurant", order.Status_Restaurant);
+                changeCmd.Parameters.AddWithValue("@IDOrder", order.IDOrder);
+                var result = await changeCmd.ExecuteNonQueryAsync();
+                return result > 0;
+            }
         }
-        public async Task<bool> DeleteOrderDetail(int IDOrder)
+        catch(Exception ex)
+        {
+            // Xử lý lỗi nếu cần thiết
+            Console.WriteLine(ex.Message);
+            return false;
+        }}
+         public async Task<bool> DeleteOrderDetail(int IDOrder)
         {
             using var conn = GetConnection();
             await conn.OpenAsync();
@@ -72,7 +88,7 @@ namespace PBL3.Service
             await conn.OpenAsync();
 
             string query = @"
-        SELECT od.IDOrder, od.IDCustomer, od.IDFood, od.IDRes, od.Quantity, od.TotalPrice, od.FoodName, od.RestaurantName,f.Url_image
+        SELECT od.IDOrder, od.IDCustomer, od.IDFood, od.IDRes, od.Quantity, od.TotalPrice, od.FoodName, od.RestaurantName,f.Url_image, od.Status_Restaurant
                 FROM ORDERDETAIL od
                 JOIN FOOD f ON od.IDFood = f.IDFood
                 JOIN RESTAURANT r ON od.IDRes = r.IDRes
@@ -93,6 +109,7 @@ namespace PBL3.Service
                            orderDetail.FoodName = reader.GetString("FoodName");
                            orderDetail.RestaurantName = reader.GetString("RestaurantName");
                             orderDetail.Url_image = reader.GetString("Url_image");
+                            orderDetail.Status_Restaurant = reader.GetString("Status_Restaurant");
                          orderDetails.Add(orderDetail);
                 }
                 return orderDetails;

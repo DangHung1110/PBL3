@@ -5,7 +5,11 @@
       <div class="card" v-for="(item, index) in thongkedata" :key="index">
         <h3>{{ item.FoodName }}</h3>
         <p><strong>Nhà hàng:</strong> {{ item.RestaurantName }}</p>
-      <img :src="item.Url_image" alt="Ảnh món ăn" style="width: 150px; height: auto;" />
+          <p><strong>Trạng thái:</strong> </p>
+        <img :src="item.Url_image" alt="Ảnh món ăn" style="width: 150px; height: auto;" />
+      
+      <button v-if="item.Status_Restaurant.trim() === 'confirmed'">Xác nhận đã nhận hàng</button>
+<p v-else>Chưa confirmed</p>
 
         <p><strong>Số lượng:</strong> {{ item.Quantity }}</p>
         <p><strong>Tổng tiền:</strong> {{ item.TotalPrice }} VNĐ</p>
@@ -30,12 +34,14 @@ const getdata = async (ID) => {
     const data = await ThongkeOrder(ID);
     console.log('Dữ liệu thống kê:', data);
     thongkedata.value = data.map(item => ({
+      Status_Restaurant:item.status_Restaurant,
       FoodName: item.foodName,
       RestaurantName: item.restaurantName,
       Quantity: item.quantity,
       TotalPrice: item.totalPrice,
       Url_image :item.url_image
     }));
+    console.log('Sau khi map:', thongkedata.value);
   } catch (error) {
     console.error('Lỗi khi lấy dữ liệu:', error);
   }

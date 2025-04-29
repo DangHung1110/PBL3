@@ -46,7 +46,9 @@
     Quantity:quantityToAdd.value,
     TotalPrice:parseInt(calculatedPrice.value),
     Url_image:food.value.url_image,
-    IDCustomer:localStorage.getItem("IDRes")
+    IDCustomer:localStorage.getItem("IDRes"),
+    Status_User:"pending",
+    Status_Restaurant:"pending",
     };
      console.log(senddata);
      try {
