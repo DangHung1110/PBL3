@@ -13,5 +13,7 @@ namespace PBL3.Models
         public string Url_image {get;set;}
         public string Status_Restaurant {get;set;}
         public string Status_User {get;set;}
+        public DateTime OrderTime {get;set;}
+        public DateTime OrderConfirmedTime {get;set;}
         }
 }

@@ -9,7 +9,7 @@
           <span class="quantity">{{ item.quantity }} x</span>
           <span class="price">{{ item.totalPrice.toLocaleString() }} VND</span>
         </div>
-        <button class="confirm-btn" @click="confirmOrder(item)">Xác nhận</button>
+        <button class="confirm-btn" @click="confirmOrder(item.IDOrder)">Xác nhận</button>
       </div>
     </div>
   </div>
@@ -18,7 +18,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { ResOrderList, addOrder } from '../api/order.js';  
+import { ResOrderList, UpdateConfirmedTime} from '../api/order.js';  
 
 const router = useRouter();
 const orderDetails = ref([]);
@@ -26,7 +26,7 @@ const orderDetails = ref([]);
 const IDRes = localStorage.getItem("IDRes");
 console.log(IDRes);
 
-// Đây là phần lấy danh sách món ăn
+
 onMounted(async () => {
   try {
     if (IDRes) {
@@ -47,25 +47,12 @@ onMounted(async () => {
   }
 });
 
-// Đây là phần xác nhận đơn hàng
-const confirmOrder = async (item) => {
-  const senddata = {
-    IDOrder: item.IDOrder,
-    IDRes:localStorage.getItem("IDRes"),
-    IDFood:item.IDFood,
-    IDCustomer: item.IDCustomer,
-    restaurantName: item.RestaurantName,
-    foodName: item.foodName,
-    quantity: item.quantity,
-    totalPrice: item.totalPrice,
-    Url_image:item.imageUrl,
-    Status_Restaurant: "confirmed",
-    Status_User: "pending"
-  };
-  console.log(senddata);
+
+const confirmOrder = async (IDOrder) => {
+
 
   try {
-    const response = await addOrder(senddata);
+    const response = await UpdateConfirmedTime(IDOrder);
     console.log(response);
     alert("Đơn hàng đã được xác nhận thành công!");
   } catch (error) {

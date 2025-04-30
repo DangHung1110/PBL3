@@ -36,29 +36,9 @@
   import { computed } from 'vue';
   import { onMounted, ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { GetFoodById, GetRestaurantById } from '../api/FoodSevice.js';
- const addToCart = async() => {
-   const senddata={
-    IDFood:route.params.id,
-    FoodName:food.value.name,
-    RestaurantName:restaurant.value.name,
-    IDRes:food.value.idRes,
-    Quantity:quantityToAdd.value,
-    TotalPrice:parseInt(calculatedPrice.value),
-    Url_image:food.value.url_image,
-    IDCustomer:localStorage.getItem("IDRes"),
-    Status_User:"pending",
-    Status_Restaurant:"pending",
-    };
-     console.log(senddata);
-     try {
-    const result = await addOrder(senddata);
-    console.log("Item added to cart:", result);
-    alert("Thêm vào giỏ hàng thành công!");
-  } catch (error) {
-    alert("Đã xảy ra lỗi khi thêm vào giỏ hàng.");
-  }
-  };
+  import { GetFoodById, GetRestaurantById,changefoodnum} from '../api/FoodSevice.js';
+  import Swal from 'sweetalert2';
+ 
 const route = useRoute();
   const router = useRouter();
   const food = ref(null);
@@ -87,6 +67,72 @@ const route = useRoute();
   const discountedPrice = originalPrice * (1 - discount / 100);
   return (discountedPrice * quantityToAdd.value); // Giữ 2 số lẻ
 });
+const addToCart = async() => {
+   const senddata={
+    IDFood:route.params.id,
+    FoodName:food.value.name,
+    RestaurantName:restaurant.value.name,
+    IDRes:food.value.idRes,
+    Quantity:quantityToAdd.value,
+    TotalPrice:parseInt(calculatedPrice.value),
+    Url_image:food.value.url_image,
+    IDCustomer:localStorage.getItem("IDRes"),
+    Status_User:"pending",
+    Status_Restaurant:"pending",
+    };
+     console.log(senddata);
+     console.log(food.value.quantity);
+     if(food.value.quantity>1)
+     {  console.log(food.value.quantity);
+     try {
+    const result = await addOrder(senddata);
+    console.log(route.params.id);
+    console.log("Food quantity before update:", food.value.quantity);
+    console.log("Quantity to add:", quantityToAdd.value);
+    console.log(food.value.quantity-quantityToAdd.value);
+    await changefoodnum(route.params.id,food.value.quantity-quantityToAdd.value);
+    console.log("Item added to cart:", result);
+    Swal.fire({
+      toast: true,   
+    icon: 'success',
+    title: 'THÔNG BÁO',
+    text: 'Thêm đơn hàng thành công!',
+    timer: 3000,
+    position: 'bottom-end',
+    timerProgressBar: true,
+    showConfirmButton: false,
+    showClass: {
+      popup: 'swal2-slide-in-right' }}
+    );
+  } catch (error) {
+    console.log(food.value.quantity);
+    Swal.fire({
+      toast: true,   
+    icon: 'error',
+    title: 'THÔNG BÁO',
+    text: 'Lỗi chọn đơn hàng!',
+    timer: 3000,
+    position: 'bottom-end',
+    timerProgressBar: true,
+    showConfirmButton: false,
+    showClass: {
+      popup: 'swal2-slide-in-right' }}
+    );
+  }}
+  else{
+    Swal.fire({
+      toast: true,   
+    icon: 'error',
+    title: 'THÔNG BÁO',
+    text: 'Đã hết hàng!',
+    timer: 3000,
+    position: 'bottom-end',
+    timerProgressBar: true,
+    showConfirmButton: false,
+    showClass: {
+      popup: 'swal2-slide-in-right' }}
+    );
+  };}
   </script>
   
   <style scoped>
@@ -101,30 +147,30 @@ const route = useRoute();
 }
 
 .popup-content {
-  background: linear-gradient(135deg, #ffffff, #f7f7f7);
-  padding: 15px;
-  border-radius: 16px;
-  width: 320px; /* ↓ nhỏ lại */
+  background: #fff8f1;
+  padding: 16px;
+  border-radius: 20px;
+  width: 300px;
   max-width: 90%;
-  position: relative;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
   display: flex;
   flex-direction: column;
-  gap: 14px; /* ↓ giảm gap */
-  animation: scaleIn 0.35s ease;
-  font-family: 'Poppins', sans-serif;
+  gap: 12px;
+  position: relative;
+  animation: scaleIn 0.4s ease;
+  font-family: 'Playfair Display', serif;
 }
 
-
 .popup-image {
-  width: 180px;
-  height: 180px;
+  width: 160px;
+  height: 160px;
   object-fit: cover;
   border-radius: 16px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
   align-self: center;
   transition: transform 0.3s ease;
 }
+
 
 .popup-image:hover {
   transform: scale(1.05);
@@ -135,47 +181,47 @@ const route = useRoute();
 }
 
 .popup-text h2 {
-  font-size: 26px;
-  margin-bottom: 8px;
-  color: #2c3e50;
+  font-size: 30px;
+  color: #8b4513;
+  margin-bottom: 12px;
 }
 
 .popup-text p {
   margin: 6px 0;
-  font-size: 15px;
-  color: #555;
+  font-size: 16px;
+  color: #5c4033;
 }
 
 .quantity-control {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .quantity-control button {
-  width: 38px;
-  height: 38px;
-  border-radius: 10px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
   border: none;
-  background: #f0f0f0;
-  font-size: 20px;
+  background: #f7d9c4;
+  font-size: 22px;
   font-weight: bold;
   cursor: pointer;
-  transition: background 0.2s, transform 0.2s;
+  transition: background 0.3s, transform 0.2s;
 }
 
 .quantity-control button:hover {
-  background: #ddd;
-  transform: scale(1.1);
+  background: #f2c29d;
+  transform: scale(1.15);
 }
 
 .quantity-control input {
-  width: 65px;
+  width: 60px;
   text-align: center;
-  padding: 6px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
+  padding: 8px;
+  border: 1px solid #d3a675;
+  border-radius: 8px;
   font-size: 16px;
 }
 
@@ -183,76 +229,45 @@ const route = useRoute();
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
 }
 
 .popup-actions p {
   font-size: 18px;
-  font-weight: 600;
-  color: #388e3c;
+  font-weight: bold;
+  color: #a0522d;
 }
 
 .add-to-cart-btn {
-  background: linear-gradient(135deg, #ff5722, #e64a19);
-  color: #fff;
-font-size: 14px;
-  padding: 8px 20px;
-  border-radius: 10px;
-  padding: 12px 28px;.popup-content {
-  background: linear-gradient(135deg, #ffffff, #f7f7f7);
-
- 
-  width: 320px; /* ↓ nhỏ lại */
-  max-width: 90%;
-  position: relative;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-  display: flex;
-  flex-direction: column;
-  gap: 14px; /* ↓ giảm gap */
-  animation: scaleIn 0.35s ease;
-  font-family: 'Poppins', sans-serif;
-}
-.popup-content {
-  background: linear-gradient(135deg, #ffffff, #f7f7f7);
-  padding: 20px;
-  border-radius: 16px;
-  width: 320px; /* ↓ nhỏ lại */
-  max-width: 90%;
-  position: relative;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-  display: flex;
-  flex-direction: column;
-  gap: 14px; /* ↓ giảm gap */
-  animation: scaleIn 0.35s ease;
-  font-family: 'Poppins', sans-serif;
-}
-
+  background: linear-gradient(135deg, #d2691e, #8b4513);
+  color: white;
+  font-size: 16px;
+  padding: 12px 30px;
   border: none;
-  border-radius: 14px;
+  border-radius: 30px;
   cursor: pointer;
   transition: background 0.3s, transform 0.2s;
 }
 
 .add-to-cart-btn:hover {
-
-  background: linear-gradient(135deg, #e64a19, #d84315);
-  transform: scale(1.05);
+  background: linear-gradient(135deg, #8b4513, #5c4033);
+  transform: scale(1.08);
 }
 
 .close-btn {
   position: absolute;
-  top: 14px;
-  right: 18px;
-  background: transparent;
+  top: 16px;
+  right: 20px;
+  background: none;
   border: none;
-  font-size: 30px;
+  font-size: 32px;
   cursor: pointer;
-  color: #aaa;
-  transition: color 0.2s, transform 0.2s;
+  color: #a9a9a9;
+  transition: color 0.3s, transform 0.2s;
 }
 
 .close-btn:hover {
-  color: #ff5252;
+  color: #ff6347;
   transform: scale(1.2);
 }
 
@@ -276,5 +291,21 @@ font-size: 14px;
 .popup-fade-leave-to {
   opacity: 0;
 }
+.swal2-slide-in-right {
+  animation: slide-in-right 0.5s ease-out;
+}
+
+@keyframes slide-in-right {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+
 </style>
   

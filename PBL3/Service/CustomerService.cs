@@ -19,7 +19,8 @@ namespace PBL3.Service
         {   try{
             using var conn = GetConnection();
             await conn.OpenAsync();
-
+            
+            DateTime datetime=TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
             // Kiểm tra tính hợp lệ
             string checkQuery = @"
         SELECT f.IDFood, c.IDCustomer, r.IDRes 
@@ -39,8 +40,8 @@ namespace PBL3.Service
          await reader.DisposeAsync();
             if(order.Status_Restaurant=="pending")
             {string insertQuery = @"
-    INSERT INTO ORDERDETAIL (IDCustomer, IDFood, IDRes, Quantity, TotalPrice,FoodName,RestaurantName,Url_image,Status_Restaurant,Status_User)
-    VALUES (@idCustomer, @idFood, @idRes, @quantity, @totalPrice, @foodName, @restaurantName, @url_image,@Status_Restaurant,@Status_User)";
+    INSERT INTO ORDERDETAIL (IDCustomer, IDFood, IDRes, Quantity, TotalPrice,FoodName,RestaurantName,Url_image,Status_Restaurant,Status_User,OrderTime,OrderConfirmedTime)
+    VALUES (@idCustomer, @idFood, @idRes, @quantity, @totalPrice, @foodName, @restaurantName, @url_image,@Status_Restaurant,@Status_User,@OrderTime,@OrderConfirmedTime)";
             using var insertCmd = new MySqlCommand(insertQuery, conn);
             insertCmd.Parameters.AddWithValue("@idCustomer", order.IDCustomer);
             insertCmd.Parameters.AddWithValue("@idFood", order.IDFood);
@@ -52,6 +53,8 @@ namespace PBL3.Service
                 insertCmd.Parameters.AddWithValue("@url_image", order.Url_image);
                 insertCmd.Parameters.AddWithValue("@Status_Restaurant", order.Status_Restaurant);
                 insertCmd.Parameters.AddWithValue("@Status_User", order.Status_User);
+                insertCmd.Parameters.AddWithValue("@OrderTime", datetime);
+                insertCmd.Parameters.AddWithValue("@OrderConfirmedTime", datetime);
             var result = await insertCmd.ExecuteNonQueryAsync();
             return result > 0;}
             else
@@ -88,7 +91,7 @@ namespace PBL3.Service
             await conn.OpenAsync();
 
             string query = @"
-        SELECT od.IDOrder, od.IDCustomer, od.IDFood, od.IDRes, od.Quantity, od.TotalPrice, od.FoodName, od.RestaurantName,f.Url_image, od.Status_Restaurant
+        SELECT od.IDOrder, od.IDCustomer, od.IDFood, od.IDRes, od.Quantity, od.TotalPrice, od.FoodName, od.RestaurantName,f.Url_image, od.Status_Restaurant,od.Status_User, od.OrderTime, od.OrderConfirmedTime
                 FROM ORDERDETAIL od
                 JOIN FOOD f ON od.IDFood = f.IDFood
                 JOIN RESTAURANT r ON od.IDRes = r.IDRes
@@ -110,6 +113,9 @@ namespace PBL3.Service
                            orderDetail.RestaurantName = reader.GetString("RestaurantName");
                             orderDetail.Url_image = reader.GetString("Url_image");
                             orderDetail.Status_Restaurant = reader.GetString("Status_Restaurant");
+                    orderDetail.Status_User = reader.GetString("Status_User");
+                    orderDetail.OrderTime = reader.GetDateTime("OrderTime");
+                    orderDetail.OrderConfirmedTime = reader.GetDateTime("OrderConfirmedTime");
                          orderDetails.Add(orderDetail);
                 }
                 return orderDetails;

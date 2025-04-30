@@ -148,5 +148,53 @@ namespace PBL3.Controllers
             var result = await _restaurantservice.GetOrderDetailsByRestaurant(IDRes);
             return Ok(result);
         }
+        [HttpPost("Thongke")]
+        public void AddTK(Thongke thongke)
+        {
+            try
+            {
+                _restaurantservice.AddTKData(thongke);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+
+            }
+        }
+        [HttpPut("UpdateConfirmedTime/{IDOrder}")]
+        public IActionResult UpdateConfirmedTime(int IDOrder)
+        {
+            try
+            {
+                _restaurantservice.UpdateConfirmedTime(IDOrder);
+                return Ok(new { Message = "Order confirmed successfully." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "Update failed", Error = ex.Message });
+            }
+        }
+        [HttpPut("ChangeFoodNum/{id}")]
+        public IActionResult ChangeFoodNum(string id,int quantity)
+        {
+            try{
+                _restaurantservice.ChangeFoodNum(id,quantity);
+                return Ok(new { Message = "Food quantity updated successfully." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "Update failed", Error = ex.Message });
+            }
+        }
+        [HttpGet("GetFoodByName/{Name}")]
+        public IActionResult GetFoodByName(String Name)
+        {
+            var food=_restaurantservice.GetFoodByName(Name);
+            if (food == null)
+            {
+                return NotFound(new { Message = "Food not found." });
+            }
+            return Ok(food);
+        }
     }
 }

@@ -1,5 +1,15 @@
 import axios from 'axios';
-
+export const GetFoodByName=async(Name)=>{
+  try{
+    const response=await axios.get(`http://localhost:5299/api/Restaurant/GetFoodByName/${Name}`);
+    return response.data;
+  }
+  catch(error)
+  {
+    console.error("Lỗi khi gọi API lấy món ăn: theo tên",error);
+    throw error;
+  }
+}
 export const getFoodsByRestaurantId = async (IDRes) => {
   try {
     const response = await axios.get(`http://localhost:5299/api/restaurant/foods/${IDRes}`);
@@ -74,4 +84,15 @@ export const GetRestaurantById = async (IDRes) => {
         console.error("Lỗi khi gọi API lấy nhà hàng:", error);
         throw error;
     }
+}
+export const changefoodnum=async(id,quantity)=>{
+  try{
+    const response=await axios.put(`http://localhost:5299/api/Restaurant/ChangeFoodNum/${id}`,quantity);
+    return response.data;
+  }
+  catch(error)
+  {
+    console.error("Lỗi khi gọi API thay đổi số lượng món ăn:",error);
+    throw error;
+  }
 }

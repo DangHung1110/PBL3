@@ -303,4 +303,55 @@ public class RestaurantService
 
         return orders;
     }
+    public void AddTKData(Thongke tk)
+    {
+        using var conn=GetConnection();
+        conn.Open();
+        DateTime CusConfirmedTime =TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
+        var cmd = new MySqlCommand("INSERT INTO THONGKE(IDRes, CusConfirmedTime, DOANHSO) VALUES(@IDRes, @CusConfirmedTime, @DOANHSO)", conn);
+        cmd.Parameters.AddWithValue("@IDRes",tk.IDRes);
+        cmd.Parameters.AddWithValue("@CusConfirmedTime", CusConfirmedTime);
+        cmd.Parameters.AddWithValue("@DOANHSO", tk.DOANHSO);
+        cmd.ExecuteNonQuery();
 }
+public void UpdateConfirmedTime(int IDOrder)
+{
+    using var conn=GetConnection();
+    conn.Open();
+    DateTime datetime= TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
+    var cmd = new MySqlCommand("UPDATE ORDERDETAIL SET OrderConfirmedTime = @OrderConfirmedTime,Status_Restaurant='confirmed' WHERE IDOrder = @IDOrder", conn);
+    cmd.Parameters.AddWithValue("@OrderConfirmedTime", datetime);
+    cmd.Parameters.AddWithValue("@IDOrder", IDOrder);
+    cmd.ExecuteNonQuery();
+}
+public void ChangeFoodNum (string id,int quantity)
+{
+    using var conn=GetConnection();
+    conn.Open();
+    var cmd=new MySqlCommand("UPDATE FOOD SET Quantity = @Quantity WHERE IDFood = @IDFood", conn);
+    cmd.Parameters.AddWithValue("@IDFood", id);
+    cmd.Parameters.AddWithValue("@Quantity", quantity);
+    cmd.ExecuteNonQuery();
+}
+public List<Food> GetFoodByName(string Name)
+{   List<Food> foods=new List<Food>();
+    using var conn=GetConnection();
+    conn.Open();
+    var cmd=new MySqlCommand("SELECT * FROM FOOD WHERE Name = @Name", conn);
+    cmd.Parameters.AddWithValue("@Name", Name);
+    using var reader=cmd.ExecuteReader();
+    while(reader.Read())
+    {
+        Food x=new Food();
+        x.IDFood=reader.GetString("IDFood");
+        x.IDRes=reader.GetString("IDRes"); 
+        x.Name=reader.GetString("Name");
+        x.Price=reader.GetInt32("Price");
+        x.Discount=reader.GetInt32("Discount");
+        x.Category=reader.GetString("Category");
+        x.Url_Image=reader.GetString("Url_Image");
+        x.Quantity=reader.GetInt32("Quantity");
+        foods.Add(x);
+    }
+    return foods;
+}}

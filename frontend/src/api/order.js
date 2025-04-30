@@ -44,3 +44,13 @@ export const ResOrderList = async (IDRes) => {
     throw error;
   }
 }
+export const UpdateConfirmedTime=async(IDOrder)=>{
+  try{
+    const response=await axios.put(`http://localhost:5299/api/Restaurant/UpdateConfirmedTime/${IDOrder}`);
+    return response.data;
+}
+catch(error)
+{
+    console.error('Error when updating confirmed time:',error);
+    throw error;
+}}
