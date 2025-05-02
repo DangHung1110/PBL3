@@ -30,7 +30,7 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { login } from "../api/api.js"; // Import API
-
+import { emitter } from "../api/eventBus.js"; // Import event bus
 export default {
   setup() {
     const router = useRouter();
@@ -49,6 +49,8 @@ export default {
     localStorage.setItem("username", username.value);
 const parsedUser = JSON.parse(response.userID);
 localStorage.setItem("IDRes", parsedUser.id);
+emitter.emit("Ordercount",'');
+
 
 
 

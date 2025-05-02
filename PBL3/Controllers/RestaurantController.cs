@@ -175,10 +175,9 @@ namespace PBL3.Controllers
             }
         }
         [HttpPut("ChangeFoodNum/{id}")]
-        public IActionResult ChangeFoodNum(string id,int quantity)
-        {
-            try{
-                _restaurantservice.ChangeFoodNum(id,quantity);
+        public IActionResult ChangeFoodNum(string id, [FromBody] QuantityUpdateDTO dto)
+        {  try{
+                _restaurantservice.ChangeFoodNum(id,dto.Quantity);
                 return Ok(new { Message = "Food quantity updated successfully." });
             }
             catch (Exception ex)
@@ -195,6 +194,16 @@ namespace PBL3.Controllers
                 return NotFound(new { Message = "Food not found." });
             }
             return Ok(food);
+        }
+        [HttpGet("GetTKData/{IDCustomer}")]
+        public IActionResult GetTKData(string IDCustomer)
+        {
+            var result = _restaurantservice.GetTKData(IDCustomer);
+            if (result == null)
+            {
+                return NotFound(new { Message = "No data found." });
+            }
+            return Ok(result);
         }
     }
 }

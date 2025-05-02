@@ -106,5 +106,24 @@ namespace PBL3.Controllers
             catch (Exception ex)
             { Console.WriteLine("Lỗi server: " + ex.Message);
     return StatusCode(500, new { Message = "Server Error", Error = ex.Message }); }}
+      [HttpGet("ProductCount/{IDCus}")]
+        public async Task<IActionResult> GetProductCount(string IDCus)
+        {
+            try
+            {
+                var productCount = await _customerService.GetProductCount(IDCus);
+                if (productCount != null)
+                {
+                    return Ok(productCount);
+                }
+                else
+                {
+                    return NotFound(new { Message = "No product count found for this customer" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "Server Error", Error = ex.Message });
+            }
 }
-}
+}}

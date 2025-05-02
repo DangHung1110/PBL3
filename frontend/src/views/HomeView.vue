@@ -1,7 +1,10 @@
 <template>
   <div>
     <!-- Hiển thị Navbar nếu không phải trang dashboard -->
-    <div class="container" v-if="!$route.path.includes('/restaurant/dashboard')">
+    <div
+      class="container"
+      v-if="!$route.path.includes('/restaurant/dashboard')"
+    >
       <div class="navbar">
         <div class="logo">
           <div class="logo-food"></div>
@@ -9,9 +12,24 @@
         </div>
 
         <div class="home-page">
-          <button class="category food" @click="navigateTo('/foodlist')">🍔 Đồ ăn</button>
-          <button class="category drink" @click="navigateTo('/drinklist')">🥤 Đồ uống</button>
-          <input  type="text" v-model="searchQuery" placeholder="Tìm kiếm món ăn..." class="search-input"    @keydown.enter="emitSearch">
+          <div class="category-buttons">
+            <button class="category food" @click="navigateTo('/foodlist')">
+              <span class="icon">🍔</span> Đồ ăn
+            </button>
+            <button class="category drink" @click="navigateTo('/drinklist')">
+              <span class="icon">🥤</span> Đồ uống
+            </button>
+          </div>
+          <div class="search-bar">
+            <input
+              type="text"
+              v-model="searchQuery"
+              placeholder="Tìm kiếm món ăn..."
+              class="search-input"
+              @keydown.enter="emitSearch"
+            />
+            <span class="search-icon">🔍</span>
+          </div>
         </div>
 
         <div v-if="isLoggedIn" class="user-menu">
@@ -20,14 +38,25 @@
             <span class="username">{{ username }}</span>
           </div>
           <div v-if="dropdownOpen" class="dropdown-menu">
-            <button @click="openOrderHistoryPopup" class="dropdown-item">📦 Lịch sử đơn đặt hàng</button>
-            <button @click="handleLogout" class="dropdown-item logout">🚪 Đăng xuất</button>
+            <button @click="openOrderHistoryPopup" class="dropdown-item">
+              🛒 Thông tin đơn hàng
+              <span class="badge" v-if="orderCount > 0">{{ orderCount }}</span>
+            </button>
+            <button @click="openorderHistory" class="dropdown-item">
+              📝 Lịch sử đặt hàng
+            </button>
+            <button @click="handleLogout" class="dropdown-item logout">
+              🚪 Đăng xuất
+            </button>
           </div>
         </div>
 
         <div v-else class="login">
           <button class="login-button">
-            <font-awesome-icon icon="user" style="font-size: 20px; color: white;" />
+            <font-awesome-icon
+              icon="user"
+              style="font-size: 20px; color: white"
+            />
           </button>
           <div class="boder-login">
             <router-link to="/login" class="loginn">Đăng nhập</router-link>
@@ -41,13 +70,17 @@
       </div>
 
       <div v-if="orderHistoryPopupOpen" class="popup">
-        <div class="popup-content" style="max-height: 80vh; overflow-y: auto;">
-          <h2>Đơn hàng</h2>
-          <button class="close-button" @click="closeOrderHistoryPopup" aria-label="Đóng popup">
+        <div class="popup-content">
+          <h2 class="popup-title">Đơn hàng</h2>
+          <button
+            class="close-button"
+            @click="closeOrderHistoryPopup"
+            aria-label="Đóng popup"
+          >
             <span>&times;</span>
           </button>
 
-          <table class="order-table" style="width: 100%; border-collapse: collapse; text-align: left;">
+          <table class="order-table">
             <thead>
               <tr>
                 <th>Tên món</th>
@@ -58,28 +91,53 @@
                 <th>Trạng thái</th>
                 <th>Hành động</th>
                 <th>Thời gian đặt hàng</th>
-                <th>
-                  Thời gian xác nhận
-                </th>
-               </tr>
+                <th>Thời gian xác nhận</th>
+              </tr>
             </thead>
             <tbody>
-              <tr v-for="(item, index) in thongkedata" :key="index" style="border-top: 1px solid #ccc;">
+              <tr v-for="(item, index) in thongkedata" :key="index">
                 <td>{{ item.FoodName }}</td>
                 <td>{{ item.RestaurantName }}</td>
                 <td>
-                  <img :src="item.Url_image" alt="Ảnh món ăn" style="width: 80px; border-radius: 8px;" />
+                  <img
+                    :src="item.Url_image"
+                    alt="Ảnh món ăn"
+                    class="food-image"
+                  />
                 </td>
                 <td>{{ item.Quantity }}</td>
-                <td>{{ item.TotalPrice}} VNĐ</td>
+                <td>{{ item.TotalPrice }} VNĐ</td>
                 <td>
-                  <button class="confirm-btn" v-if="item.Status_Restaurant === 'confirmed'" @click="FinishedOrder(item.id,item.TotalPrice,item.IDRes)">Xác nhận</button>
+                  <button
+                    class="confirm-btn"
+                    v-if="item.Status_Restaurant === 'confirmed'"
+                    @click="
+                      FinishedOrder(
+                        item.id,
+                        item.TotalPrice,
+                        item.IDRes,
+                        item.IDCustomer,
+                        item.OrderTime,
+                        item.OrderConfirmedTime,
+                        item.Url_image,
+                        item.FoodName,
+                        item.RestaurantName,
+                        item.Quantity
+                      )
+                    "
+                  >
+                    Xác nhận
+                  </button>
                 </td>
                 <td>
-                  <button class="delete-btn" @click="DeleteFFromOD(item.id)">Xóa</button>
+                  <button class="delete-btn" @click="DeleteFFromOD(item.id)">
+                    Xóa
+                  </button>
                 </td>
-                <td>{{formatDate(item.OrderTime)}}</td>
-                <td v-if="item.Status_Restaurant==='confirmed'">{{formatDate(item.OrderConfirmedTime)}}</td>
+                <td>{{ formatDate(item.OrderTime) }}</td>
+                <td v-if="item.Status_Restaurant === 'confirmed'">
+                  {{ formatDate(item.OrderConfirmedTime) }}
+                </td>
               </tr>
             </tbody>
           </table>
@@ -91,78 +149,98 @@
   </div>
 </template>
 
-
-
-
 <script setup>
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faUser } from '@fortawesome/free-solid-svg-icons'
-import { library } from '@fortawesome/fontawesome-svg-core'
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+
 import { ref, onMounted, onUnmounted, computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import { ThongkeOrder} from "../api/order.js";
-import {DeleteOrder} from "../api/order.js";
-import {Thongke} from "../api/thongke.js";
-import Swal from 'sweetalert2';
-import {emitter} from "../api/eventBus.js";
+import { ThongkeOrder } from "../api/order.js";
+import { DeleteOrder } from "../api/order.js";
+import { Thongke } from "../api/thongke.js";
+import Swal from "sweetalert2";
+import { emitter } from "../api/eventBus.js";
+import OrderHistory from "../components/OrderHistory.vue";
+import { ProductCount } from "../api/order.js";
 const orderHistoryPopupOpen = ref(false);
+const openHistory = ref(false);
 const router = useRouter();
-const route = useRoute();
+const orderCount = ref(0);
 const isLoggedIn = ref(false);
 const username = ref("");
 const dropdownOpen = ref(false);
-const searchQuery = ref('');
+const searchQuery = ref("");
 const formatDate = (datetime) => {
   return new Date(datetime).toLocaleString("vi-VN");
 };
 const thongkedata = ref([]);
-
-const goToFoodPage = () => {
-  emitter.emit('searchItem', ''); 
-};
-const emitSearch = () => {
-  emitter.emit('searchItem', searchQuery.value);
-};
-const DeleteFFromOD=async(id)=>{
-console.log(id);
-  try {    console.log(id);
-      await DeleteOrder(id);
-      await getThongkeData();
-thongkedata.value = thongkedata.value.filter(p => p.id !== id);
-
-      console.log("Xoá thành công");
+const updateOrderCount = async () => {
+  const IDUser = localStorage.getItem("IDRes");
+  if (IDUser) {
+    try {
+      const count = await ProductCount(IDUser);
+      orderCount.value = count;
     } catch (error) {
-      console.error("Xoá thất bại:", error);
-      alert("Có lỗi xảy ra khi xoá món ăn.");
+      console.error("Lỗi khi cập nhật orderCount:", error);
     }
   }
+};
+
+const emitSearch = () => {
+  emitter.emit("searchItem", searchQuery.value);
+};
+const DeleteFFromOD = async (id) => {
+  console.log(id);
+
+  try {
+    console.log(id);
+    await DeleteOrder(id);
+    await updateOrderCount();
+    await getThongkeData();
+    thongkedata.value = thongkedata.value.filter((p) => p.id !== id);
+
+    console.log("Xoá thành công");
+  } catch (error) {
+    console.error("Xoá thất bại:", error);
+    alert("Có lỗi xảy ra khi xoá món ăn.");
+  }
+};
 // Hàm lấy thống kê từ API
 const getThongkeData = async () => {
-const ID = localStorage.getItem("IDRes");
+  const ID = localStorage.getItem("IDRes");
   try {
     if (!ID) {
       alert("Bạn chưa đăng nhập!");
       return;
     }
     const data = await ThongkeOrder(ID);
-    thongkedata.value = data.map(item => ({
-      IDRes:item.idRes,
-      Status_Restaurant:item.status_Restaurant,
-      OrderConfirmedTime:item.orderConfirmedTime,
-      OrderTime:item.orderTime,
-      id: item.idOrder,
-      FoodName: item.foodName,
-      RestaurantName: item.restaurantName,
-      Quantity: item.quantity,
-      TotalPrice: item.totalPrice,
-      Url_image: item.url_image
-    }));
+    thongkedata.value = data
+      .map((item) => ({
+        IDCustomer: item.idCustomer,
+        IDRes: item.idRes,
+        Status_Restaurant: item.status_Restaurant,
+        OrderConfirmedTime: item.orderConfirmedTime,
+        OrderTime: item.orderTime,
+        id: item.idOrder,
+        FoodName: item.foodName,
+        RestaurantName: item.restaurantName,
+        Quantity: item.quantity,
+        TotalPrice: item.totalPrice,
+        Url_image: item.url_image,
+      }))
+      .sort((a, b) => new Date(b.OrderTime) - new Date(a.OrderTime));
     console.log(thongkedata.value);
   } catch (error) {
     console.error("Lỗi khi lấy dữ liệu thống kê:", error);
     thongkedata.value = [];
   }
 };
+
+emitter.on("UpdateCountProduct", async () => {
+  await updateOrderCount();
+});
+emitter.on("Ordercount", async () => {
+  await updateOrderCount();
+});
 
 // Mở popup và gọi API
 const openOrderHistoryPopup = async () => {
@@ -172,6 +250,9 @@ const openOrderHistoryPopup = async () => {
 
 const closeOrderHistoryPopup = () => {
   orderHistoryPopupOpen.value = false;
+};
+const openorderHistory = async () => {
+  router.push("/orderHistory");
 };
 
 const toggleDropdown = () => {
@@ -188,9 +269,9 @@ const handleLogout = () => {
 };
 
 const navigateTo = (path) => {
-  if (path === '/foodlist') {
-    searchQuery.value = ''; 
-    emitter.emit('searchItem', ''); 
+  if (path === "/foodlist") {
+    searchQuery.value = "";
+    emitter.emit("searchItem", "");
   }
   router.push(path);
 };
@@ -200,60 +281,91 @@ const checkLogin = () => {
   isLoggedIn.value = !!storedUsername;
   username.value = storedUsername || "";
 };
-const FinishedOrder=async(idOrder,TotalPrice,IDRes)=>{
-  console.log(idOrder,TotalPrice,IDRes);
+const FinishedOrder = async (
+  idOrder,
+  TotalPrice,
+  IDRes,
+  IDCustomer,
+  OrderTime,
+  OrderConfirmedTime,
+  Url_image,
+  FoodName,
+  RestaurantName,
+  Quantity
+) => {
+  console.log(
+    idOrder,
+    TotalPrice,
+    IDRes,
+    IDCustomer,
+    OrderTime,
+    OrderConfirmedTime,
+    Url_image,
+    FoodName,
+    RestaurantName,
+    Quantity
+  );
   await DeleteOrder(idOrder);
-  const senddata={
-    IDRes:IDRes,
-    DOANHSO:TotalPrice,
-    IDOrder:idOrder
-  }
-  try{
+  await updateOrderCount();
+  const senddata = {
+    Quantity: Quantity,
+    IDRes: IDRes,
+    DOANHSO: TotalPrice,
+    IDOrder: idOrder,
+    IDCustomer: IDCustomer,
+    OrderTime: OrderTime,
+    OrderConfirmedTime: OrderConfirmedTime,
+    Url_Image: Url_image,
+    FoodName: FoodName,
+    RestaurantName: RestaurantName,
+  };
+  try {
     await Thongke(senddata);
     Swal.fire({
       toast: true,
-    icon: 'success',
-    title: 'THÔNG BÁO',
-    text: 'Xác nhận thành công!',
-    timer: 3000,
-    position: 'bottom-end',
-    timerProgressBar: true,
-    showConfirmButton: false,
-    showClass: {
-      popup: 'swal2-slide-in-right' }}
-    );
-  }
-  catch(error){
-    toast: true,   
-    console.error("Xác nhận thất bại:", error);
+      icon: "success",
+      title: "THÔNG BÁO",
+      text: "Xác nhận thành công!",
+      timer: 3000,
+      position: "bottom-end",
+      timerProgressBar: true,
+      showConfirmButton: false,
+      showClass: {
+        popup: "swal2-slide-in-right",
+      },
+    });
+  } catch (error) {
+    toast: true, console.error("Xác nhận thất bại:", error);
     Swal.fire({
-    icon: 'error',
-    title: 'Lỗi',
-    position: 'bottom-end',
-    text: 'Có lỗi xảy ra khi xác nhận!',
-  });
+      icon: "error",
+      title: "Lỗi",
+      position: "bottom-end",
+      text: "Có lỗi xảy ra khi xác nhận!",
+    });
   }
   await getThongkeData();
 
- thongkedata.value = thongkedata.value.filter(p => p.id !== id);}
-onMounted(() => {
+  thongkedata.value = thongkedata.value.filter((p) => p.id !== id);
+};
+onMounted(async () => {
   checkLogin();
+  await updateOrderCount();
+  console.log(orderCount);
   window.addEventListener("storage", checkLogin);
 });
 </script>
 
-
 <style scoped>
-
 * {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   box-sizing: border-box;
 }
 
 .container {
   width: 100vw;
   height: 100vh;
-  background: url("https://watermark.lovepik.com/photo/20211118/large/lovepik-gourmet-background-picture_400152283.jpg") no-repeat center center/cover;
+  background: url("https://assets.tronhouse.vn/59185068-4c44-404a-a5b6-493d1d50d13d/origin/chup-anh-mon-an-4.jpeg")
+    no-repeat center center/cover;
 }
 
 .navbar {
@@ -290,61 +402,75 @@ onMounted(() => {
 
 .home-page {
   display: flex;
-  gap: 15px;
+  flex-wrap: wrap;
+  gap: 20px;
   align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+}
+
+.category-buttons {
+  display: flex;
+  gap: 12px;
 }
 
 .category {
-  padding: 10px 18px;
-  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
   border: none;
-  cursor: pointer;
+  border-radius: 16px;
   font-size: 16px;
-  font-weight: 500;
-  transition: 0.3s;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .food {
   background: linear-gradient(to right, #ff7e5f, #feb47b);
-  color: white;
-  padding: 9px 28px;
-  font-size: 16px;
-  font-weight: 600;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .drink {
   background: linear-gradient(to right, #4facfe, #00f2fe);
-  color: white;
-  padding: 9px 28px;
-  font-size: 16px;
-  font-weight: 600;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-.food:hover,
-.drink:hover,
 .category:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-  opacity: 0.9;
+  opacity: 0.95;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.search-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 300px;
 }
 
 .search-input {
-  padding: 8px 14px;
-  font-size: 16px;
-  border: none;
-  border-radius: 8px;
-  outline: none;
-  width: 280px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  padding: 10px 38px 10px 16px;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+  transition: 0.3s;
 }
 
 .search-input:focus {
-  border: 2px solid #ff7f50;
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+}
+
+.search-icon {
+  position: absolute;
+  right: 12px;
+  font-size: 18px;
+  color: #666;
+  pointer-events: none;
 }
 
 .login {
@@ -525,32 +651,27 @@ onMounted(() => {
 
 .popup {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 999;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgb(255, 255, 255);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  width: 90vw;
+  max-width: 1000px;
 }
 
 .popup-content {
-  background: linear-gradient(145deg, #fffaf0, #f7efe5); /* trắng kem ánh vàng */
-box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-border-radius: 20px;
   padding: 24px;
-  max-width: 1000px;
-  margin: 32px auto;
-  font-family: 'Segoe UI', sans-serif;
-  position: relative;
+  max-height: 80vh;
+  overflow-y: auto;
 }
-
-.popup-content h2 {
-  color: #2c3e50; /* xanh than đậm */
-font-weight: 700;
-font-size: 1.5rem;
+.popup-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #222;
+  margin-bottom: 16px;
   text-align: center;
 }
 
@@ -567,109 +688,91 @@ font-size: 1.5rem;
 
 .close-button {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 12px;
+  right: 12px;
   background: transparent;
   border: none;
-  font-size: 22px;
-  font-weight: bold;
+  font-size: 24px;
+  color: #999;
   cursor: pointer;
-  z-index: 1000;
-  color: #333;
-  transition: 0.2s ease-in-out;
+  transition: color 0.3s ease;
 }
 
 .close-button:hover {
-  color: #e53935;
-  transform: scale(1.2);
+  color: #ff424e;
 }
 
-.order-table img {
+.food-image {
   width: 80px;
   height: auto;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .order-table {
   width: 100%;
   border-collapse: collapse;
-  background: #fdfdfd;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-  font-size: 15px;
-  color: #333;
+  font-size: 14px;
+  color: #000000;
 }
 
-.order-table thead {
-  background: linear-gradient(to right, #4b6cb7, #182848); /* xanh navy gradient */
-color: white;
-font-weight: bold;
-  text-transform: uppercase;
-}
-
-.order-table th,
-.order-table td {
-  padding: 12px 16px;
-  border-bottom: 1px solid #e0e0e0;
-  text-align: left;
-}
-
-.order-table tbody tr:hover {
-  background-color: #f9f9f9;
-  transition: background 0.3s;
-}
-
-.order-table td button {
-  padding: 6px 12px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
+.order-table th {
+  background-color: #cecaca;
   font-weight: 500;
-}
-
-.confirm-btn,
-.delete-btn {
-
-  border: none;
-  border-radius: 8px; 
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15); 
-  transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
-  padding: 6px 14px; 
-  font-size: 14px;    
-  white-space: nowrap; 
-  display: inline-block;
+  padding: 12px;
+  border-bottom: 1px solid #eee;
   text-align: center;
+  vertical-align: middle;
 }
 
+.order-table td {
+  text-align: center;
+  vertical-align: middle;
+
+  padding: 12px;
+  border-top: 1px solid #f0f0f0;
+  vertical-align: top;
+}
 
 .confirm-btn {
-  background-color: #4caf50;
-}
+  background-color: #0f9800;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background 0.3s ease;
 
-.confirm-btn:hover {
-  background-color: #388e3c;
-  transform: translateY(-2px); /* Hiệu ứng nổi lên khi hover */
-  box-shadow: 0 4px 10px rgba(56, 142, 60, 0.4);
+  white-space: nowrap; /* 👉 NGĂN chữ xuống dòng */
 }
 
 .delete-btn {
+  display: inline-block;
   background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background 0.3s ease;
 }
 
 .delete-btn:hover {
   background-color: #d32f2f;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(211, 47, 47, 0.4);
 }
-
 
 .swal2-slide-in-right {
   animation: slide-in-right 0.5s ease-out;
+}
+.badge {
+  background-color: red;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 12px;
+  margin-left: 6px;
+  font-weight: bold;
 }
 
 @keyframes slide-in-right {
@@ -686,5 +789,4 @@ font-weight: bold;
 .footer {
   /* Nếu sau này bạn có thêm nội dung footer, giữ lại class này */
 }
-
- </style>
+</style>

@@ -38,6 +38,7 @@
   import { useRoute, useRouter } from 'vue-router';
   import { GetFoodById, GetRestaurantById,changefoodnum} from '../api/FoodSevice.js';
   import Swal from 'sweetalert2';
+  import {emitter} from '../api/eventBus.js';
  
 const route = useRoute();
   const router = useRouter();
@@ -82,7 +83,7 @@ const addToCart = async() => {
     };
      console.log(senddata);
      console.log(food.value.quantity);
-     if(food.value.quantity>1)
+     if(food.value.quantity>=1)
      {  console.log(food.value.quantity);
      try {
     const result = await addOrder(senddata);
@@ -92,6 +93,7 @@ const addToCart = async() => {
     console.log(food.value.quantity-quantityToAdd.value);
     await changefoodnum(route.params.id,food.value.quantity-quantityToAdd.value);
     console.log("Item added to cart:", result);
+    emitter.emit('UpdateCountProduct',' ');
     Swal.fire({
       toast: true,   
     icon: 'success',

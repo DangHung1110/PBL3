@@ -121,5 +121,21 @@ namespace PBL3.Service
                 return orderDetails;
 
        }
+       public async Task<int> GetProductCount(string IDCus)
+{
+    using var conn = GetConnection();
+    await conn.OpenAsync();
+
+    string query = "SELECT COUNT(*) FROM ORDERDETAIL WHERE IDCustomer = @idCustomer AND Status_User='pending'";
+
+    using var cmd = new MySqlCommand(query, conn);
+    cmd.Parameters.AddWithValue("@idCustomer", IDCus);
+
+    object result = await cmd.ExecuteScalarAsync();
+    int count = Convert.ToInt32(result);
+
+    return count;
+}
+
 }
 }

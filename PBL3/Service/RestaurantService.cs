@@ -308,10 +308,17 @@ public class RestaurantService
         using var conn=GetConnection();
         conn.Open();
         DateTime CusConfirmedTime =TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
-        var cmd = new MySqlCommand("INSERT INTO THONGKE(IDRes, CusConfirmedTime, DOANHSO) VALUES(@IDRes, @CusConfirmedTime, @DOANHSO)", conn);
+        var cmd = new MySqlCommand("INSERT INTO THONGKE(IDRes, CusConfirmedTime, Doanhso,IDCustomer,OrderTime,OrderConfirmedTime,Url_Image,FoodName,RestaurantName,Quantity) VALUES(@IDRes, @CusConfirmedTime, @Doanhso,@IDCustomer,@OrderTime,@OrderConfirmedTime,@Url_Image,@FoodName,@RestaurantName,@Quantity)", conn);
         cmd.Parameters.AddWithValue("@IDRes",tk.IDRes);
         cmd.Parameters.AddWithValue("@CusConfirmedTime", CusConfirmedTime);
-        cmd.Parameters.AddWithValue("@DOANHSO", tk.DOANHSO);
+        cmd.Parameters.AddWithValue("@Doanhso", tk.Doanhso);
+          cmd.Parameters.AddWithValue("@IDCustomer", tk.IDCustomer);
+            cmd.Parameters.AddWithValue("@OrderTime", tk.OrderTime);
+              cmd.Parameters.AddWithValue("@OrderConfirmedTime", tk.OrderConfirmedTime);
+        cmd.Parameters.AddWithValue("@FoodName", tk.FoodName);
+        cmd.Parameters.AddWithValue("@RestaurantName", tk.RestaurantName);
+        cmd.Parameters.AddWithValue("@Quantity", tk.Quantity);
+        cmd.Parameters.AddWithValue("@Url_Image", tk.Url_Image);
         cmd.ExecuteNonQuery();
 }
 public void UpdateConfirmedTime(int IDOrder)
@@ -324,8 +331,8 @@ public void UpdateConfirmedTime(int IDOrder)
     cmd.Parameters.AddWithValue("@IDOrder", IDOrder);
     cmd.ExecuteNonQuery();
 }
-public void ChangeFoodNum (string id,int quantity)
-{
+public void ChangeFoodNum (string id, int quantity)
+{   Console.WriteLine(id,quantity);
     using var conn=GetConnection();
     conn.Open();
     var cmd=new MySqlCommand("UPDATE FOOD SET Quantity = @Quantity WHERE IDFood = @IDFood", conn);
@@ -344,7 +351,7 @@ public List<Food> GetFoodByName(string Name)
     {
         Food x=new Food();
         x.IDFood=reader.GetString("IDFood");
-        x.IDRes=reader.GetString("IDRes"); 
+        x.IDRes=reader.GetString("IDRes");
         x.Name=reader.GetString("Name");
         x.Price=reader.GetInt32("Price");
         x.Discount=reader.GetInt32("Discount");
@@ -354,4 +361,31 @@ public List<Food> GetFoodByName(string Name)
         foods.Add(x);
     }
     return foods;
-}}
+}
+public List<Thongke> GetTKData(string IDCustomer)
+{
+    using var conn=GetConnection();
+    conn.Open();
+    var cmd=new MySqlCommand("SELECT * FROM THONGKE WHERE IDCustomer = @IDCustomer", conn);
+    cmd.Parameters.AddWithValue("@IDCustomer", IDCustomer);
+    List<Thongke>tk=new List<Thongke>();
+    using var reader=cmd.ExecuteReader();
+    while(reader.Read())
+    {
+        Thongke x=new Thongke();
+        x.ID=reader.GetInt32("ID");
+        x.IDRes=reader.GetString("IDRes");
+        x.CusConfirmedTime=reader.GetDateTime("CusConfirmedTime");
+        x.Doanhso=reader.GetInt32("Doanhso");
+        x.IDCustomer=reader.GetString("IDCustomer");
+        x.OrderTime=reader.GetDateTime("OrderTime");
+        x.OrderConfirmedTime=reader.GetDateTime("OrderConfirmedTime");
+        x.Quantity=reader.GetInt32("Quantity");
+        x.RestaurantName=reader.GetString("RestaurantName");
+        x.FoodName=reader.GetString("FoodName");
+        x.Url_Image=reader.GetString("Url_Image");
+        tk.Add(x);
+    }
+    return tk;
+}
+}

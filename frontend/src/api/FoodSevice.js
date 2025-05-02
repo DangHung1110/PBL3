@@ -87,7 +87,10 @@ export const GetRestaurantById = async (IDRes) => {
 }
 export const changefoodnum=async(id,quantity)=>{
   try{
-    const response=await axios.put(`http://localhost:5299/api/Restaurant/ChangeFoodNum/${id}`,quantity);
+    console.log(id,quantity);
+    const response=await axios.put(`http://localhost:5299/api/Restaurant/ChangeFoodNum/${id}`,{
+      quantity: quantity
+    });
     return response.data;
   }
   catch(error)

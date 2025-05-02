@@ -10,7 +10,8 @@ import Dashboard from "./components/dashboard.vue"
 import AddFood from "./components/AddFood.vue"
 import Restaurant from "./components/RestaurantList.vue";
 import OderFood from "./components/OderFood.vue";
-import CustomerStatistic from "./components/CustomerStatistic.vue";
+import OrderHistory from "./components/OrderHistory.vue";
+
 import RestaurantOrderList from "./components/RestaurantOderList.vue";
 const routes = [
     {
@@ -66,11 +67,11 @@ const routes = [
             }
         ]
     },
-    {path: "/order-history",
-     name: 'OrderHistory',
-     component: CustomerStatistic
-
-    }
+   {
+    path:"/orderHistory",
+    component: OrderHistory,
+    name: 'OrderHistory',
+   }
 ];
 
 const router = createRouter({

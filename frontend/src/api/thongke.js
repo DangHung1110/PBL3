@@ -12,3 +12,14 @@ export const Thongke=async (thongke)=>{
 
 
 }
+export const getTKData=async (IDCustomer)=>{
+    try{
+        const response=await axios.get(`http://localhost:5299/api/Restaurant/GetTKData/${IDCustomer}`);
+        return response.data;
+    }
+    catch(error)
+    {
+        console.error("Lỗi khi gọi API lấy thống kê:",error);
+        throw error;
+    }
+}
