@@ -145,20 +145,41 @@ public class RestaurantService
         cmd.ExecuteNonQuery();
     }
 
-    public void UpdateFood(Food food)
+    public bool UpdateFoodPartial(string idFood, int? price, int? quantity, int? discount)
     {
         using var conn = GetConnection();
+
         conn.Open();
 
-        var cmd = new MySqlCommand("UPDATE FOOD SET Name = @Name, Price = @Price, Discount = @Discount, Category = @Category, Quantity = @Quantity WHERE IDFood = @IDFood", conn);
-        cmd.Parameters.AddWithValue("@IDFood", food.IDFood);
-        cmd.Parameters.AddWithValue("@Name", food.Name);
-        cmd.Parameters.AddWithValue("@Price", food.Price);
-        cmd.Parameters.AddWithValue("@Discount", food.Discount);
-        cmd.Parameters.AddWithValue("@Category", food.Category);
-        cmd.Parameters.AddWithValue("@Quantity", food.Quantity);
+        List<string> updateFields = new List<string>();
+        MySqlCommand cmd = new MySqlCommand();
+        cmd.Connection = conn;
 
-        cmd.ExecuteNonQuery();
+        if (price.HasValue)
+        {
+            updateFields.Add("PRICE = @Price");
+            cmd.Parameters.AddWithValue("@Price", price.Value);
+        }
+        if (quantity.HasValue)
+        {
+            updateFields.Add("Quantity = @Quantity");
+            cmd.Parameters.AddWithValue("@Quantity", quantity.Value);
+        }
+        if (discount.HasValue)
+        {
+            updateFields.Add("Discount = @Discount");
+            cmd.Parameters.AddWithValue("@Discount", discount.Value);
+        }
+
+        if (updateFields.Count == 0)
+            return false; // Không có gì để cập nhật
+
+        string sql = $"UPDATE FOOD SET {string.Join(", ", updateFields)} WHERE IDFood = @IDFood";
+        cmd.CommandText = sql;
+        cmd.Parameters.AddWithValue("@IDFood", idFood);
+
+        return cmd.ExecuteNonQuery() > 0;
+
     }
 
     public List<Food> GetFoodsByRestaurant(string IDRes)
@@ -253,7 +274,7 @@ public class RestaurantService
         }
         return null;
     }
-    
+
     public async Task<List<OrderDetailDTO>> GetOrderDetailsByRestaurant(string idRes)
     {
         var orders = new List<OrderDetailDTO>();
@@ -286,7 +307,8 @@ public class RestaurantService
                     while (await reader.ReadAsync())
                     {
                         orders.Add(new OrderDetailDTO
-                        {    IDOrder= reader.GetInt32("IDOrder"),
+                        {
+                            IDOrder = reader.GetInt32("IDOrder"),
                             IDCustomer = reader.GetString("IDCustomer"),
                             IDFood = reader.GetString("IDFood"),
                             IDRes = reader.GetString("IDRes"),
@@ -305,53 +327,57 @@ public class RestaurantService
     }
     public void AddTKData(Thongke tk)
     {
-        using var conn=GetConnection();
+        using var conn = GetConnection();
         conn.Open();
-        DateTime CusConfirmedTime =TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
+        DateTime CusConfirmedTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
         var cmd = new MySqlCommand("INSERT INTO THONGKE(IDRes, CusConfirmedTime, DOANHSO) VALUES(@IDRes, @CusConfirmedTime, @DOANHSO)", conn);
-        cmd.Parameters.AddWithValue("@IDRes",tk.IDRes);
+        cmd.Parameters.AddWithValue("@IDRes", tk.IDRes);
         cmd.Parameters.AddWithValue("@CusConfirmedTime", CusConfirmedTime);
         cmd.Parameters.AddWithValue("@DOANHSO", tk.DOANHSO);
         cmd.ExecuteNonQuery();
-}
-public void UpdateConfirmedTime(int IDOrder)
-{
-    using var conn=GetConnection();
-    conn.Open();
-    DateTime datetime= TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
-    var cmd = new MySqlCommand("UPDATE ORDERDETAIL SET OrderConfirmedTime = @OrderConfirmedTime,Status_Restaurant='confirmed' WHERE IDOrder = @IDOrder", conn);
-    cmd.Parameters.AddWithValue("@OrderConfirmedTime", datetime);
-    cmd.Parameters.AddWithValue("@IDOrder", IDOrder);
-    cmd.ExecuteNonQuery();
-}
-public void ChangeFoodNum (string id,int quantity)
-{
-    using var conn=GetConnection();
-    conn.Open();
-    var cmd=new MySqlCommand("UPDATE FOOD SET Quantity = @Quantity WHERE IDFood = @IDFood", conn);
-    cmd.Parameters.AddWithValue("@IDFood", id);
-    cmd.Parameters.AddWithValue("@Quantity", quantity);
-    cmd.ExecuteNonQuery();
-}
-public List<Food> GetFoodByName(string Name)
-{   List<Food> foods=new List<Food>();
-    using var conn=GetConnection();
-    conn.Open();
-    var cmd=new MySqlCommand("SELECT * FROM FOOD WHERE Name = @Name", conn);
-    cmd.Parameters.AddWithValue("@Name", Name);
-    using var reader=cmd.ExecuteReader();
-    while(reader.Read())
-    {
-        Food x=new Food();
-        x.IDFood=reader.GetString("IDFood");
-        x.IDRes=reader.GetString("IDRes"); 
-        x.Name=reader.GetString("Name");
-        x.Price=reader.GetInt32("Price");
-        x.Discount=reader.GetInt32("Discount");
-        x.Category=reader.GetString("Category");
-        x.Url_Image=reader.GetString("Url_Image");
-        x.Quantity=reader.GetInt32("Quantity");
-        foods.Add(x);
     }
-    return foods;
-}}
+    public void UpdateConfirmedTime(int IDOrder)
+    {
+        using var conn = GetConnection();
+        conn.Open();
+        DateTime datetime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
+        var cmd = new MySqlCommand("UPDATE ORDERDETAIL SET OrderConfirmedTime = @OrderConfirmedTime,Status_Restaurant='confirmed' WHERE IDOrder = @IDOrder", conn);
+        cmd.Parameters.AddWithValue("@OrderConfirmedTime", datetime);
+        cmd.Parameters.AddWithValue("@IDOrder", IDOrder);
+        cmd.ExecuteNonQuery();
+    }
+    public void ChangeFoodNum(string id, int quantity)
+    {
+        using var conn = GetConnection();
+        conn.Open();
+        var cmd = new MySqlCommand("UPDATE FOOD SET Quantity = @Quantity WHERE IDFood = @IDFood", conn);
+        cmd.Parameters.AddWithValue("@IDFood", id);
+        cmd.Parameters.AddWithValue("@Quantity", quantity);
+        cmd.ExecuteNonQuery();
+    }
+
+
+    public List<Food> GetFoodByName(string Name)
+    {
+        List<Food> foods = new List<Food>();
+        using var conn = GetConnection();
+        conn.Open();
+        var cmd = new MySqlCommand("SELECT * FROM FOOD WHERE Name = @Name", conn);
+        cmd.Parameters.AddWithValue("@Name", Name);
+        using var reader = cmd.ExecuteReader();
+        while (reader.Read())
+        {
+            Food x = new Food();
+            x.IDFood = reader.GetString("IDFood");
+            x.IDRes = reader.GetString("IDRes");
+            x.Name = reader.GetString("Name");
+            x.Price = reader.GetInt32("Price");
+            x.Discount = reader.GetInt32("Discount");
+            x.Category = reader.GetString("Category");
+            x.Url_Image = reader.GetString("Url_Image");
+            x.Quantity = reader.GetInt32("Quantity");
+            foods.Add(x);
+        }
+        return foods;
+    }
+}

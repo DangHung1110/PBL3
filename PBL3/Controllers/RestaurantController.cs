@@ -88,23 +88,15 @@ namespace PBL3.Controllers
         }
 
         // UPDATE
-        [HttpPut("updatefood")]
-        public IActionResult UpdateFood([FromBody] Food food)
+        [HttpPatch("updateFood/{idFood}")]
+        public IActionResult UpdateFood(string idFood, [FromBody] FoodUpdateDTO request)
         {
-            if (string.IsNullOrEmpty(food.Name) || food.Price < 0)
-            {
-                return BadRequest(new { Message = "Invalid food data." });
-            }
+            bool success = _restaurantservice.UpdateFoodPartial(idFood, request.Price, request.Quantity, request.Discount);
 
-            try
-            {
-                _restaurantservice.UpdateFood(food);
-                return Ok(new { Message = "Food updated successfully." });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { Message = "Update failed", Error = ex.Message });
-            }
+            if (!success)
+                return BadRequest("No fields to update or invalid ID.");
+
+            return Ok("Food updated successfully.");
         }
 
         [HttpGet("foods/{IDRes}")]
@@ -175,10 +167,11 @@ namespace PBL3.Controllers
             }
         }
         [HttpPut("ChangeFoodNum/{id}")]
-        public IActionResult ChangeFoodNum(string id,int quantity)
+        public IActionResult ChangeFoodNum(string id, int quantity)
         {
-            try{
-                _restaurantservice.ChangeFoodNum(id,quantity);
+            try
+            {
+                _restaurantservice.ChangeFoodNum(id, quantity);
                 return Ok(new { Message = "Food quantity updated successfully." });
             }
             catch (Exception ex)
@@ -189,7 +182,7 @@ namespace PBL3.Controllers
         [HttpGet("GetFoodByName/{Name}")]
         public IActionResult GetFoodByName(String Name)
         {
-            var food=_restaurantservice.GetFoodByName(Name);
+            var food = _restaurantservice.GetFoodByName(Name);
             if (food == null)
             {
                 return NotFound(new { Message = "Food not found." });

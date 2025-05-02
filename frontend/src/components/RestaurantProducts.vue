@@ -31,7 +31,7 @@
               <td>{{ product.quantity }}</td>
               <td><img :src="product.image" alt="product image" class="product-image" /></td>
               <td class="action-buttons">
-                <button @click="editProduct(product.id)" class="btn-edit">Sửa</button>
+                <button @click="editProduct(product)" class="btn-edit">Sửa</button>
                 <button @click="deleteProduct(product.id)" class="btn-delete">Xóa</button>
               </td>
             </tr>
@@ -39,29 +39,33 @@
         </table>
       </div>
 
-      <RouterView />
+      <UpdateFoodPopup
+        v-if="showPopup"
+        :visible="showPopup"
+        :food="selectedProduct"
+        @close="showPopup = false"
+        @updated="fetchFoods"
+      />
     </main>
   </div>
 </template>
 
-
-
 <script setup>
-import { ref, watch, onMounted} from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import { getFoodsByRestaurantId, deleteFood } from '../api/FoodSevice.js'; // Import your API function
+import { getFoodsByRestaurantId, deleteFood } from '../api/FoodSevice.js'; 
+import UpdateFoodPopup from '../components/UpdateFood.vue'; // Import the popup component
 
 const router = useRouter();
 const products = ref([]);
+const showPopup = ref(false);
+const selectedProduct = ref(null);
 const route = useRoute();
 
 const fetchFoods = async () => {
   const IDRes = localStorage.getItem("IDRes");
-  console.log("IDRes:", IDRes); // log IDRes để kiểm tra
   try {
     const data = await getFoodsByRestaurantId(IDRes);
-    console.log("Dữ liệu từ API:", data); // log kết quả
-
     products.value = data.map(item => ({
       id: item.idFood,
       name: item.name,
@@ -77,15 +81,11 @@ const fetchFoods = async () => {
 };
 
 const deleteProduct = async (id) => {
-  console.log("Đang xoá món:", id); // kiểm tra có bấm đúng không
-
   if (confirm("Bạn có chắc muốn xoá món này không?")) {
     try {
       await deleteFood(id);
       products.value = products.value.filter(p => p.id !== id);
-      console.log("Xoá thành công");
     } catch (error) {
-      console.error("Xoá thất bại:", error);
       alert("Có lỗi xảy ra khi xoá món ăn.");
     }
   }
@@ -93,6 +93,11 @@ const deleteProduct = async (id) => {
 
 const addProduct = () => {
   router.push({ path: '/restaurant/dashboard/product/addFood' });
+};
+
+const editProduct = (product) => {
+  selectedProduct.value = product;
+  showPopup.value = true;
 };
 
 onMounted(fetchFoods);
