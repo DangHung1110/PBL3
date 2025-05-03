@@ -3,9 +3,7 @@
     <!-- Sidebar -->
     <aside class="sidebar">
       <div class="logo">
-        <div class="logo-food">
-          <i class="fa-solid fa-utensils"></i>
-        </div>
+        <div class="logo-food"><i class="fa-solid fa-utensils"></i></div>
         <div class="Name">GRAP FOOD</div>
       </div>
       <nav class="menu">
@@ -16,12 +14,13 @@
       </nav>
     </aside>
 
-    <!-- Main Content -->
+    <!-- Nội dung động sẽ hiển thị tại đây -->
     <div class="main-content">
       <router-view></router-view>
     </div>
   </div>
 </template>
+
 
 <script setup>
 

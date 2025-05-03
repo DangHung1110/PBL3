@@ -38,35 +38,36 @@ const routes = [
         ],
     },
     {
-        path: "/restaurant/dashboard", // Trang Dashboard chính
-        name: 'Dashboard',
-        component: RestaurantDashboard,
+        path: "/restaurant/dashboard",
+        name: "Dashboard",
+        component: RestaurantDashboard, // layout chứa sidebar + router-view
         children: [
-            {
-                path: '', 
-                name: 'DashboardHome',
-                component: Dashboard, 
-            },
-            {
-                path: 'product', // Trang sản phẩm
-                name: 'Product',
-                component: RestaurantProduct,
-                children: [ 
-                    {
-                        path:'addFood', // Thêm món ăn
-                        name: 'AddFood',
-                        component: AddFood,
-                    }
-                ]
-            },
-            
-            {
-                path: 'RestaurantOrderList',
-                name: 'RestaurantOrderList',
-                component: RestaurantOrderList,
-            }
-        ]
-    },
+          {
+            path: "",
+            name: "DashboardHome",
+            component: Dashboard,
+          },
+          {
+            path: "product",
+            name: "Product",
+            component: RestaurantProduct,
+            children: [
+              {
+                path: "addFood",
+                name: "AddFood",
+                component: AddFood,
+              },
+            ],
+          },
+         
+          {
+            path: "RestaurantOrderList",
+            name: "RestaurantOrderList",
+            component: RestaurantOrderList,
+          },
+        ],
+      }
+      ,
    {
     path:"/orderHistory",
     component: OrderHistory,

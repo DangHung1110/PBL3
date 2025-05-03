@@ -272,7 +272,8 @@ public class RestaurantService
                     FoodName,
                     RestaurantName,
                     Quantity,
-                    TotalPrice
+                    TotalPrice,
+                    Status_Restaurant
                 FROM ORDERDETAIL
                 WHERE IDRes = @idRes
             ";
@@ -294,7 +295,9 @@ public class RestaurantService
                             FoodName = reader.GetString("FoodName"),
                             RestaurantName = reader.GetString("RestaurantName"),
                             Quantity = reader.GetInt32("Quantity"),
-                            TotalPrice = reader.GetInt32("TotalPrice")
+                            TotalPrice = reader.GetInt32("TotalPrice"),
+                            Status_Restaurant= reader.GetString("Status_Restaurant")
+
                         });
                     }
                 }

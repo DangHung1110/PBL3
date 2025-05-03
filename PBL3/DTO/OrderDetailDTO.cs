@@ -10,4 +10,5 @@ public class OrderDetailDTO
     public string RestaurantName { get; set; }
     public int Quantity { get; set; }
     public int TotalPrice { get; set; }
+    public string Status_Restaurant { get; set; }
 }
