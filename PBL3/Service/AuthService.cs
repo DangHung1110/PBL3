@@ -17,93 +17,80 @@ namespace PBL3.Service
         {
             return new MySqlConnection(_iconfiguration.GetConnectionString("DefaultConnection"));
         }
-        // public string Login(String Name, String Pass)
-        // {
-        //     using var conn = GetConnection();
-        //     conn.Open();
-        //     var cmd = new MySqlCommand("SELECT IDCustomer FROM CUSTOMER WHERE NAME=@Name AND PASS=@Pass", conn);
-        //     cmd.Parameters.AddWithValue("@Name", Name);
-        //     cmd.Parameters.AddWithValue("@Pass", Pass);
-        //     var Result = cmd.ExecuteScalar();
-        //     if (Result != null)
-        //     {
-        //         return Result.ToString();
-        //     }
-        //     else
-        //     {
-        //         return null;
-        //     }
+      
 
+      public Object Login(string name, string pass)
+{
+    using var conn = GetConnection();
+    conn.Open();
 
-
-        // }
-        // public string Login2(string Name, string Pass)
-        // {
-        //     using var conn = GetConnection();
-        //     conn.Open();
-        //     var cmd = new MySqlCommand("SELECT IDRes FROM RESTAURANT WHERE Name=@Name AND Pass=@Pass ", conn);
-        //     cmd.Parameters.AddWithValue("@Name", Name);
-        //     cmd.Parameters.AddWithValue("@Pass", Pass);
-        //     var result = cmd.ExecuteScalar();
-        //     if (result != null)
-        //     {
-        //         return result.ToString();
-        //     }
-        //     else
-        //     {
-        //         return null;
-        //     }
-        // }
-
-        public string Login(string name, string pass, string role)
+    var cmd = new MySqlCommand("SELECT IDCustomer, Name, Address, Phone FROM CUSTOMER WHERE Name=@Name AND Pass=@Pass", conn);
+    cmd.Parameters.AddWithValue("@Name", name);
+    cmd.Parameters.AddWithValue("@Pass", pass);
+    
+    using var reader = cmd.ExecuteReader();
+    if (reader.Read())
+    {
+        var x = new Customer
         {
-            using var conn = GetConnection();
-            conn.Open();
+            IDCustomer = reader.GetString("IDCustomer"),
+            Name = reader.GetString("Name"),
+            Address = reader.GetString("Address"),
+            Phone = reader.GetString("Phone"),
+            Role = "Customer"
+        };
+        return x;
+    }
 
-            // Chọn bảng tương ứng dựa trên role
-            string query = role == "user"
-                ? "SELECT IDCustomer FROM CUSTOMER WHERE Name=@Name AND Pass=@Pass"
-                : "SELECT IDRes FROM RESTAURANT WHERE Name=@Name AND Pass=@Pass";
+    reader.Close(); 
 
-            var cmd = new MySqlCommand(query, conn);
-            cmd.Parameters.AddWithValue("@Name", name);
-            cmd.Parameters.AddWithValue("@Pass", pass);
+    var cc = new MySqlCommand("SELECT IDRes, Name, Address, Phone FROM RESTAURANT WHERE Name=@Name AND Pass=@Pass", conn);
+    cc.Parameters.AddWithValue("@Name", name);
+    cc.Parameters.AddWithValue("@Pass", pass);
+    
+    using var reader2 = cc.ExecuteReader();
+    if (reader2.Read())
+    {
+        var x = new Restaurant
+        {
+            IDRes = reader2.GetString("IDRes"),
+            Name = reader2.GetString("Name"),
+            Address = reader2.GetString("Address"),
+            Phone = reader2.GetString("Phone"),
+            Role = "Restaurant"
+        };
+        return x;
+    }
 
-            var result = cmd.ExecuteScalar();
-            return JsonSerializer.Serialize(new
-            {
-                success = true,
-                role = role,
-                id = result?.ToString()
-            });
-            // Trả về ID nếu tồn tại, null nếu không
-        }
+    return null;
+}
+
         public int SignUp([FromBody] Customer customer)
         {
             using var conn = GetConnection();
             conn.Open();
 
-            // Kiểm tra xem tên khách hàng đã tồn tại chưa
+        
             var checkCmd = new MySqlCommand("SELECT COUNT(*) FROM CUSTOMER WHERE Name=@Name", conn);
             checkCmd.Parameters.AddWithValue("@Name", customer.Name);
             var check = Convert.ToInt32(checkCmd.ExecuteScalar());
             if (check > 0)
             {
-                return 1;  // Tên đã tồn tại
+                return 1;  
             }
 
-            // Sinh IDCustomer dạng CUS001, CUS002,...
+         
             var idCmd = new MySqlCommand("SELECT IDCustomer FROM CUSTOMER WHERE IDCustomer LIKE 'CUS%' ORDER BY IDCustomer DESC LIMIT 1", conn);
             string newID = "CUS000";
             var lastIDObj = idCmd.ExecuteScalar();
             if (lastIDObj != null)
             {
-                string lastID = lastIDObj.ToString();  // VD: "CUS005"
-                int number = int.Parse(lastID.Substring(3));  // Lấy phần số: 5
-                newID = "CUS" + (number + 1).ToString("D3");  // Tăng lên: "CUS006"
+                string lastID = lastIDObj.ToString();  
+                int number = int.Parse(lastID.Substring(3));  
+                newID = "CUS" + (number + 1).ToString("D3");
             }
 
-            // Thêm khách hàng vào cơ sở dữ liệu với IDCustomer sinh ra
+        
             var cmd = new MySqlCommand("INSERT INTO CUSTOMER (IDCustomer, Name, Address, Phone, Pass) VALUES(@IDCustomer, @Name, @Address, @Phone, @Pass)", conn);
             cmd.Parameters.AddWithValue("@IDCustomer", newID);
             cmd.Parameters.AddWithValue("@Name", customer.Name);
@@ -119,29 +106,29 @@ namespace PBL3.Service
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
-                return 2;  // Lỗi hệ thống
+                return 2; 
             }
         }
 
 
         public int Signup2([FromBody] Restaurant res)
         {
-            // Kiểm tra nếu restaurant null
+           
             if (res == null)
             {
-                return 1;  // Có thể trả về mã lỗi tùy chỉnh hoặc thông báo lỗi ở đây
+                return 1;  
             }
 
             Restaurant.SetNextID();
-            // Lấy thông tin từ restaurant
-            string IDRes = Restaurant.ID;  // ID đã được tạo tự động khi khởi tạo Restaurant
+         
+            string IDRes = Restaurant.ID;  
             string Name = res.Name;
             string Address = res.Address;
             string Phone = res.Phone;
             string Pass = res.Pass;
             string Url_Image = res.Url_Image;
 
-            // Kiểm tra nhà hàng đã tồn tại trong cơ sở dữ liệu
+       
             using var conn = GetConnection();
             conn.Open();
             var cmd = new MySqlCommand("SELECT COUNT(*) FROM RESTAURANT WHERE Name=@Name", conn);
@@ -150,11 +137,11 @@ namespace PBL3.Service
 
             if (Check > 0)
             {
-                return 1;  // Nhà hàng đã tồn tại
+                return 1;  
             }
             else
             {
-                // Thêm nhà hàng mới vào cơ sở dữ liệu
+                
                 var cmd2 = new MySqlCommand("INSERT INTO RESTAURANT (IDRes, Name, Address, Phone, Pass, Url_Image) VALUES(@IDRes, @Name, @Address, @Phone, @Pass, @Url_Image)", conn);
                 cmd2.Parameters.AddWithValue("@Url_Image", Url_Image);
                 cmd2.Parameters.AddWithValue("@IDRes", IDRes);
@@ -168,17 +155,17 @@ namespace PBL3.Service
                     int rowAffected = cmd2.ExecuteNonQuery();
                     if (rowAffected > 0)
                     {
-                        return 0;  // Đăng ký thành công
+                        return 0;  
                     }
                     else
                     {
-                        return 1;  // Lỗi khi thêm vào cơ sở dữ liệu
+                        return 1; 
                     }
                 }
                 catch (Exception ex)
                 {
-                    // Xử lý lỗi, có thể ghi log hoặc thông báo lỗi chi tiết
-                    return 2;  // Mã lỗi cho lỗi hệ thống (database connection, etc.)
+                    
+                    return 2;  
                 }
             }
         }

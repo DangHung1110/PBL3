@@ -18,6 +18,7 @@
         public string Pass { get; set; }
         public List<Food> Menu { get; set; }
         public string Url_Image { get; set; }
+        public string Role {get;set;}= "Restaurant";
 
         public Restaurant()
         {

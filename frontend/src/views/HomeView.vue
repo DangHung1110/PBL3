@@ -68,10 +68,10 @@
       <div class="content">
         <router-view></router-view>
       </div>
-
+      <div v-if="isLoggedIn ">
       <div v-if="orderHistoryPopupOpen" class="popup">
         <div class="popup-content">
-          <h2 class="popup-title">Đơn hàng</h2>
+          <h2 class="popup-title"> 🛒 Đơn hàng</h2>
           <button
             class="close-button"
             @click="closeOrderHistoryPopup"
@@ -128,6 +128,9 @@
                   >
                     Xác nhận
                   </button>
+                  <div v-else>
+                     Đang chờ...
+                  </div>
                 </td>
                 <td>
                   <button class="delete-btn" @click="DeleteFFromOD(item.id)">
@@ -138,10 +141,12 @@
                 <td v-if="item.Status_Restaurant === 'confirmed'">
                   {{ formatDate(item.OrderConfirmedTime) }}
                 </td>
+                <td v-else>Đang chờ...</td>
               </tr>
             </tbody>
           </table>
         </div>
+      </div>
       </div>
 
       <div class="footer"></div>
@@ -204,7 +209,7 @@ const DeleteFFromOD = async (id) => {
     alert("Có lỗi xảy ra khi xoá món ăn.");
   }
 };
-// Hàm lấy thống kê từ API
+
 const getThongkeData = async () => {
   const ID = localStorage.getItem("IDRes");
   try {
@@ -242,7 +247,6 @@ emitter.on("Ordercount", async () => {
   await updateOrderCount();
 });
 
-// Mở popup và gọi API
 const openOrderHistoryPopup = async () => {
   orderHistoryPopupOpen.value = true;
   await getThongkeData();
@@ -261,11 +265,12 @@ const toggleDropdown = () => {
 
 const handleLogout = () => {
   localStorage.removeItem("IDRes");
-  localStorage.removeItem("role");
-  localStorage.removeItem("username");
+  localStorage.removeItem("Role");
+  localStorage.removeItem("UserName");
   isLoggedIn.value = false;
   username.value = "";
   router.replace("/login");
+
 };
 
 const navigateTo = (path) => {
@@ -277,10 +282,15 @@ const navigateTo = (path) => {
 };
 
 const checkLogin = () => {
-  const storedUsername = localStorage.getItem("username");
+  const storedUsername = localStorage.getItem("UserName");
   isLoggedIn.value = !!storedUsername;
   username.value = storedUsername || "";
-};
+  const role=localStorage.getItem("Role");
+  if(role==="Restaurant")
+  {
+    router.push("/restaurant/dashboard");
+  }};
+emitter.on("Login",checkLogin);
 const FinishedOrder = async (
   idOrder,
   TotalPrice,
@@ -654,9 +664,9 @@ onMounted(async () => {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: rgb(255, 255, 255);
+  background: rgb(252, 238, 220);
   border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 20px rgb(0, 0, 0);
   z-index: 1000;
   width: 90vw;
   max-width: 1000px;

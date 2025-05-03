@@ -25,8 +25,9 @@
   
   // Hàm đăng xuất
   const handleLogout = () => {
-    localStorage.removeItem("role");
-    localStorage.removeItem("username");
+    localStorage.removeItem("Role");
+    localStorage.removeItem("UserName");
+    localStorage.removeItem("IDRes");
     router.replace("/login");  // Điều hướng về trang đăng nhập
   };
 

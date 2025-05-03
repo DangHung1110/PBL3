@@ -3,6 +3,7 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using PBL3.Service;
 using PBL3.Models;
+using PBL3.DTO;
 namespace PBL3.Controllers
 {
     [Route("api/auth")]
@@ -17,17 +18,21 @@ namespace PBL3.Controllers
       
 
         [HttpPost("login")]
-        public IActionResult Login([FromBody] JsonElement jsonElement)
+        public IActionResult Login([FromBody] LoginDTO loginDTO)
         {
-            string name = jsonElement.GetProperty("Name").GetString();
-            string pass = jsonElement.GetProperty("Pass").GetString();
-            string role = jsonElement.GetProperty("Role").GetString(); // Xác định đăng nhập từ đâu
-
-            var userId = _authservice.Login(name, pass, role);
-            if (userId != null)
+            string name =loginDTO.Name;
+            string pass =loginDTO.Password;
+           Object result = _authservice.Login(name, pass);
+            if (result != null && result.GetType().GetProperty("Role").GetValue(result).ToString()=="Customer")
             {
-                return Ok(new { Message = "Login Successful", UserID = userId, Role = role });
+                return Ok(new { Message = "Login Successful", UserID=result.GetType().GetProperty("IDCustomer").GetValue(result),Role=result.GetType().GetProperty("Role").GetValue(result),UserName=result.GetType().GetProperty("Name").GetValue(result) });
             }
+            else
+            if(result != null && result.GetType().GetProperty("Role").GetValue(result).ToString()=="Restaurant")
+            {
+                return Ok(new { Message = "Login Successful", UserID=result.GetType().GetProperty("IDRes").GetValue(result),Role=result.GetType().GetProperty("Role").GetValue(result),UserName=result.GetType().GetProperty("Name").GetValue(result) });
+            }
+            
             return Unauthorized(new { Message = "Invalid Credentials" });
         }
 
