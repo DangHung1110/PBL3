@@ -1,6 +1,6 @@
 <template> 
   <div class="cart-container">
-    <h3>Đơn hàng chờ xác nhận</h3>
+    <h3>📝Đơn hàng chờ xác nhận</h3>
 
     <div class="cart-header">
       <span class="col-name">Sản Phẩm</span>
@@ -48,6 +48,7 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { ResOrderList, UpdateConfirmedTime} from '../api/order.js';  
+import Swal from 'sweetalert2';
 const formatCurrency = (value) => {
   return new Intl.NumberFormat('vi-VN', {
     style: 'currency',
@@ -95,10 +96,32 @@ const confirmOrder = async (IDOrder) => {
       updatedOrder.Status_Restaurant = 'confirmed'; 
     }
     console.log(response);
-    alert("Đơn hàng đã được xác nhận thành công!");
+    Swal.fire({
+      toast: true,   
+    icon: 'success',
+    title: 'THÔNG BÁO',
+    text: 'Đơn hàng đã được xác nhận thành công!',
+    timer: 3000,
+    position: 'bottom-end',
+    timerProgressBar: true,
+    showConfirmButton: false,
+    showClass: {
+      popup: 'swal2-slide-in-right' }}
+    );
   } catch (error) {
     console.error('Lỗi khi xác nhận đơn hàng:', error);
-    alert("Đã xảy ra lỗi trong quá trình xác nhận đơn hàng!");
+     Swal.fire({
+          toast: true,   
+        icon: 'error',
+        title: 'THÔNG BÁO',
+        text: 'Lỗi xác nhận đơn hàng',
+        timer: 3000,
+        position: 'bottom-end',
+        timerProgressBar: true,
+        showConfirmButton: false,
+        showClass: {
+          popup: 'swal2-slide-in-right' }}
+        );
   }
 };
 </script>
@@ -122,7 +145,9 @@ const confirmOrder = async (IDOrder) => {
   border-radius: 12px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
-
+.col-name{
+   margin-left:20%;
+}
 h3 {
   font-size: 24px;
   color: #087404;
@@ -237,6 +262,20 @@ h3 {
 
 .delivery-icon {
   font-size: 15px;
+}
+.swal2-slide-in-right {
+  animation: slide-in-right 0.5s ease-out;
+}
+
+@keyframes slide-in-right {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
 

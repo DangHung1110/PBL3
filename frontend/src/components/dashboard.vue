@@ -1,5 +1,7 @@
 <template>
-    <!-- Header -->
+    <div class="container">
+
+   
     <header class="header">
       <div class="menu-toggle">&#9776;</div>
       <div class="user-info">
@@ -7,15 +9,15 @@
       </div>
     </header>
   
-    <!-- Dashboard Content -->
+
     <div class="main-content">
       <div class="dashboard-overview">
          <OrderList />
       </div>
   
-      <h2>Thu nhập 30 ngày gần đây nhất</h2>
-      <div class="chart-placeholder">Biểu đồ</div>
+     
     </div>
+  </div>
   </template>
   
   <script setup>
@@ -23,51 +25,62 @@
   import OrderList from './RestaurantOderList.vue';
   const router = useRouter();
   
-  // Hàm đăng xuất
+
   const handleLogout = () => {
     localStorage.removeItem("Role");
     localStorage.removeItem("UserName");
     localStorage.removeItem("IDRes");
-    router.replace("/login");  // Điều hướng về trang đăng nhập
+    router.replace("/login");  
   };
 
-  const viewOderDetail = () => {
-    router.push({ name: 'RestaurantOrderList' }); // Điều hướng đến trang chi tiết đơn hàng
-  };
+
 
   </script>
   
   <style scoped>
-/* Header */
+.container {
+ 
+  background: url("https://xoaimedia.com/wp-content/uploads/2021/08/composition-delicious-indonesian-bakso.jpg" ) no-repeat center center/cover;
+ 
+    display:flex;
+    flex-direction:column;
+    margin-top:0px;
+  
+}
 .header {
   display: flex;
   justify-content: space-between;
+
   align-items: center;
   padding: 16px 24px;
-  background-color: #ff8818; /* màu đỏ Shopee */
+  background-color: #0eac09; /* màu đỏ Shopee */
   color: white;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
   font-size: 16px;
   font-weight: 500;
 }
-
+.container{
+  display:flex;
+}
 .menu-toggle {
   font-size: 24px;
   cursor: pointer;
+  border-radius:50%;
 }
 
-/* User Info */
+
 .user-info {
   display: flex;
   align-items: center;
   gap: 16px;
 }
 
-/* Logout Button */
+
 .logout-button {
-  background-color: white;
-  color: #f94c43;
-  border: 1.5px solid #f94c43;
+  background-color: rgb(255, 149, 0);
+  color: #ffffff;
+  border-radius:20%;
+  border: 1.5px solid #ffffff;
   padding: 8px 18px;
   font-size: 14px;
   font-weight: 600;
@@ -76,17 +89,45 @@
   transition: 0.2s ease;
 }
 
-.logout-button:hover {
-  background-color: #fef0ef;
+.logout-button {
+  background-color:orange;
+  color: #ffffff;
+  border: 1px solid #ffffff;
+  padding: 10px 24px;
+  font-size: 15px;
+  font-family: 'Poppins', 'Segoe UI', sans-serif;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(4px);
 }
 
-/* Main Content */
-.main-content {
-  padding: 30px 24px;
-  background: #f5f5f5;
-  min-height: 100vh;
-  font-family: 'Segoe UI', 'Poppins', sans-serif;
+.logout-button:hover {
+  background-color: #ff0000;
+  color: white;
+  border-color: #111;
+  transform: translateY(-1px);
 }
+
+.logout-button:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+
+
+
+.main-content {
+  padding: 0px 0px;
+
+ 
+  min-height: 200vh;
+  font-family: 'Segoe UI', 'Poppins', sans-serif;
+  border-radius: 12px;
+  backdrop-filter: blur(0px); /* hiệu ứng mờ nền đẹp */
+}
+
 
 /* Dashboard Overview */
 .dashboard-overview {
@@ -94,6 +135,7 @@
   flex-wrap: wrap;
   gap: 16px;
   margin-bottom: 32px;
+  margin-left:0
 }
 
 .overview-card {
@@ -116,7 +158,7 @@
   transform: translateY(-2px);
 }
 
-/* Card Colors */
+
 .yellow {
   background: linear-gradient(135deg, #ffe57f, #ff9a8b);
   color: #4a4a4a;
@@ -132,7 +174,6 @@
   color: #3f3f3f;
 }
 
-/* Section Title */
 h2 {
   font-size: 20px;
   color: #333;
@@ -140,7 +181,7 @@ h2 {
   font-weight: 600;
 }
 
-/* Chart Placeholder */
+
 .chart-placeholder {
   background: white;
   height: 400px;
@@ -155,7 +196,7 @@ h2 {
   border: 1px solid #e0e0e0;
 }
 
-/* Responsive */
+
 @media (max-width: 768px) {
   .dashboard-overview {
     flex-direction: column;

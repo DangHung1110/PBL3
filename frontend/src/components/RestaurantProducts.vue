@@ -50,7 +50,7 @@
 import { ref, watch, onMounted} from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { getFoodsByRestaurantId, deleteFood } from '../api/FoodSevice.js'; // Import your API function
-
+import Swal from 'sweetalert2';
 const router = useRouter();
 const products = ref([]);
 const route = useRoute();
@@ -83,10 +83,32 @@ const deleteProduct = async (id) => {
     try {
       await deleteFood(id);
       products.value = products.value.filter(p => p.id !== id);
-      console.log("Xoá thành công");
+      Swal.fire({
+      toast: true,   
+    icon: 'success',
+    title: 'THÔNG BÁO',
+    text: 'Xóa hàng thành công!',
+    timer: 3000,
+    position: 'bottom-end',
+    timerProgressBar: true,
+    showConfirmButton: false,
+    showClass: {
+      popup: 'swal2-slide-in-right' }}
+    );
     } catch (error) {
       console.error("Xoá thất bại:", error);
-      alert("Có lỗi xảy ra khi xoá món ăn.");
+      Swal.fire({
+      toast: true,   
+    icon: 'error',
+    title: 'THÔNG BÁO',
+    text: 'Không thể xóa loại này do vẫn còn khách đang đặt!',
+    timer: 3000,
+    position: 'bottom-end',
+    timerProgressBar: true,
+    showConfirmButton: false,
+    showClass: {
+      popup: 'swal2-slide-in-right' }}
+    );
     }
   }
 };
@@ -230,6 +252,20 @@ button {
 
   .popup-container {
     padding: 20px;
+  }
+}
+.swal2-slide-in-right {
+  animation: slide-in-right 0.5s ease-out;
+}
+
+@keyframes slide-in-right {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
   }
 }
 </style>

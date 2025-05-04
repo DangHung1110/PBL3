@@ -68,85 +68,90 @@
       <div class="content">
         <router-view></router-view>
       </div>
-      <div v-if="isLoggedIn ">
-      <div v-if="orderHistoryPopupOpen" class="popup">
-        <div class="popup-content">
-          <h2 class="popup-title"> 🛒 Đơn hàng</h2>
-          <button
-            class="close-button"
-            @click="closeOrderHistoryPopup"
-            aria-label="Đóng popup"
-          >
-            <span>&times;</span>
-          </button>
+      <div v-if="isLoggedIn">
+        <div v-if="orderHistoryPopupOpen" class="popup">
+          <div class="popup-content">
+            <h2 class="popup-title">🛒 Đơn hàng</h2>
+            <button
+              class="close-button"
+              @click="closeOrderHistoryPopup"
+              aria-label="Đóng popup"
+            >
+              <span>&times;</span>
+            </button>
 
-          <table class="order-table">
-            <thead>
-              <tr>
-                <th>Tên món</th>
-                <th>Nhà hàng</th>
-                <th>Hình ảnh</th>
-                <th>Số lượng</th>
-                <th>Tổng tiền</th>
-                <th>Trạng thái</th>
-                <th>Hành động</th>
-                <th>Thời gian đặt hàng</th>
-                <th>Thời gian xác nhận</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(item, index) in thongkedata" :key="index">
-                <td>{{ item.FoodName }}</td>
-                <td>{{ item.RestaurantName }}</td>
-                <td>
-                  <img
-                    :src="item.Url_image"
-                    alt="Ảnh món ăn"
-                    class="food-image"
-                  />
-                </td>
-                <td>{{ item.Quantity }}</td>
-                <td>{{ item.TotalPrice }} VNĐ</td>
-                <td>
-                  <button
-                    class="confirm-btn"
-                    v-if="item.Status_Restaurant === 'confirmed'"
-                    @click="
-                      FinishedOrder(
-                        item.id,
-                        item.TotalPrice,
-                        item.IDRes,
-                        item.IDCustomer,
-                        item.OrderTime,
-                        item.OrderConfirmedTime,
-                        item.Url_image,
-                        item.FoodName,
-                        item.RestaurantName,
-                        item.Quantity
-                      )
-                    "
-                  >
-                    Xác nhận
+            <table class="order-table">
+              <thead>
+                <tr>
+                  <th>Tên món</th>
+                  <th>Nhà hàng</th>
+                  <th>Hình ảnh</th>
+                  <th>Số lượng</th>
+                  <th>Tổng tiền</th>
+                  <th>Trạng thái</th>
+                  <th>Hành động</th>
+                  <th>Thời gian đặt hàng</th>
+                  <th>Thời gian xác nhận</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(item, index) in thongkedata" :key="index">
+                  <td>{{ item.FoodName }}</td>
+                  <td>{{ item.RestaurantName }}</td>
+                  <td>
+                    <img
+                      :src="item.Url_image"
+                      alt="Ảnh món ăn"
+                      class="food-image"
+                    />
+                  </td>
+                  <td>{{ item.Quantity }}</td>
+                  <td>{{ item.TotalPrice }} VNĐ</td>
+                  <td>
+                    <button
+                      class="confirm-btn"
+                      v-if="item.Status_Restaurant === 'confirmed'"
+                      @click="
+                        FinishedOrder(
+                          item.id,
+                          item.TotalPrice,
+                          item.IDRes,
+                          item.IDCustomer,
+                          item.OrderTime,
+                          item.OrderConfirmedTime,
+                          item.Url_image,
+                          item.FoodName,
+                          item.RestaurantName,
+                          item.Quantity
+                        )
+                      "
+                    >
+                      Xác nhận
+                    </button>
+                    <button v-else class="wait">
+                      <span class="spinner"></span>
+                      Đang chờ...
+                    </button>
+                  </td>
+
+                  <td>
+                    <button class="delete-btn" @click="DeleteFFromOD(item.id)">
+                      Xóa
+                    </button>
+                  </td>
+                  <td class="handletime">{{ formatDate(item.OrderTime) }}</td>
+                  <td v-if="item.Status_Restaurant === 'confirmed'" class="handletime">
+                    {{ formatDate(item.OrderConfirmedTime) }}
+                  </td>
+                  <button v-else class="wait2">
+                    <span class="spinner"></span>
+                    Đang chờ...
                   </button>
-                  <div v-else>
-                     Đang chờ...
-                  </div>
-                </td>
-                <td>
-                  <button class="delete-btn" @click="DeleteFFromOD(item.id)">
-                    Xóa
-                  </button>
-                </td>
-                <td>{{ formatDate(item.OrderTime) }}</td>
-                <td v-if="item.Status_Restaurant === 'confirmed'">
-                  {{ formatDate(item.OrderConfirmedTime) }}
-                </td>
-                <td v-else>Đang chờ...</td>
-              </tr>
-            </tbody>
-          </table>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
       </div>
 
       <div class="footer"></div>
@@ -174,9 +179,12 @@ const isLoggedIn = ref(false);
 const username = ref("");
 const dropdownOpen = ref(false);
 const searchQuery = ref("");
-const formatDate = (datetime) => {
-  return new Date(datetime).toLocaleString("vi-VN");
-};
+const formatDate=(dateString)=> {
+    const date = new Date(dateString);
+    const time = date.toLocaleTimeString('vi-VN', { hour12: false });
+    const datePart = date.toLocaleDateString('vi-VN');
+    return `${time} | ${datePart}`;
+  }
 const thongkedata = ref([]);
 const updateOrderCount = async () => {
   const IDUser = localStorage.getItem("IDRes");
@@ -270,7 +278,6 @@ const handleLogout = () => {
   isLoggedIn.value = false;
   username.value = "";
   router.replace("/login");
-
 };
 
 const navigateTo = (path) => {
@@ -285,12 +292,12 @@ const checkLogin = () => {
   const storedUsername = localStorage.getItem("UserName");
   isLoggedIn.value = !!storedUsername;
   username.value = storedUsername || "";
-  const role=localStorage.getItem("Role");
-  if(role==="Restaurant")
-  {
+  const role = localStorage.getItem("Role");
+  if (role === "Restaurant") {
     router.push("/restaurant/dashboard");
-  }};
-emitter.on("Login",checkLogin);
+  }
+};
+emitter.on("Login", checkLogin);
 const FinishedOrder = async (
   idOrder,
   TotalPrice,
@@ -747,7 +754,7 @@ onMounted(async () => {
   background-color: #0f9800;
   color: white;
   border: none;
-  padding: 6px 12px;
+  padding: 6px 27px;
   border-radius: 4px;
   cursor: pointer;
   font-size: 13px;
@@ -770,6 +777,51 @@ onMounted(async () => {
 
 .delete-btn:hover {
   background-color: #d32f2f;
+}
+.wait {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  background-color: #ffa200;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: default;
+  font-size: 13px;
+  gap: 6px;
+  margin-left: 0.5%;
+  margin-top: 0.7%;
+}
+.wait2 {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  background-color: #ffa200;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: default;
+  font-size: 13px;
+  gap: 6px;
+  margin-left: 10%;
+  margin-top: 9%;
+}
+
+.spinner {
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .swal2-slide-in-right {
@@ -795,7 +847,17 @@ onMounted(async () => {
     opacity: 1;
   }
 }
+.handletime {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  white-space: nowrap;
 
+  padding: 6px 10px;
+
+ 
+  font-family: 'Segoe UI', sans-serif;
+}
 .footer {
   /* Nếu sau này bạn có thêm nội dung footer, giữ lại class này */
 }
