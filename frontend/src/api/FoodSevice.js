@@ -99,3 +99,13 @@ export const changefoodnum=async(id,quantity)=>{
     throw error;
   }
 }
+export const updateFood = async (foodId, updateData) => {
+  try {
+    console.log(foodId, updateData);
+    const response = await axios.patch(`http://localhost:5299/api/Restaurant/updatefood/${foodId}`, updateData)
+    return response.data
+  } catch (error) {
+    console.error('Error updating food:', error)
+    throw error
+  }
+}

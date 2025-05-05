@@ -31,14 +31,20 @@
               <td>{{ product.quantity }}</td>
               <td><img :src="product.image" alt="product image" class="product-image" /></td>
               <td class="action-buttons">
-                <button @click="editProduct(product.id)" class="btn-edit">Sửa</button>
+                <button @click="editProduct(product)" class="btn-edit">Sửa</button>
                 <button @click="deleteProduct(product.id)" class="btn-delete">Xóa</button>
               </td>
             </tr>
           </tbody>
         </table>
       </div>
-
+      <UpdateFoodPopup
+        v-if="showPopup"
+        :visible="showPopup"
+        :food="selectedProduct"
+        @close="showPopup = false"
+        @updated="fetchFoods"
+      />
       <RouterView />
     </main>
   </div>
@@ -49,12 +55,19 @@
 <script setup>
 import { ref, watch, onMounted} from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import { getFoodsByRestaurantId, deleteFood } from '../api/FoodSevice.js'; // Import your API function
+import { getFoodsByRestaurantId, deleteFood } from '../api/FoodSevice.js'; 
+import UpdateFoodPopup from '../components/UpdateFood.vue';
 import Swal from 'sweetalert2';
 const router = useRouter();
 const products = ref([]);
 const route = useRoute();
+const selectedProduct = ref(null);
 
+const showPopup = ref(false);
+const editProduct = (product) => {
+  selectedProduct.value = product;
+  showPopup.value = true;
+};
 const fetchFoods = async () => {
   const IDRes = localStorage.getItem("IDRes");
   console.log("IDRes:", IDRes); // log IDRes để kiểm tra
@@ -225,23 +238,44 @@ button {
   border: none;
 }
 
+.btn-edit, .btn-delete {
+  padding: 6px 16px;
+  border-radius: 4px;
+  font-weight: 500;
+  font-size: 14px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+/* Nút Sửa - màu cam Shopee */
 .btn-edit {
-  background-color: #f39c12;
+  background-color: #f57224;
   color: white;
+  border-color: #f57224;
+  margin-right: 12px;
 }
 
 .btn-edit:hover {
-  background-color: #e67e22;
+  background-color: white;
+  color: #f57224;
+  border: 1px solid #f57224;
 }
 
+/* Nút Xóa - màu đỏ Shopee */
 .btn-delete {
-  background-color: #e74c3c;
+  background-color: #ee4d2d;
   color: white;
+  border-color: #ee4d2d;
 }
 
 .btn-delete:hover {
-  background-color: #c0392b;
+  background-color: white;
+  color: #ee4d2d;
+  border: 1px solid #ee4d2d;
 }
+
 
 /* Responsive */
 @media (max-width: 768px) {

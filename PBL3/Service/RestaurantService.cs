@@ -391,4 +391,57 @@ public List<Thongke> GetTKData(string IDCustomer)
     }
     return tk;
 }
+ public bool UpdateFoodPartial(string idFood, int? price, int? quantity, int? discount)
+    {
+        using var conn = GetConnection();
+
+        conn.Open();
+
+        List<string> updateFields = new List<string>();
+        MySqlCommand cmd = new MySqlCommand();
+        cmd.Connection = conn;
+
+        if (price.HasValue)
+        {
+            updateFields.Add("PRICE = @Price");
+            cmd.Parameters.AddWithValue("@Price", price.Value);
+        }
+        if (quantity.HasValue)
+        {
+            updateFields.Add("Quantity = @Quantity");
+            cmd.Parameters.AddWithValue("@Quantity", quantity.Value);
+        }
+        if (discount.HasValue)
+        {
+            updateFields.Add("Discount = @Discount");
+            cmd.Parameters.AddWithValue("@Discount", discount.Value);
+        }
+
+        if (updateFields.Count == 0)
+            return false; // Không có gì để cập nhật
+
+        string sql = $"UPDATE FOOD SET {string.Join(", ", updateFields)} WHERE IDFood = @IDFood";
+        cmd.CommandText = sql;
+        cmd.Parameters.AddWithValue("@IDFood", idFood);
+
+        return cmd.ExecuteNonQuery() > 0;
+
+    }
+public List<RevenueByMonth> GetRevenue(string IDCus)
+{
+    using var conn=GetConnection();
+    conn.Open();
+    var cmd=new MySqlCommand("SELECT * FROM THONGKE WHERE IDRes = @IDCus", conn);
+    cmd.Parameters.AddWithValue("@IDCus", IDCus);
+    List<RevenueByMonth> revenue=new List<RevenueByMonth>();
+    using var reader=cmd.ExecuteReader();
+    while(reader.Read())
+    {
+        RevenueByMonth x=new RevenueByMonth();
+        x.datetime=reader.GetDateTime("CusConfirmedTime");
+        x.Revenue=reader.GetInt32("Doanhso");
+        revenue.Add(x);
+    }
+    return revenue;
+}
 }

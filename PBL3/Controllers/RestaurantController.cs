@@ -205,5 +205,25 @@ namespace PBL3.Controllers
             }
             return Ok(result);
         }
+          [HttpPatch("updateFood/{idFood}")]
+        public IActionResult UpdateFood(string idFood, [FromBody] FoodUpdateDTO updateData)
+        {
+            bool success = _restaurantservice.UpdateFoodPartial(idFood, updateData.Price, updateData.Quantity, updateData.Discount);
+
+            if (!success)
+                return BadRequest("No fields to update or invalid ID.");
+
+            return Ok("Food updated successfully.");
+        }
+        [HttpGet("GetRevenue/{IDCus}")]
+        public IActionResult GetRevenue (string IDCus)
+        {
+            var result=_restaurantservice.GetRevenue(IDCus);
+            if (result == null)
+            {
+                return NotFound(new { Message = "No data found." });
+            }
+            return Ok(result);
+        }
     }
 }

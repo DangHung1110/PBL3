@@ -52,9 +52,9 @@ import Swal from 'sweetalert2';
 const formatCurrency = (value) => {
   return new Intl.NumberFormat('vi-VN', {
     style: 'currency',
-    currency: 'VND'
-  }).format(value);
-};
+    currency: 'VND' }).format(value);
+  }
+
 
 const router = useRouter();
 const orderDetails = ref([]);
