@@ -14,6 +14,7 @@ import OrderHistory from "./components/OrderHistory.vue";
 import RestaurantStatistics from "./components/RestaurantStatistics.vue";
 import RestaurantOrderList from "./components/RestaurantOderList.vue";
 import RestaurantInvoices from "./components/RestaurantInvoices.vue";
+import GrabMain from "./components/GrabMain.vue";
 const routes = [
     {
         path: "/",
@@ -84,7 +85,13 @@ const routes = [
     path:"/orderHistory",
     component: OrderHistory,
     name: 'OrderHistory',
-   }
+   },
+   {
+    path:"/Grab",
+    component: GrabMain,
+    name: 'GrabMain',
+   },
+
 ];
 
 const router = createRouter({

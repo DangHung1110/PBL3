@@ -36,6 +36,8 @@
         <div v-if="role === 'restaurant'" class="input-wrapper">
           <input type="file" @change="handleImageUpload" class="input-field" />
         </div>
+        <div v-if="role === 'restaurant'" class="input-wrapper">
+          </div>
 
         <button type="submit" class="btn">Đăng ký</button>
       </form>

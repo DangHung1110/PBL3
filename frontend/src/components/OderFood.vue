@@ -78,6 +78,8 @@ const addToCart = async() => {
     TotalPrice:parseInt(calculatedPrice.value),
     Url_image:food.value.url_image,
     IDCustomer:localStorage.getItem("IDRes"),
+    Phone:localStorage.getItem("Phone"),
+    Address:localStorage.getItem("Address"),
     Status_User:"pending",
     Status_Restaurant:"pending",
     };

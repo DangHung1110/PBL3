@@ -30,6 +30,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<CustomerService>();
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<GrabService>();
+
 
 
 var app = builder.Build();

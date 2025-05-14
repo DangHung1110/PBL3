@@ -25,12 +25,17 @@ namespace PBL3.Controllers
            Object result = _authservice.Login(name, pass);
             if (result != null && result.GetType().GetProperty("Role").GetValue(result).ToString()=="Customer")
             {
-                return Ok(new { Message = "Login Successful", UserID=result.GetType().GetProperty("IDCustomer").GetValue(result),Role=result.GetType().GetProperty("Role").GetValue(result),UserName=result.GetType().GetProperty("Name").GetValue(result) });
+                return Ok(new { Message = "Login Successful", UserID=result.GetType().GetProperty("IDCustomer").GetValue(result),Role=result.GetType().GetProperty("Role").GetValue(result),UserName=result.GetType().GetProperty("Name").GetValue(result),Phone=result.GetType().GetProperty("Phone").GetValue(result),Address=result.GetType().GetProperty("Address").GetValue(result) });
             }
             else
             if(result != null && result.GetType().GetProperty("Role").GetValue(result).ToString()=="Restaurant")
             {
                 return Ok(new { Message = "Login Successful", UserID=result.GetType().GetProperty("IDRes").GetValue(result),Role=result.GetType().GetProperty("Role").GetValue(result),UserName=result.GetType().GetProperty("Name").GetValue(result) });
+            }
+              else
+            if(result != null && result.GetType().GetProperty("Role").GetValue(result).ToString()=="Grab")
+            {
+                return Ok(new { Message = "Login Successful", UserID=result.GetType().GetProperty("IDGrab").GetValue(result),Role=result.GetType().GetProperty("Role").GetValue(result),UserName=result.GetType().GetProperty("Name").GetValue(result) });
             }
             
             return Unauthorized(new { Message = "Invalid Credentials" });

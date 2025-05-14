@@ -45,14 +45,23 @@ import Swal from 'sweetalert2';
       localStorage.setItem("Role", response.role);
       localStorage.setItem("IDRes", response.userID);
       localStorage.setItem("UserName", response.userName);
-      router.push("/restaurant/dashboard");
+      router.replace("/restaurant/dashboard");
     } else if (response.role === "Customer") {
       localStorage.setItem("Role", response.role);
       localStorage.setItem("IDRes", response.userID);
       localStorage.setItem("UserName", response.userName);
+      localStorage.setItem("Phone",response.phone);
+      localStorage.setItem("Address",response.address);
       emitter.emit("Login", ' ');
       emitter.emit("Ordercount", ' ');
-      router.push(`/customer/${response.userName}`);
+      router.replace(`/customer/${response.userName}`);
+    }
+    else if( response.role ==="Grab")
+    {localStorage.setItem("Role", response.role);
+      localStorage.setItem("IDRes", response.userID);
+      localStorage.setItem("UserName", response.userName);
+      router.replace("/Grab");
+
     }
   } catch (error) {
     console.error("Lỗi đăng nhập:", error);

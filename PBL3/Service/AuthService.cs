@@ -31,14 +31,17 @@ namespace PBL3.Service
     using var reader = cmd.ExecuteReader();
     if (reader.Read())
     {
-        var x = new Customer
-        {
-            IDCustomer = reader.GetString("IDCustomer"),
-            Name = reader.GetString("Name"),
-            Address = reader.GetString("Address"),
-            Phone = reader.GetString("Phone"),
-            Role = "Customer"
-        };
+        Customer x = new Customer();
+        
+            x.IDCustomer = reader.GetString("IDCustomer");
+            x.Name = reader.GetString("Name");
+            x.Address = reader.GetString("Address");
+            x.Phone = reader.GetString("Phone");
+            x.Role = "Customer";
+            Console.WriteLine(reader.GetString("Phone"));
+               Console.WriteLine(reader.GetString("Address"));
+            
+        
         return x;
     }
 
@@ -60,6 +63,22 @@ namespace PBL3.Service
             Role = "Restaurant"
         };
         return x;
+    }
+        reader2.Close(); 
+    var tt=new MySqlCommand("SELECT IDGrab,Name,Phone FROM Grab WHERE Name=@Name AND Pass=@Pass",conn);
+    tt.Parameters.AddWithValue("@Name",name);
+    tt.Parameters.AddWithValue("@Pass",pass);
+    using var reader3=tt.ExecuteReader();
+    if(reader3.Read())
+    {
+        var x=new Grab();
+        x.IDGrab=reader3.GetInt32("IDGrab");
+        x.Name=reader3.GetString("Name");
+        x.Phone=reader3.GetString("Phone");
+    
+        x.Role="Grab";
+        return x;
+
     }
 
     return null;

@@ -1,0 +1,311 @@
+<template>
+  <div class="popup-content">
+            <h2 class="popup-title">🛒 Đơn hàng</h2>
+              <button @click="handleLogout" class="dropdown-item logout">
+              🚪 Đăng xuất
+            </button>
+            
+
+            <table class="order-table">
+              <thead>
+                <tr>
+                  <th>Tên món</th>
+                  <th>Nhà hàng</th>
+                  <th>Hình ảnh</th>
+                  <th>Số lượng</th>
+                  <th>Tổng tiền</th>
+                  <th>Trạng thái</th>
+                         <th>Số điện thoại</th>
+                
+                     <th>Thời gian đặt hàng</th>
+                 <th>Thời gian xác nhận</th>
+                   <th>Địa chỉ</th>
+               
+           
+                
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(item, index) in thongkedata" :key="index">
+                  <td>{{ item.FoodName }}</td>
+                  <td>{{ item.RestaurantName }}</td>
+                  <td>
+                    <img
+                      :src="item.Url_image"
+                      alt="Ảnh món ăn"
+                      class="food-image"
+                    />
+                  </td>
+                  <td>{{ item.Quantity }}</td>
+                  <td>{{ item.Doanhso }} VNĐ</td>
+                  <td>
+                    <button
+                      class="confirm-btn"
+                      v-if="item.Status_Restaurant === 'confirmed'"
+                      @click="
+                        FinishedOrder(
+                          item.IDOrder,
+                          item.Doanhso,
+                          item.IDRes,
+                          item.IDCustomer,
+                          item.OrderTime,
+                          item.OrderConfirmedTime,
+                          item.Url_Image,
+                          item.FoodName,
+                          item.RestaurantName,
+                          item.Quantity
+                        )
+                      "
+                    >
+                      Xác nhận
+                    </button>
+                    <button v-else class="wait">
+                      <span class="spinner"></span>
+                      Đang chờ...
+                    </button>
+                  </td>
+                 
+
+                  <td>{{ item.Phone }}</td>
+            
+                  <td class="handletime">{{ formatDate(item.OrderTime) }}</td>
+                  <td v-if="item.Status_Restaurant === 'confirmed'" class="handletime">
+                    {{ formatDate(item.OrderConfirmedTime) }}
+                  </td>
+                  <button v-else class="wait2">
+                    <span class="spinner"></span>
+                    Đang chờ...
+                  </button>
+                    <td>{{ item.Address }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+</template>
+<script setup>
+import { DeleteOrder } from "../api/order.js";
+import { Thongke } from "../api/thongke.js";
+import Swal from "sweetalert2";
+import { useRouter, useRoute } from "vue-router";
+import { ProductCount } from "../api/order.js";
+const router = useRouter();
+import { ref, onMounted, onUnmounted, computed } from "vue";
+import {GetGrabData} from "../api/Grab";
+const isLoggedIn = ref(false);
+const formatDate=(dateString)=> {
+    const date = new Date(dateString);
+    const time = date.toLocaleTimeString('vi-VN', { hour12: false });
+    const datePart = date.toLocaleDateString('vi-VN');
+    return `${time} | ${datePart}`;
+  }
+
+  const FinishedOrder = async (
+  IDOrder,
+  TotalPrice,
+  IDRes,
+  IDCustomer,
+  OrderTime,
+  OrderConfirmedTime,
+  Url_image,
+  FoodName,
+  RestaurantName,
+  Quantity
+) => {
+  console.log(
+    IDOrder,
+    TotalPrice,
+    IDRes,
+    IDCustomer,
+    OrderTime,
+    OrderConfirmedTime,
+    Url_image,
+    FoodName,
+    RestaurantName,
+    Quantity
+  );
+  console.log("idOrder:", IDOrder)
+  await DeleteOrder(IDOrder);
+
+  const senddata = {
+    Quantity: Quantity,
+    IDRes: IDRes,
+    DOANHSO: TotalPrice,
+    IDOrder:  IDOrder,
+    IDCustomer: IDCustomer,
+    OrderTime: OrderTime,
+    OrderConfirmedTime: OrderConfirmedTime,
+    Url_Image: Url_image,
+    FoodName: FoodName,
+    RestaurantName: RestaurantName,
+  };
+  try {
+    const response=await Thongke(senddata);
+    console.log(response.data);
+    Swal.fire({
+      toast: true,
+      icon: "success",
+      title: "THÔNG BÁO",
+      text: "Xác nhận thành công!",
+      timer: 3000,
+      position: "bottom-end",
+      timerProgressBar: true,
+      showConfirmButton: false,
+      showClass: {
+        popup: "swal2-slide-in-right",
+      },
+    });
+  } catch (error) {
+    toast: true, console.error("Xác nhận thất bại:", error);
+    Swal.fire({
+      icon: "error",
+      title: "Lỗi",
+      position: "bottom-end",
+      text: "Có lỗi xảy ra khi xác nhận!",
+    });
+  }
+  await FetchGrabData();
+
+  thongkedata.value = thongkedata.value.filter((p) => p.IDOrder!=IDOrder);
+};
+  const handleLogout = () => {
+  localStorage.removeItem("IDRes");
+  localStorage.removeItem("Role");
+  localStorage.removeItem("UserName");
+  isLoggedIn.value = false;
+
+  router.replace("/login");
+};
+
+  const thongkedata=ref([]);
+  const FetchGrabData=async()=>{
+    try{
+        const ID=localStorage.getItem("IDRes");
+    const data= await GetGrabData(ID);
+    console.log(data);
+    thongkedata.value=data.map(item=>({
+        IDOrder: item.idOrder,
+      IDCustomer: item.idCustomer,
+      IDRes: item.idRes,
+      OrderTime: item.orderTime,
+      Status_Restaurant: item.status_Restaurant,
+      CusConfirmedTime: item.cusConfirmedTime,
+      OrderConfirmedTime: item.orderConfirmedTime,
+      FoodName: item.foodName,
+      Phone:item.phone,
+      Address:item.address,
+      RestaurantName: item.restaurantName,
+      Quantity: item.quantity,
+      Doanhso: item.totalPrice,
+      Url_Image: item.url_image,
+      IDGrab:item.idGrab
+
+      
+  
+      
+    }))
+    console.log(thongkedata.value);
+
+    }
+    catch(error)
+    {
+         console.error("Lỗi khi tải dữ liệu đơn Grab:", error);
+    }
+   
+  }
+onMounted(async () => {
+  await FetchGrabData();
+});
+
+
+
+  
+</script>
+<style>
+.popup-content {
+  padding: 24px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+.popup-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #222;
+  margin-bottom: 16px;
+  text-align: center;
+}
+.order-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  color: #000000;
+}
+
+.order-table th {
+  background-color: #cecaca;
+  font-weight: 500;
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.order-table td {
+  text-align: center;
+  vertical-align: middle;
+
+  padding: 12px;
+  border-top: 1px solid #f0f0f0;
+  vertical-align: top;
+}
+.confirm-btn {
+  background-color: #0f9800;
+  color: white;
+  border: none;
+  padding: 6px 27px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background 0.3s ease;
+
+  white-space: nowrap; /* 👉 NGĂN chữ xuống dòng */
+}
+.wait {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  background-color: #ffa200;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: default;
+  font-size: 13px;
+  gap: 6px;
+  margin-left: 0.5%;
+  margin-top: 0.7%;
+}
+.wait2 {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  background-color: #ffa200;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: default;
+  font-size: 13px;
+  gap: 6px;
+  margin-left: 10%;
+  margin-top: 9%;
+}
+
+.spinner {
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+</style>

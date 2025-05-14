@@ -15,5 +15,8 @@ namespace PBL3.Models
         public string Status_User {get;set;}
         public DateTime OrderTime {get;set;}
         public DateTime OrderConfirmedTime {get;set;}
+        public int IDGrab {get;set;}
+        public string Phone {get;set;}
+        public string Address {get;set;}
         }
 }

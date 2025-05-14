@@ -110,23 +110,8 @@
                   <td>
                     <button
                       class="confirm-btn"
-                      v-if="item.Status_Restaurant === 'confirmed'"
-                      @click="
-                        FinishedOrder(
-                          item.id,
-                          item.TotalPrice,
-                          item.IDRes,
-                          item.IDCustomer,
-                          item.OrderTime,
-                          item.OrderConfirmedTime,
-                          item.Url_image,
-                          item.FoodName,
-                          item.RestaurantName,
-                          item.Quantity
-                        )
-                      "
-                    >
-                      Xác nhận
+                      v-if="item.Status_Restaurant === 'confirmed'">
+                      🚚 Đang giao...
                     </button>
                     <button v-else class="wait">
                       <span class="spinner"></span>
@@ -275,6 +260,11 @@ const handleLogout = () => {
   localStorage.removeItem("IDRes");
   localStorage.removeItem("Role");
   localStorage.removeItem("UserName");
+  if(localStorage.getItem("Role")=="Customer")
+{
+  localStorage.removeItem("Phone");
+  localStorage.removeItem("Address");
+}
   isLoggedIn.value = false;
   username.value = "";
   router.replace("/login");
@@ -296,74 +286,13 @@ const checkLogin = () => {
   if (role === "Restaurant") {
     router.push("/restaurant/dashboard");
   }
+  else if(role==="Grab")
+  {
+    router.replace("/Grab");
+  }
 };
 emitter.on("Login", checkLogin);
-const FinishedOrder = async (
-  idOrder,
-  TotalPrice,
-  IDRes,
-  IDCustomer,
-  OrderTime,
-  OrderConfirmedTime,
-  Url_image,
-  FoodName,
-  RestaurantName,
-  Quantity
-) => {
-  console.log(
-    idOrder,
-    TotalPrice,
-    IDRes,
-    IDCustomer,
-    OrderTime,
-    OrderConfirmedTime,
-    Url_image,
-    FoodName,
-    RestaurantName,
-    Quantity
-  );
-  await DeleteOrder(idOrder);
-  await updateOrderCount();
-  const senddata = {
-    Quantity: Quantity,
-    IDRes: IDRes,
-    DOANHSO: TotalPrice,
-    IDOrder: idOrder,
-    IDCustomer: IDCustomer,
-    OrderTime: OrderTime,
-    OrderConfirmedTime: OrderConfirmedTime,
-    Url_Image: Url_image,
-    FoodName: FoodName,
-    RestaurantName: RestaurantName,
-  };
-  try {
-    await Thongke(senddata);
-    Swal.fire({
-      toast: true,
-      icon: "success",
-      title: "THÔNG BÁO",
-      text: "Xác nhận thành công!",
-      timer: 3000,
-      position: "bottom-end",
-      timerProgressBar: true,
-      showConfirmButton: false,
-      showClass: {
-        popup: "swal2-slide-in-right",
-      },
-    });
-  } catch (error) {
-    toast: true, console.error("Xác nhận thất bại:", error);
-    Swal.fire({
-      icon: "error",
-      title: "Lỗi",
-      position: "bottom-end",
-      text: "Có lỗi xảy ra khi xác nhận!",
-    });
-  }
-  await getThongkeData();
 
-  thongkedata.value = thongkedata.value.filter((p) => p.id !== id);
-};
 onMounted(async () => {
   checkLogin();
   await updateOrderCount();
@@ -754,7 +683,7 @@ onMounted(async () => {
   background-color: #0f9800;
   color: white;
   border: none;
-  padding: 6px 27px;
+  padding: 6px 10px;
   border-radius: 4px;
   cursor: pointer;
   font-size: 13px;

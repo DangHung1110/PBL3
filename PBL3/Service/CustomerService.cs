@@ -19,7 +19,7 @@ namespace PBL3.Service
         {   try{
             using var conn = GetConnection();
             await conn.OpenAsync();
-            
+            int grabnumber=0;
             DateTime datetime=TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
             // Kiểm tra tính hợp lệ
             string checkQuery = @"
@@ -37,11 +37,22 @@ namespace PBL3.Service
             {
                 return false;
             }
+            try{
+                using var conn2=GetConnection();
+                await conn2.OpenAsync();
+                string sql=@"SELECT COUNT(*) FROM Grab";
+                using var cc=new MySqlCommand(sql,conn2);
+                grabnumber = Convert.ToInt32(await cc.ExecuteScalarAsync());
+            }
+            catch (MySqlException e)
+            {
+                Console.WriteLine(e.Message);
+            }
          await reader.DisposeAsync();
             if(order.Status_Restaurant=="pending")
             {string insertQuery = @"
-    INSERT INTO ORDERDETAIL (IDCustomer, IDFood, IDRes, Quantity, TotalPrice,FoodName,RestaurantName,Url_image,Status_Restaurant,Status_User,OrderTime,OrderConfirmedTime)
-    VALUES (@idCustomer, @idFood, @idRes, @quantity, @totalPrice, @foodName, @restaurantName, @url_image,@Status_Restaurant,@Status_User,@OrderTime,@OrderConfirmedTime)";
+    INSERT INTO ORDERDETAIL (IDCustomer, IDFood, IDRes, Quantity, TotalPrice,FoodName,RestaurantName,Url_image,Status_Restaurant,Status_User,OrderTime,OrderConfirmedTime,IDGrab,Phone,Address)
+    VALUES (@idCustomer, @idFood, @idRes, @quantity, @totalPrice, @foodName, @restaurantName, @url_image,@Status_Restaurant,@Status_User,@OrderTime,@OrderConfirmedTime,@IDGrab,@Phone,@Address)";
             using var insertCmd = new MySqlCommand(insertQuery, conn);
             insertCmd.Parameters.AddWithValue("@idCustomer", order.IDCustomer);
             insertCmd.Parameters.AddWithValue("@idFood", order.IDFood);
@@ -55,6 +66,16 @@ namespace PBL3.Service
                 insertCmd.Parameters.AddWithValue("@Status_User", order.Status_User);
                 insertCmd.Parameters.AddWithValue("@OrderTime", datetime);
                 insertCmd.Parameters.AddWithValue("@OrderConfirmedTime", datetime);
+                insertCmd.Parameters.AddWithValue("@Phone",order.Phone);
+                   insertCmd.Parameters.AddWithValue("@Address",order.Address);
+                  Random random=new Random();
+                     int grabnumberresult=random.Next(1,grabnumber+1);
+                     Console.WriteLine(grabnumber);
+              
+                insertCmd.Parameters.AddWithValue("@IDGrab",grabnumberresult);
+
+
+
             var result = await insertCmd.ExecuteNonQueryAsync();
             return result > 0;}
             else
@@ -116,6 +137,7 @@ namespace PBL3.Service
                     orderDetail.Status_User = reader.GetString("Status_User");
                     orderDetail.OrderTime = reader.GetDateTime("OrderTime");
                     orderDetail.OrderConfirmedTime = reader.GetDateTime("OrderConfirmedTime");
+                  
                          orderDetails.Add(orderDetail);
                 }
                 return orderDetails;
