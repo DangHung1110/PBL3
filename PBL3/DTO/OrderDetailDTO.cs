@@ -11,5 +11,8 @@ public class OrderDetailDTO
     public int Quantity { get; set; }
     public int TotalPrice { get; set; }
     public string Status_Restaurant { get; set; }
+    public string GrabPhone {get;set;}
+    public string CustomerPhone {get;set;}
+    public string Address {get;set;}
  
 }

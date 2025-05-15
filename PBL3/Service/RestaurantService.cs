@@ -273,8 +273,13 @@ public class RestaurantService
                     RestaurantName,
                     Quantity,
                     TotalPrice,
-                    Status_Restaurant
+                    Status_Restaurant,
+                    ORDERDETAIL.Phone AS CustomerPhone,
+                    Address,
+                    Grab.Phone AS GrabPhone
+
                 FROM ORDERDETAIL
+                JOIN Grab on Grab.IDgrab=ORDERDETAIL.IDGrab
                 WHERE IDRes = @idRes
             ";
 
@@ -296,7 +301,11 @@ public class RestaurantService
                             RestaurantName = reader.GetString("RestaurantName"),
                             Quantity = reader.GetInt32("Quantity"),
                             TotalPrice = reader.GetInt32("TotalPrice"),
-                            Status_Restaurant= reader.GetString("Status_Restaurant")
+                            Status_Restaurant= reader.GetString("Status_Restaurant"),
+                            GrabPhone=reader.GetString("GrabPhone"),
+                            CustomerPhone=reader.GetString("CustomerPhone"),
+                            Address=reader.GetString("Address")
+
 
                         });
                     }

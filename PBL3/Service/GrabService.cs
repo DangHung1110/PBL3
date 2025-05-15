@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using MySqlConnector;
 using PBL3.Models;
+using PBL3.DTO;
 using System.Data;
 namespace PBL3.Service
 {public class GrabService{
@@ -47,6 +48,27 @@ namespace PBL3.Service
             }
             return orderDetails;
         }
+       public async Task<bool> PostTKGrab(ThongkeGrabDTO thongkeGrabDTO)
+{
+    using var conn = GetConnection();
+    await conn.OpenAsync();
+
+    string sql = "INSERT INTO ThongkeGrab (CusConfirmedTime, OrderTime, OrderConfirmedTime, Revenue, IDGrab) " +
+                 "VALUES (@CusConfirmedTime, @OrderTime, @OrderConfirmedTime, @Revenue, @IDGrab)";
+    
+    var cmd = new MySqlCommand(sql, conn);
+    DateTime datetime=TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
+    cmd.Parameters.AddWithValue("@CusConfirmedTime",datetime);
+    cmd.Parameters.AddWithValue("@OrderTime", thongkeGrabDTO.OrderTime);
+    cmd.Parameters.AddWithValue("@OrderConfirmedTime", thongkeGrabDTO.OrderConfirmedTime);
+    cmd.Parameters.AddWithValue("@Revenue", thongkeGrabDTO.Revenue);
+    cmd.Parameters.AddWithValue("@IDGrab", thongkeGrabDTO.IDGrab);
+
+    int rowsAffected = await cmd.ExecuteNonQueryAsync();
+    return rowsAffected > 0;
+}
+
+
 }
     
 }

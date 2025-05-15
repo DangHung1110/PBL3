@@ -86,6 +86,7 @@
 import { DeleteOrder } from "../api/order.js";
 import { Thongke } from "../api/thongke.js";
 import Swal from "sweetalert2";
+import {Thongkegrab} from "../api/Grab.js"
 import { useRouter, useRoute } from "vue-router";
 import { ProductCount } from "../api/order.js";
 const router = useRouter();
@@ -138,8 +139,18 @@ const formatDate=(dateString)=> {
     FoodName: FoodName,
     RestaurantName: RestaurantName,
   };
+  const DataTKGrab={
+      OrderTime: OrderTime,
+    OrderConfirmedTime: OrderConfirmedTime,
+  Revenue:3000,
+   IDGrab:parseInt(localStorage.getItem("IDRes"))
+
+
+  }
+  console.log(DataTKGrab);
   try {
     const response=await Thongke(senddata);
+    const response2=await Thongkegrab(DataTKGrab);
     console.log(response.data);
     Swal.fire({
       toast: true,
@@ -221,54 +232,96 @@ onMounted(async () => {
   
 </script>
 <style>
+/* Layout chính */
 .popup-content {
   padding: 24px;
   max-height: 80vh;
   overflow-y: auto;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  font-family: 'Segoe UI', sans-serif;
 }
+
+/* Tiêu đề */
 .popup-title {
-  font-size: 20px;
+  font-size: 24px;
   font-weight: bold;
   color: #222;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
   text-align: center;
 }
+
+/* Nút đăng xuất */
+.logout {
+  background-color: #e74c3c;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  float: right;
+  font-size: 14px;
+  transition: background 0.3s ease;
+}
+.logout:hover {
+  background-color: #c0392b;
+}
+
+/* Bảng đơn hàng */
 .order-table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0 10px;
   font-size: 14px;
-  color: #000000;
+  color: #333;
 }
 
 .order-table th {
-  background-color: #cecaca;
-  font-weight: 500;
+  background-color: #f5f5f5;
+  font-weight: 600;
   padding: 12px;
-  border-bottom: 1px solid #eee;
   text-align: center;
-  vertical-align: middle;
+  border-bottom: 2px solid #e0e0e0;
+  border-top: 2px solid #e0e0e0;
+  color: #555;
 }
 
 .order-table td {
+  background-color: #fff;
   text-align: center;
+  padding: 16px 12px;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
   vertical-align: middle;
-
-  padding: 12px;
-  border-top: 1px solid #f0f0f0;
-  vertical-align: top;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.04);
 }
+
+/* Ảnh món ăn */
+.food-image {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+}
+
+/* Nút xác nhận */
 .confirm-btn {
-  background-color: #0f9800;
-  color: white;
+  background-color: #288500;
+  color: #fff;
   border: none;
-  padding: 6px 27px;
-  border-radius: 4px;
+  padding: 8px 20px;
+  border-radius: 6px;
+  font-size: 14px;
   cursor: pointer;
-  font-size: 13px;
   transition: background 0.3s ease;
-
-  white-space: nowrap; /* 👉 NGĂN chữ xuống dòng */
+    white-space: nowrap; /* 👉 NGĂN chữ xuống dòng */
 }
+.confirm-btn:hover {
+  background-color: #016411;
+}
+
+/* Nút chờ xác nhận */
 .wait {
   display: inline-flex;
   align-items: center;
@@ -297,15 +350,43 @@ onMounted(async () => {
   font-size: 13px;
   gap: 6px;
   margin-left: 10%;
-  margin-top: 9%;
+  margin-top: 17%;
 }
 
+/* Spinner */
 .spinner {
-  width: 12px;
-  height: 12px;
+  width: 14px;
+  height: 14px;
   border: 2px solid rgba(255, 255, 255, 0.5);
   border-top-color: white;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
+
+/* Thời gian */
+.handletime {
+  font-size: 13px;
+  color: #555;
+  font-style: italic;
+  white-space: nowrap;
+}
+
+/* Animation */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .order-table {
+    font-size: 12px;
+  }
+  .food-image {
+    width: 48px;
+    height: 48px;
+  }
+}
+
 </style>

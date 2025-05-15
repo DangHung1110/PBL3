@@ -39,6 +39,19 @@ namespace PBL3.Controllers
             catch (Exception ex)
             { Console.WriteLine("Lỗi server: " + ex.Message);
     return StatusCode(500, new { Message = "Server Error", Error = ex.Message }); }}
+    [HttpPost("PostTKGrab")]
+    public async Task<IActionResult>PostTKGrab([FromBody] ThongkeGrabDTO thongkegrabDTO)
+    { var result=await _grabservice.PostTKGrab(thongkegrabDTO);
+      if(result)
+      {
+        return Ok(result);
+      }
+           else
+                {
+                    return NotFound(new { Message = "Lỗi khi tải dữ liệu lên thống kê của grab" });
+                }
+
+    }
 
     }
 }

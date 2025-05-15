@@ -1,268 +1,348 @@
-<template> 
+<template>
   <div class="cart-container">
-    <h3>📝Đơn hàng chờ xác nhận</h3>
+    <h3>📝 Đơn hàng chờ xác nhận</h3>
 
     <div class="cart-header">
-      <span class="col-name">Sản Phẩm</span>
-      <span class="col-unit">Đơn Giá</span>
-      <span class="col-quantity">Số Lượng</span>
-      <span class="col-total">Thành Tiền</span>
-      <span class="col-action">Thao Tác</span>
+      <span class="col-name">Product</span>
+      <span class="col-unit">UPrice</span>
+      <span class="col-quantity">SL</span>
+      <span class="col-total">Total</span>
+      <span class="col-action">Confirm</span>
+      <span class="col-contact">GrabPhone</span>
+      <span class="col-address">Address</span>
+      <span class="col-contact2">CusPhone</span>
     </div>
 
     <div class="cart-item" v-for="(item, index) in orderDetails" :key="index">
+      <div class="item-info">
+        <img :src="item.imageUrl" alt="Hình món ăn" class="item-image" />
+        <div class="item-desc">
+          <div class="item-name">{{ item.foodName }}</div>
+          <div class="item-restaurant">Nhà hàng: {{ item.RestaurantName }}</div>
+        </div>
+      </div>
 
-  <div class="item-info">
-    <img :src="item.imageUrl" alt="Hình món ăn" class="item-image" />
-    <div class="item-desc">
-      <div class="item-name" style="text-align:center">{{ item.foodName }}</div>
-      <div class="item-restaurant">Nhà hàng : {{ item.RestaurantName }}</div>
+      <div class="item-price">{{ formatCurrency(item.totalPrice / item.quantity) }}</div>
+      <div class="item-quantity">{{ item.quantity }}</div>
+      <div class="item-total">{{ formatCurrency(item.totalPrice) }}</div>
+      <div class="item-action">
+        <button v-if="item.Status_Restaurant === 'pending'" @click="confirmOrder(item.IDOrder)">
+          Xác nhận
+        </button>
+        <div v-else class="delivery-status">
+          <span class="delivery-icon">🚚</span>
+          <span class="delivery-text">Đang giao...</span>
+        </div>
+      </div>
+      <div class="item-contact">{{ item.GrabPhone }}</div>
+      <div class="item-address">{{ item.Address }}</div>
+      <div class="item-contact">{{ item.CustomerPhone }}</div>
     </div>
-  </div>
-
-
-  <div class="item-price">{{ formatCurrency(item.totalPrice / item.quantity) }}</div>
-
-
-  <div class="item-quantity">{{ item.quantity }}</div>
-
-
-  <div class="item-total">{{ formatCurrency(item.totalPrice) }}</div>
-
-
-  <div class="item-action">
-    <button v-if="item.Status_Restaurant === 'pending'" @click="confirmOrder(item.IDOrder)">Xác nhận đơn</button>
-    <div v-else class="delivery-status">
-      <span class="delivery-icon">🚚</span>
-      <span class="delivery-text">Đang giao...</span>
-    </div>
-  </div>
-</div>
-
   </div>
 </template>
-
-
 
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { ResOrderList, UpdateConfirmedTime} from '../api/order.js';  
+import { ResOrderList, UpdateConfirmedTime } from '../api/order.js';
 import Swal from 'sweetalert2';
+
 const formatCurrency = (value) => {
   return new Intl.NumberFormat('vi-VN', {
     style: 'currency',
-    currency: 'VND' }).format(value);
-  }
-
+    currency: 'VND',
+  }).format(value);
+};
 
 const router = useRouter();
 const orderDetails = ref([]);
-
-const IDRes = localStorage.getItem("IDRes");
-console.log(IDRes);
-
+const IDRes = localStorage.getItem('IDRes');
 
 onMounted(async () => {
   try {
     if (IDRes) {
       const data = await ResOrderList(IDRes);
-      orderDetails.value = data.map(item => ({
-      IDOrder: item.idOrder,
-     IDFood: item.idFood,
-     Status_Restaurant: item.status_Restaurant,
-    IDCustomer: item.idCustomer, 
-    RestaurantName: item.restaurantName, 
+      orderDetails.value = data.map((item) => ({
+        IDOrder: item.idOrder,
+        IDFood: item.idFood,
+        Status_Restaurant: item.status_Restaurant,
+        IDCustomer: item.idCustomer,
+        RestaurantName: item.restaurantName,
         foodName: item.foodName,
         quantity: item.quantity,
         totalPrice: item.totalPrice,
-        imageUrl: item.url_Image
+        imageUrl: item.url_Image,
+        Address: item.address,
+        GrabPhone: item.grabPhone,
+        CustomerPhone: item.customerPhone,
       }));
-      console.log(orderDetails.value);
     }
   } catch (error) {
     console.error('Lỗi khi lấy dữ liệu đơn hàng:', error);
   }
 });
 
-
 const confirmOrder = async (IDOrder) => {
-
-
   try {
     const response = await UpdateConfirmedTime(IDOrder);
-    const updatedOrder = orderDetails.value.find(item => item.IDOrder === IDOrder);
+    const updatedOrder = orderDetails.value.find((item) => item.IDOrder === IDOrder);
     if (updatedOrder) {
-      updatedOrder.Status_Restaurant = 'confirmed'; 
+      updatedOrder.Status_Restaurant = 'confirmed';
     }
-    console.log(response);
     Swal.fire({
-      toast: true,   
-    icon: 'success',
-    title: 'THÔNG BÁO',
-    text: 'Đơn hàng đã được xác nhận thành công!',
-    timer: 3000,
-    position: 'bottom-end',
-    timerProgressBar: true,
-    showConfirmButton: false,
-    showClass: {
-      popup: 'swal2-slide-in-right' }}
-    );
+      toast: true,
+      icon: 'success',
+      title: 'THÔNG BÁO',
+      text: 'Đơn hàng đã được xác nhận thành công!',
+      timer: 3000,
+      position: 'bottom-end',
+      timerProgressBar: true,
+      showConfirmButton: false,
+      showClass: {
+        popup: 'swal2-slide-in-right',
+      },
+    });
   } catch (error) {
     console.error('Lỗi khi xác nhận đơn hàng:', error);
-     Swal.fire({
-          toast: true,   
-        icon: 'error',
-        title: 'THÔNG BÁO',
-        text: 'Lỗi xác nhận đơn hàng',
-        timer: 3000,
-        position: 'bottom-end',
-        timerProgressBar: true,
-        showConfirmButton: false,
-        showClass: {
-          popup: 'swal2-slide-in-right' }}
-        );
+    Swal.fire({
+      toast: true,
+      icon: 'error',
+      title: 'THÔNG BÁO',
+      text: 'Lỗi xác nhận đơn hàng',
+      timer: 3000,
+      position: 'bottom-end',
+      timerProgressBar: true,
+      showConfirmButton: false,
+      showClass: {
+        popup: 'swal2-slide-in-right',
+      },
+    });
   }
 };
 </script>
 
-<style>
-.item-desc
-.item-price
-.item-quantity
-.item-total {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  align-items: center; /* <- Thêm dòng này để căn giữa ngang */
+<style scoped>
+.cart-container {
+  max-width: 1400px;
+  margin: 40px auto;
+  padding: 32px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-.cart-container {
-  max-width: 1100px;
-  margin: 40px auto;
-  padding: 24px;
-  background: #ffffff;
-  border-radius: 12px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-.col-name{
-   margin-left:20%;
-}
 h3 {
-  font-size: 24px;
-  color: #087404;
-  font-weight: bold;
-  margin-bottom: 24px;
+  font-size: 22px;
+  color: #1a3c34;
+  font-weight: 600;
+  margin-bottom: 32px;
+  padding:0px 34%;
   text-align: center;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 /* Tiêu đề bảng */
 .cart-header {
-  display: grid;
-  grid-template-columns: 7fr 2fr 2fr 2fr 2fr;
+  display:flex;
+
   align-items: center;
-  padding: 14px 16px;
-  background-color: #f5f5f5;
-  border: 1px solid #e6e6e6;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border-radius: 12px;
   font-weight: 600;
-  color: #333;
-  border-radius: 8px;
-  margin-bottom: 8px;
+  color: #1a3c34;
+  text-transform: uppercase;
+  font-size: 13px;
+  letter-spacing: 0.8px;
+  margin-bottom: 16px;
+  border: 1px solid #e2e8f0;
 }
+
+.cart-header span {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.col-name {
+  font-size:11px;
+  justify-content:left;
+  padding-left: 20px;
+}
+.col-unit{
+   font-size:11px;
+   padding-left:13.5%;
+}
+
+.col-quantity{
+   font-size:11px;
+    padding-left:6%;
+}
+.col-total{
+   font-size:11px;
+    padding-left:5%;
+}
+.col-action{
+   font-size:11px;
+   padding-left:7%;
+}
+
+.col-contact{
+   font-size:11px;
+ padding-left:6.5%;}
+
+.col-address{
+   font-size:11px;
+  padding-left:5%;
+}
+.col-contact2{
+   font-size:11px;
+ padding-left:5%;}
+
+
+
+
+
+
+
 
 /* Dòng item */
 .cart-item {
   display: grid;
-  grid-template-columns: 3fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 4fr 1.5fr 1fr 1.5fr 1.5fr 1.5fr 2.5fr 1.5fr;
+  grid-column-gap: 24px;
   align-items: center;
-  background-color: #fff;
-  padding: 14px 16px;
-  border: 1px solid #eee;
+  background: #fff;
+  padding: 16px 20px;
+  border-radius: 12px;
   margin-bottom: 12px;
-  border-radius: 8px;
-  transition: box-shadow 0.2s;
+  border: 1px solid #f1f5f9;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .cart-item:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.06);
 }
 
-/* Cột sản phẩm (ảnh + tên + nhà hàng) */
+/* Cột sản phẩm */
 .item-info {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
 }
 
 .item-image {
-  width: 64px;
-  height: 64px;
+  width: 80px;
+  height: 80px;
   object-fit: cover;
-  border-radius: 6px;
-  border: 1px solid #ddd;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  transition: transform 0.2s ease;
+}
+
+.item-image:hover {
+  transform: scale(1.05);
 }
 
 .item-desc {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  gap: 6px;
 }
 
 .item-name {
   font-weight: 600;
-  font-size: 15px;
-  color: #222;
+  font-size: 16px;
+  color: #1a3c34;
+  text-align: left;
 }
 
 .item-restaurant {
   font-size: 13px;
-  color: #888;
+  color: #64748b;
+  font-weight: 400;
 }
 
-/* Các cột còn lại */
+/* Các cột khác */
 .item-price,
 .item-quantity,
 .item-total,
-.item-action {
+.item-contact,
+.item-address {
   text-align: center;
   font-size: 14px;
-  color: #333;
+  color: #1a3c34;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.item-address {
+  font-size: 13px;
+  color: #64748b;
+  line-height: 1.4;
 }
 
 /* Nút xác nhận */
 .item-action button {
-  padding: 6px 12px;
-  background-color: #0b7904;
-  color: #fff;
+  width: 120px;
+  height: 36px;
+  background: #318801;
+  color: #ffffff;
   border: none;
-  border-radius: 4px;
+  border-radius: 10px;
   cursor: pointer;
   font-size: 13px;
   font-weight: 500;
-  transition: background-color 0.2s ease;
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .item-action button:hover {
-  background-color: #0f9106;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background:#318801; 
 }
 
 /* Trạng thái đang giao */
 .delivery-status {
-  background-color: #ffa113;
+  width: 120px;
+  height: 36px;
+  background:#efb300 ;
   color: #ffffff;
-  padding: 6px 10px;
-  border-radius: 4px;
-  display: inline-flex;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
   align-items: center;
   gap: 6px;
   font-size: 13px;
   font-weight: 500;
-  justify-content: center;
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.delivery-status:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .delivery-icon {
-  font-size: 15px;
+  font-size: 16px;
+  line-height: 1;
 }
+
+/* Animation cho Swal */
 .swal2-slide-in-right {
   animation: slide-in-right 0.5s ease-out;
 }
@@ -277,8 +357,4 @@ h3 {
     opacity: 1;
   }
 }
-
-
-
-
 </style>
