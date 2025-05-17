@@ -1,9 +1,10 @@
-<template>
-  <div class="modal">
+<template> 
+  <div class="modal"> 
     <div class="modal-content">
       <h2>Đăng ký</h2>
       <form @submit.prevent="handleSignup">
-        <!-- Chọn vai trò -->
+
+      
         <div class="input-wrapper">
           <select v-model="role" class="input-field">
             <option value="user">Người dùng</option>
@@ -11,49 +12,83 @@
           </select>
         </div>
 
-        <!-- Hiển thị thông tin Nhà hàng khi chọn role là "restaurant" -->
-        <div v-if="role === 'restaurant'" class="input-wrapper">
-          <input v-model="restaurantName" type="text" placeholder="Tên nhà hàng" class="input-field" required />
-        </div>
-
-        <div class="input-wrapper">
-          <input v-model="username" type="text" placeholder="Tên đăng nhập" class="input-field" required />
-        </div>
-
-        <div class="input-wrapper">
-          <input v-model="phone" type="text" placeholder="Số điện thoại" class="input-field" required />
-        </div>
-
-        <div class="input-wrapper">
-          <input v-model="address" type="text" placeholder="Địa chỉ" class="input-field" required />
-        </div>
-
-        <div class="input-wrapper">
-          <input v-model="password" type="password" placeholder="Mật khẩu" class="input-field" required />
-        </div>
-
-        <!-- Chọn ảnh cho Nhà hàng, có thể bỏ qua nếu không cần -->
-        <div v-if="role === 'restaurant'" class="input-wrapper">
-          <input type="file" @change="handleImageUpload" class="input-field" />
-        </div>
-        <div v-if="role === 'restaurant'" class="input-wrapper">
+     
+        <template v-if="role === 'user'">
+          <div class="input-wrapper">
+            <input v-model="username" type="text" placeholder="Tên đăng nhập" class="input-field" required />
           </div>
+
+          <div class="input-wrapper">
+            <input v-model="phone" type="text" placeholder="Số điện thoại" class="input-field" required />
+          </div>
+
+          <div class="input-wrapper">
+            <input v-model="address" type="text" placeholder="Địa chỉ" class="input-field" required />
+          </div>
+
+          <div class="input-wrapper">
+            <input v-model="password" type="password" placeholder="Mật khẩu" class="input-field" required />
+          </div>
+        </template>
+
+        
+        <template v-if="role === 'restaurant'">
+  <div class="restaurant-form-grid">
+    <!-- Cột trái: thông tin -->
+    <div class="info-column">
+      <div class="input-wrapper">
+        <input v-model="restaurantName" type="text" placeholder="Tên nhà hàng" class="input-field" required />
+      </div>
+
+      <div class="input-wrapper">
+        <input v-model="phone" type="text" placeholder="Số điện thoại" class="input-field" required />
+      </div>
+
+      <div class="input-wrapper">
+        <input v-model="address" type="text" placeholder="Địa chỉ nhà hàng" class="input-field" required />
+      </div>
+
+      <div class="input-wrapper">
+        <input v-model="password" type="password" placeholder="Mật khẩu" class="input-field" required />
+      </div>
+    </div>
+
+    <!-- Cột phải: ảnh -->
+    <div class="file-column">
+      <div class="input-wrapper">
+        <label>Căn cước công dân người đại diện pháp lý</label>
+        <input type="file"@change="handleImageUpload" class="input-field" />
+      </div>
+
+      <div class="input-wrapper">
+        <label>Ảnh chụp khu vực chế biến</label>
+        <input type="file" @change="handleImageUpload2" class="input-field" />
+      </div>
+
+      <div class="input-wrapper">
+        <label>Menu quán (Chụp ảnh các mặt)</label>
+        <input type="file" @change="handleImageUpload3" class="input-field" />
+      </div>
+    </div>
+  </div>
+</template>
+
 
         <button type="submit" class="btn">Đăng ký</button>
       </form>
+
       <button @click="closeModal" class="close-btn">Đóng</button>
     </div>
   </div>
 </template>
 
-<script>
+
+<script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { signup } from "../api/signup.api.js"; // Import API
-
-export default {
-  setup() {
-    const router = useRouter();
+import { SignUpUser,SignUpRes } from "../api/signup.api.js"; // Import API
+import {ImageDeal} from "../api/signup.api.js"; // Import API
+const router = useRouter();
 
     const username = ref("");
     const phone = ref("");
@@ -61,142 +96,171 @@ export default {
     const password = ref("");
     const restaurantName = ref("");
     const imageUrl = ref(null);
+    const imageUrl2 = ref(null);
+    const imageUrl3 = ref(null);
+
     const role = ref("user");
 
     const closeModal = () => {
       router.push("/");
     };
 
-    const handleImageUpload = (event) => {
-      const file = event.target.files[0];
-      if (file) {
-        // Here, you can convert the file to base64 or upload it to a server and get the URL
-        const reader = new FileReader();
-        reader.onload = () => {
-          imageUrl.value = reader.result; // Save base64 string
-        };
-        reader.readAsDataURL(file);
-      } else {
-        imageUrl.value = null; // No image selected
+  const handleImageUpload = (event) => {
+  imageUrl.value = event.target.files[0] || null;
+};
+const handleImageUpload2 = (event) => {
+  imageUrl2.value = event.target.files[0] || null;
+};
+const handleImageUpload3 = (event) => {
+  imageUrl3.value = event.target.files[0] || null;
+};
+   
+
+   const handleSignup = async () => {
+  try {
+    if (role.value === "user") {
+    
+      await SignUpUser(role.value, username.value, password.value, phone.value, address.value);
+    } else if (role.value === "restaurant") {
+      if (!imageUrl.value || !imageUrl2.value || !imageUrl3.value) {
+        throw new Error("Vui lòng chọn tất cả các ảnh yêu cầu");
       }
-    };
-
-    const handleSignup = async () => {
-    const response = await signup(
-    username.value,
-    password.value,
-    role.value,
-    imageUrl.value,
-    phone.value,
-    address.value,
-    restaurantName.value
-  );
-
-  if (response.success) {
-    console.log("Đăng ký thành công", response);
-      alert("Đăng ký thành công! Mời bạn đăng nhập.");
-
-      router.push("/login");
-  } else {
-    console.error("Đăng ký thất bại", response.message);
-    alert("Đăng ký thất bại. Vui lòng thử lại!"); 
-    console.error("Chi tiết:", response.message);
+      const Image1=await ImageDeal(imageUrl.value);
+      const Image2=await ImageDeal(imageUrl2.value);
+      const Image3=await ImageDeal(imageUrl3.value);
+      console.log(role.value, username.value, password.value, phone.value, address.value, restaurantName.value,Image1,Image2, Image3);
+      await SignUpRes(role.value, username.value, password.value, phone.value, address.value, restaurantName.value,Image1,Image2, Image3);
+    }
+    alert("Đăng ký thành công!");
+    router.push("/"); // chuyển hướng sau khi đăng ký thành công
+  } catch (error) {
+    alert("Đăng ký thất bại. Vui lòng kiểm tra lại thông tin.");
   }
 };
 
-    return { role, username, phone, address, password, restaurantName, imageUrl, handleImageUpload, handleSignup, closeModal,};
-  },
-};
+
+ 
+
+   
+
+
 </script>
 
 <style>
-/* Định dạng chung */
 .modal {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.5);
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+}
+
+
+/* Đảm bảo file input gọn gàng */
+.file-column .input-wrapper input[type="file"] {
+  padding: 8px 12px;
+  margin-left:20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  background-color: #fff;
+}
+
+/* Canh trái label để khớp với input */
+.file-column .input-wrapper label {
+  margin-bottom: 6px;
+    margin-left:20px;
+  font-weight: 500;
+  font-size: 14px;
+  color: #333;
+}
+.info-column {
+  margin-top:25px;
+}
+.info-column .input-wrapper {
+  margin-bottom: 16px;
 }
 
 .modal-content {
+  width: 100%;
+  max-width: 1000px;
   background: white;
-  padding: 25px;
+  padding: 30px;
   border-radius: 12px;
-  min-width: 350px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #ee4d2d;
   text-align: center;
-  position: relative;
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+  margin-bottom: 24px;
 }
 
-/* Bọc input để đồng nhất với Login */
+.restaurant-form-grid {
+  display: grid;
+  grid-template-columns: 0.8fr 1fr;
+  gap: 24px;
+}
+
 .input-wrapper {
-  width: 100%;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  margin-bottom: 16px;
 }
 
-/* Ô nhập liệu */
+.input-wrapper label {
+  margin-bottom: 6px;
+  font-weight: 500;
+  font-size: 14px;
+  color: #333;
+}
+
 .input-field {
-  width: 100%;
-  padding: 12px;
-  font-size: 16px;
-  border: 2px solid #ddd;
+  padding: 10px 14px;
+  border: 1px solid #ccc;
   border-radius: 8px;
-  outline: none;
-  margin-bottom: 12px;
-  transition: 0.3s;
-  background: white;
-}
-
-/* Định dạng select giống input */
-select.input-field {
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  cursor: pointer;
-}
-
-/* Hiệu ứng focus */
-.input-field:focus {
-  border-color: #6200ea;
-  box-shadow: 0 0 5px rgba(98, 0, 234, 0.5);
-}
-
-/* Nút Đăng ký */
-.btn {
+  font-size: 14px;
   width: 100%;
-  padding: 12px;
-  background: #ea6200;
+  transition: border-color 0.2s;
+}
+
+.input-field:focus {
+  border-color: #ee4d2d;
+  outline: none;
+}
+
+.btn {
+  background-color: #ee4d2d;
   color: white;
+  padding: 12px;
   border: none;
   border-radius: 8px;
+  width: 100%;
   font-size: 16px;
   cursor: pointer;
-  transition: 0.3s;
+  margin-top: 20px;
+  transition: background-color 0.3s;
 }
 
 .btn:hover {
-  background: #cf5803;
+  background-color: #d4391d;
 }
 
-/* Nút Đóng */
 .close-btn {
   margin-top: 12px;
-  padding: 8px 14px;
-  background: red;
-  color: white;
+  background: transparent;
   border: none;
-  border-radius: 8px;
+  color: #555;
+  text-decoration: underline;
   cursor: pointer;
-  transition: 0.3s;
+  font-size: 14px;
 }
 
-.close-btn:hover {
-  background: darkred;
-}
+
 </style>

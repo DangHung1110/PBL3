@@ -16,7 +16,8 @@ import RestaurantOrderList from "./components/RestaurantOderList.vue";
 import RestaurantInvoices from "./components/RestaurantInvoices.vue";
 import GrabMain from "./components/GrabMain.vue";
 import GrabData from "./components/GrabData.vue";
-import GrabDashBoard from "./components/GrabDashBoard.vue"
+import GrabDashBoard from "./components/GrabDashBoard.vue";
+import AdminDashBoard from "./components/AdminDashBoard.vue";
 const routes = [
     {
         path: "/",
@@ -104,6 +105,12 @@ const routes = [
             component: GrabData,
           },
         ]
+   },
+     {
+    path:"/Admin",
+    component: AdminDashBoard,
+    name: 'GrabDashBoard',
+    
    },
 
 ];

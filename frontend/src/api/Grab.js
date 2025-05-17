@@ -21,6 +21,18 @@ export const Thongkegrab=async(DataTKGrab)=>{
   }
       catch(error)
   {
+    console.error("Lỗi khi đẩy dữ liêụ lên  Grab",error);
+    throw error;
+  }
+}
+export const getthongkegrab=async(IDGrab)=>{
+  try{
+    const response=await axios.get(`http://localhost:5299/api/Grab/ThongkeGrabStatistic/${IDGrab}`);
+    console.log(response.data);
+    return response.data;
+  }
+  catch(error)
+  {
     console.error("Lỗi khi lấy thống kê từ Grab",error);
     throw error;
   }

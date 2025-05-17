@@ -63,7 +63,17 @@ import Swal from 'sweetalert2';
       router.replace("/Grab");
 
     }
-  } catch (error) {
+    else if( response.role ==="Admin")
+    {
+      localStorage.setItem("Role", response.role);
+      localStorage.setItem("IDRes",response.username);
+      router.replace("/admin");
+    }
+    else {
+      errorMessage.value = "Tên đăng nhập hoặc mật khẩu không đúng";
+    }
+    }
+   catch (error) {
     console.error("Lỗi đăng nhập:", error);
     Swal.fire({
       toast: true,   
