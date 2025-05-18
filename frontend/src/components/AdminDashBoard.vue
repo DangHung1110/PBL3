@@ -15,58 +15,46 @@
             <span class="tag" @click="searchTag('Burger')">Burger</span>
             <span class="tag" @click="searchTag('Noodles')">Noodles</span>
           </div>
-          <button class="logout-btn" @click="logout">
-            <span>🔓</span> Đăng xuất
-          </button>
+          <button class="logout-btn" @click="logout">Đăng xuất</button>
         </div>
       </header>
 
       <!-- Tabs -->
-      <div class="tab-menu">
-        <!-- Tabs -->
-<div class="tab-menu">
-  <router-link
-    to="/Admin/Thongke"
-    class="tab-item"
-    active-class="active-tab"
-  >
-    <span class="tab-icon">🕒</span>
-    <span class="tab-text">Thống kê</span>
-  </router-link>
-
-  <router-link
-    to="/Admin/Grab"
-    class="tab-item"
-    active-class="active-tab"
-  >
-    <span class="tab-icon">🕒</span>
-    <span class="tab-text">Grab đối tác</span>
-  </router-link>
-</div>
-
+      <div class="tab-menu-container">
+        <router-link to="/Admin/Thongke" class="tab-button" active-class="tab-active">
+          <span class="tab-icon">📊</span>
+          <span class="tab-text">Thống kê</span>
+        </router-link>
+        <router-link to="/Admin/Grab" class="tab-button" active-class="tab-active">
+          <span class="tab-icon">🚗</span>
+          <span class="tab-text">Grab đối tác</span>
+        </router-link>
+        <router-link to="/Admin/WaitConfirmedRes" class="tab-button" active-class="tab-active">
+          <span class="tab-icon">📥</span>
+          <span class="tab-text">Đăng ký nhà hàng</span>
+        </router-link>
+        <router-link to="/Admin/LinkingRes" class="tab-button" active-class="tab-active">
+          <span class="tab-icon">🏪</span>
+          <span class="tab-text">Nhà hàng đối tác</span>
+        </router-link>
       </div>
-       <div class="main-content">
-      <router-view></router-view>
-    </div>
-     
-    </div>
 
-    <!-- Content -->
-   
+      <div class="main-content">
+        <router-view></router-view>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-
-
+import { onMounted } from "vue";
 
 function logout() {
   alert("Đăng xuất thành công!");
 }
 
 function searchTag(tag) {
-  alert(`Tìm kiếm nhà hàng với danh mục: ${tag}`);
+  alert(`Tìm kiếm: ${tag}`);
 }
 
 onMounted(() => {
@@ -109,11 +97,16 @@ body {
 
 .bg-overlay {
   background: #fff;
-  min-height: 100vh;
+  background-image: url('https://cdnmedia.baotintuc.vn/Upload/0gYjdiNY41wQIbPeRYyPvA/files/2021/12/grap-rung-chuong.jpeg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height:100vh;
+  width:100%;
 }
 
 .header {
-  background: linear-gradient(180deg, rgba(255, 87, 34, 0.9), rgba(255, 152, 0, 0.7));
+  background: #1e1e2f;
   padding: 1.5rem 0;
   position: relative;
   overflow: hidden;
@@ -130,21 +123,10 @@ body {
 
 .header-text {
   font-family: "Montserrat", sans-serif;
-  color: #fff;
+  color: #07b124;
   font-size: 23px;
   text-transform: uppercase;
   letter-spacing: 2px;
-  text-shadow: 0 0 10px rgba(255, 152, 0, 0.8), 0 0 20px rgba(255, 87, 34, 0.6);
-  animation: neonPulse 2s ease-in-out infinite;
-}
-
-@keyframes neonPulse {
-  0%, 100% {
-    text-shadow: 0 0 10px rgba(255, 152, 0, 0.8), 0 0 20px rgba(255, 87, 34, 0.6);
-  }
-  50% {
-    text-shadow: 0 0 15px rgba(255, 152, 0, 1), 0 0 30px rgba(255, 87, 34, 0.8);
-  }
 }
 
 .header-content {
@@ -157,6 +139,7 @@ body {
 }
 
 .tag-cloud {
+  padding-right: 7%;
   flex: 1;
   display: flex;
   justify-content: center;
@@ -169,21 +152,20 @@ body {
 .tag {
   position: absolute;
   font-family: "Montserrat", sans-serif;
-  color: #fff;
   font-size: 0.9rem;
   font-weight: 600;
-  background: rgba(255, 152, 0, 0.2);
   border-radius: 12px;
   padding: 0.3rem 0.8rem;
   cursor: pointer;
-  text-shadow: 0 0 5px rgba(255, 152, 0, 0.8);
+  background: rgba(0, 177, 79, 0.2);
+  color: #fff;
+  text-shadow: 0 0 5px rgba(0, 177, 79, 0.8);
   animation: rotateTags 10s linear infinite;
   transition: all 0.3s ease;
 }
 .tag:hover {
-  transform: scale(1.2);
-  background: rgba(255, 87, 34, 0.8);
-  box-shadow: 0 0 10px rgba(255, 87, 34, 0.5);
+  background: rgba(0, 177, 79, 0.8);
+  box-shadow: 0 0 10px rgba(0, 177, 79, 0.5);
 }
 .tag:nth-child(1) { transform: translate(0, 0); animation-delay: 0s; }
 .tag:nth-child(2) { transform: translate(80px, 10px); animation-delay: -2s; }
@@ -197,60 +179,60 @@ body {
 }
 
 .logout-btn {
-  background: rgba(255, 87, 34, 0.9);
+  background: #00b14f;
   color: #fff;
-  padding: 0.5rem 1.5rem;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: background 0.3s ease;
+  border-radius: 10px;
+  padding: 10px 20px;
 }
 .logout-btn:hover {
-  background: #751400;
+  background: #006633;
 }
 
-.tab-menu {
+.tab-menu-container {
   display: flex;
-  justify-content: space-around;
-  background: #fff;
-  border-bottom: 1px solid #eee;
+  justify-content: space-between;
+  padding: 20px;
+  gap: 1rem;
+  background-color: rgba(255, 253, 240, 0.7); /* màu trắng kem nhạt, mờ 70% */
+  border-bottom: 2px solid #00b14f;
+  backdrop-filter: blur(2px); /* tùy chọn: làm mờ nhẹ phía sau */
 }
 
-.tab-item {
+
+.tab-button {
   flex: 1;
-  padding: 12px 0;
-  text-align: center;
-  font-weight: 500;
-  color: #555;
-  border-bottom: 3px solid transparent;
-  background: transparent;
-  transition: all 0.3s ease;
-}
-.tab-item.active {
-  color: #ee4d2d;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.9rem 0.8rem;
+  background-color: #fff;
+  color: #00b14f;
+  border: 2px solid #00b14f;
+  border-radius: 20px;
+  text-decoration: none;
   font-weight: 600;
-  border-bottom: 3px solid #ee4d2d;
+  transition: all 0.3s ease;
+  text-align: center;
+  white-space: nowrap;
+  min-width: 0;
+  box-shadow: 0 2px 5px rgba(255, 87, 34, 0.1);
 }
-.tab-item:hover {
-  background-color: #fdf2ec;
-  color: #ee4d2d;
+.tab-button:hover {
+  background-color: #00b14f;
+  color: #fff;
+  transform: translateY(-2px);
 }
-
+.tab-active {
+  background-color: #00b14f;
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(0, 177, 79, 0.3);
+}
 .tab-icon {
-  display: block;
-  font-size: 18px;
-  margin-bottom: 4px;
+  font-size: 1.2rem;
 }
-
 .tab-text {
-  font-family: "Montserrat", sans-serif;
-  font-size: 14px;
-}
-
-.content-card {
-  backdrop-filter: blur(8px);
-  background: #fff;
-  border: 1px solid #fff;
+  font-size: 0.95rem;
 }
 </style>

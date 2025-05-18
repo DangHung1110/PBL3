@@ -111,19 +111,11 @@ const routes = [
      {
     path:"/Admin",
     component: AdminDashBoard,
-    name: 'GrabDashBoard',
+    name: 'AdminDashBoard',
      children: [
 
-      {
-            path: "",
-            name: "GrabMain",
-            component: AdminGrab,
-          },
-          {
-            path: "Grab",
-            name: "GrabMain",
-            component :AdminGrab,
-          },
+      
+         
            {
             path: "Thongke",
             name: "Thongke",

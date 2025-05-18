@@ -66,7 +66,7 @@ import Swal from 'sweetalert2';
     else if( response.role ==="Admin")
     {
       localStorage.setItem("Role", response.role);
-      localStorage.setItem("IDRes",response.username);
+   
       router.replace("/admin");
     }
     else {
