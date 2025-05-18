@@ -18,6 +18,8 @@ import GrabMain from "./components/GrabMain.vue";
 import GrabData from "./components/GrabData.vue";
 import GrabDashBoard from "./components/GrabDashBoard.vue";
 import AdminDashBoard from "./components/AdminDashBoard.vue";
+import AdminGrab from "./components/AdminGrab.vue";
+import AdminThongke from "./components/AdminThongke.vue";
 const routes = [
     {
         path: "/",
@@ -110,6 +112,24 @@ const routes = [
     path:"/Admin",
     component: AdminDashBoard,
     name: 'GrabDashBoard',
+     children: [
+
+      {
+            path: "",
+            name: "GrabMain",
+            component: AdminGrab,
+          },
+          {
+            path: "Grab",
+            name: "GrabMain",
+            component :AdminGrab,
+          },
+           {
+            path: "Thongke",
+            name: "Thongke",
+            component: AdminThongke,
+          },
+        ]
     
    },
 
