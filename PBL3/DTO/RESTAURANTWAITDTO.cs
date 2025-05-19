@@ -12,7 +12,7 @@ namespace PBL3.DTO
         public string Url_Image { get; set; }
           public string Url_Image2{ get; set; }
             public string Url_Image3 { get; set; }
-        public string Role { get; set; } = "Restaurant";
+      
 
        
     }

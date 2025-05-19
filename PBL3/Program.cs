@@ -31,6 +31,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<CustomerService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<GrabService>();
+builder.Services.AddScoped<AdminService>();
 
 
 

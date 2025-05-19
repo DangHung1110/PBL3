@@ -1,5 +1,5 @@
 <template>
-    <div>AdminGrab</div>
+    <div>AdminRes</div>
 </template>
 <script setup>
 </script>

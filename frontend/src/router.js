@@ -20,6 +20,9 @@ import GrabDashBoard from "./components/GrabDashBoard.vue";
 import AdminDashBoard from "./components/AdminDashBoard.vue";
 import AdminGrab from "./components/AdminGrab.vue";
 import AdminThongke from "./components/AdminThongke.vue";
+import AdminRes from "./components/AdminRes.vue";
+import AdminWaitRes from "./components/AdminWaitRes.vue";
+
 const routes = [
     {
         path: "/",
@@ -113,13 +116,27 @@ const routes = [
     component: AdminDashBoard,
     name: 'AdminDashBoard',
      children: [
-
-      
-         
+          {
+            path: "Res",
+            name: "AdminRes",
+            component: AdminRes,
+          },
+           {
+            path: "WaitRes",
+            name: "AdminWaitRes",
+            component: AdminWaitRes,
+          },
            {
             path: "Thongke",
             name: "Thongke",
             component: AdminThongke,
+          },
+      
+         
+           {
+            path: "Grab",
+            name: "AdminGrab",
+            component: AdminGrab,
           },
         ]
     

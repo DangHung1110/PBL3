@@ -103,8 +103,8 @@ import Swal from 'sweetalert2';
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
+  width:10vw;
+  height:10vh;
   background: rgba(0, 0, 0, 0.4);
   display: flex;
   justify-content: center;
@@ -114,90 +114,78 @@ import Swal from 'sweetalert2';
 
 
 .modal-content {
-  background: #fff;
-  padding: 30px 32px;
-  width: 400px;
- 
-  max-width: 90%;
-  border-radius: 6px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
-  animation: slideDown 0.3s ease;
+background: #fff;
+padding: 24px 24px;
+ width: 30%;
+max-width: 90%;
+ border-radius: 12px;
+ box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+animation: slideDown 0.3s ease;
 }
-
 
 .modal-content h2 {
-  font-size: 22px;
-  font-weight: 500;
-
-  color: #222;
-  margin-bottom: 24px;
-  text-align:center;
-}
-
-
-.login-form {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.input-wrapper {
-  width: 100%;
+ font-size: 20px;
+ font-weight: 600;
+ color: #333;
+margin-bottom: 16px;
+ text-align: center;
 }
 
 .input-field {
-  width: 100%;
-  padding: 12px 14px;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 2px;
-  outline: none;
-  transition: border-color 0.2s;
+width: 100%;
+padding: 10px 12px;
+font-size: 14px;
+ border: 1px solid #ddd;
+ border-radius: 8px;
+ background-color: #f9f9f9;
+ outline: none;
+ transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 .input-field:focus {
-  border-color: #ee4d2d;
+border-color: #ee4d2d;
+ box-shadow: 0 0 0 2px rgba(238, 77, 45, 0.1);
 }
 
-/* Nút đăng nhập */
 .btn {
-  background-color: #ee4d2d;
-  color: white;
-  padding: 12px;
-  font-size: 15px;
-  border: none;
-  border-radius: 2px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: background-color 0.3s;
+ background-color: #ee4d2d;
+color: white;
+ padding: 10px;
+ font-size: 14px;
+ border: none;
+ border-radius: 8px;
+ cursor: pointer;
+font-weight: 600;
+transition: background-color 0.3s;
 }
 
 .btn:hover {
-  background-color: #d84423;
+background-color: #d84423;
 }
 
-
 .close-btn {
-  margin-top: 12px;
-  background: none;
-  border: none;
-  color: #ffffff;
-  font-size: 14px;
-  cursor: pointer;
-  text-decoration: underline;
+margin-top: 10px;
+ background: none;
+ border: none;
+ color: #888;
+ font-size: 13px;
+ cursor: pointer;
+ text-align: center;
+ width: 100%;
+ text-decoration: underline;
 }
 
 .close-btn:hover {
-  color: #222;
+color: #333;
 }
-
 
 .error-message {
-  color: red;
-  font-size: 13px;
-  margin-top: 6px;
-  text-align: center;
+ color: red;
+ font-size: 13px;
+margin-top: 6px;
+text-align: center;
 }
+
 
 
 @keyframes slideDown {

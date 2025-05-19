@@ -1,5 +1,6 @@
 <template>
-  <div class="bg-overlay bg-full">
+  <div :class="['bg-full', showBackground ? 'bg-overlay' : '']">
+
     <div class="admin-dashboard">
       <!-- Header -->
       <header class="header relative">
@@ -21,22 +22,25 @@
 
       <!-- Tabs -->
       <div class="tab-menu-container">
+          <router-link to="/Admin/WaitRes" class="tab-button" active-class="tab-active">
+          <span class="tab-icon">📥</span>
+          <span class="tab-text">Đăng ký nhà hàng</span>
+        </router-link>
+              <router-link to="/Admin/Res" class="tab-button" active-class="tab-active">
+          <span class="tab-icon">🏪</span>
+          <span class="tab-text">Nhà hàng đối tác</span>
+        </router-link>
+         <router-link to="/Admin/Grab" class="tab-button" active-class="tab-active">
+          <span class="tab-icon">🚗</span>
+          <span class="tab-text">Grab đối tác</span>
+        </router-link>
         <router-link to="/Admin/Thongke" class="tab-button" active-class="tab-active">
           <span class="tab-icon">📊</span>
           <span class="tab-text">Thống kê</span>
         </router-link>
-        <router-link to="/Admin/Grab" class="tab-button" active-class="tab-active">
-          <span class="tab-icon">🚗</span>
-          <span class="tab-text">Grab đối tác</span>
-        </router-link>
-        <router-link to="/Admin/WaitConfirmedRes" class="tab-button" active-class="tab-active">
-          <span class="tab-icon">📥</span>
-          <span class="tab-text">Đăng ký nhà hàng</span>
-        </router-link>
-        <router-link to="/Admin/LinkingRes" class="tab-button" active-class="tab-active">
-          <span class="tab-icon">🏪</span>
-          <span class="tab-text">Nhà hàng đối tác</span>
-        </router-link>
+       
+      
+  
       </div>
 
       <div class="main-content">
@@ -47,43 +51,26 @@
 </template>
 
 <script setup>
+import { computed } from "vue";
 import { onMounted } from "vue";
+import { useRouter,useRoute} from "vue-router";
 
-function logout() {
-  alert("Đăng xuất thành công!");
+const route = useRoute();
+const router = useRouter();
+const logout=()=>{
+  localStorage.removeItem("Role");
+
+  router.replace("/login");
+
 }
+const showBackground = computed(() => {
+  return route.path === "/admin";});
 
 function searchTag(tag) {
   alert(`Tìm kiếm: ${tag}`);
 }
 
-onMounted(() => {
-  if (window.particlesJS) {
-    window.particlesJS("particles-js", {
-      particles: {
-        number: { value: 50, density: { enable: true, value_area: 800 } },
-        color: { value: "#ffffff" },
-        shape: { type: "circle" },
-        opacity: { value: 0.5, random: true },
-        size: { value: 3, random: true },
-        line_linked: { enable: false },
-        move: { enable: true, speed: 2, direction: "none", random: true },
-      },
-      interactivity: {
-        detect_on: "canvas",
-        events: {
-          onhover: { enable: true, mode: "repulse" },
-          onclick: { enable: true, mode: "push" },
-        },
-        modes: {
-          repulse: { distance: 100, duration: 0.4 },
-          push: { particles_nb: 4 },
-        },
-      },
-      retina_detect: true,
-    });
-  }
-});
+
 </script>
 
 <style>
