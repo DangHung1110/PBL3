@@ -28,5 +28,25 @@ namespace PBL3.Controllers
                 return StatusCode(500, new { Message = "Internal Server Error", Error = ex.Message });
             }
         }
+        [HttpDelete("deletewaitresdata/{id}")]
+        public async Task<IActionResult> Deletewaitresdata(int id)
+        {
+            try
+            {
+                var result = await _adminService.Deletewaitresdata(id);
+                if (result)
+                {
+                    return Ok(new { Message = "Delete Successful" });
+                }
+                else
+                {
+                    return NotFound(new { Message = "Restaurant not found" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "Internal Server Error", Error = ex.Message });
+            }
+        }
     }
 }

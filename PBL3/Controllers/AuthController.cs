@@ -20,8 +20,8 @@ namespace PBL3.Controllers
         [HttpPost("login")]
         public IActionResult Login([FromBody] LoginDTO loginDTO)
         {
-            string name = loginDTO.Name;
-            string pass = loginDTO.Password;
+            string name = loginDTO.Name.Trim();
+            string pass = loginDTO.Password.Trim();;
             Object result = _authservice.Login(name, pass);
             if (result != null && result.GetType().GetProperty("Role").GetValue(result).ToString() == "Customer")
             {
@@ -51,6 +51,19 @@ namespace PBL3.Controllers
         public IActionResult SignUp2([FromBody] RESTAURANTWAITDTO restaurant)
         {
             int Check = _authservice.Signup2(restaurant);
+            if (Check == 0)
+            {
+                return Ok(new { Message = "SignUpSuccessful" });
+            }
+            else
+            {
+                return BadRequest(new { Message = "SignUpFail", ErrorCode = Check });
+            }
+        }
+           [HttpPost("restaurant/signupinresafterwait")]
+        public IActionResult SignUp3([FromBody] Restaurant restaurant)
+        {
+            int Check = _authservice.Signup3(restaurant);
             if (Check == 0)
             {
                 return Ok(new { Message = "SignUpSuccessful" });

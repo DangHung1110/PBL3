@@ -34,10 +34,20 @@ public class AdminService
             restaurant.Url_Image = data.GetString("Url_image");
             restaurant.Url_Image2 = data.GetString("Url_image2");
             restaurant.Url_Image3 = data.GetString("Url_image3");
-       
+
             restaurantlist.Add(restaurant);
         }
         return restaurantlist;
+    }
+    public async Task<bool> Deletewaitresdata(int id)
+    {
+        using var conn = GetConnection();
+        await conn.OpenAsync();
+        string sql = "DELETE FROM RESTAURANTWAIT WHERE IDRes = @IDRes";
+        using var cmd = new MySqlCommand(sql, conn);
+        cmd.Parameters.AddWithValue("@IDRes", id);
+        int rowsAffected = await cmd.ExecuteNonQueryAsync();
+        return rowsAffected > 0;
     }
 
 }

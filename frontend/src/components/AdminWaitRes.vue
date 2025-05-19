@@ -57,7 +57,8 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import { getwaitresdata } from "../api/Admin.js";
-
+import { insertvalueinresdata } from "../api/Admin.js";
+import {deletewaitresdata} from "../api/Admin.js";
 const getdata = ref([]);
 const previewImage = ref(null)
 
@@ -77,6 +78,7 @@ onMounted(async () => {
       Name: item.name,
       Address: item.address,
       Phone: item.phone,
+      Pass:item.pass,
       Url_Image: item.url_Image,
       Url_Image2: item.url_Image2,
       Url_Image3: item.url_Image3,
@@ -86,8 +88,37 @@ onMounted(async () => {
   }
 });
 
-function approve(id) {
-  console.log("Duyệt nhà hàng", id);
+
+const approve=async (id)=>{
+  const data={
+    IDRes: String(id),
+    Name:getdata.value.find(item=>item.ID===id).Name,
+    Address:getdata.value.find(item=>item.ID===id).Address,
+    Phone:getdata.value.find(item=>item.ID===id).Phone,
+    Url_Image:getdata.value.find(item=>item.ID===id).Url_Image,
+    Pass:getdata.value.find(item=>item.ID===id).Pass,
+    Role:"Restaurant",
+
+
+  }
+  console.log(data);
+    
+    try{
+        const response=await insertvalueinresdata(data);
+        const response2=await deletewaitresdata(id);
+            getdata.value = getdata.value.filter(item => item.ID !== id);
+    console.log("Duyệt thành công:", response.data);
+
+           
+    console.log("Duyệt thành công:", response.data);
+
+        console.log(response.data);
+        
+    }
+    catch(error){
+        console.error("Lỗi khi duyệt nhà hàng:", error);
+    }
+
 }
 
 function reject(id) {
