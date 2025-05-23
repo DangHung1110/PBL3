@@ -1,22 +1,18 @@
-<template>
-  <div class="modal">
+<template> 
+  <div class="modal"> 
     <div class="modal-content">
+     <button @click="closeModal" class="modal-close-x">x</button>
       <h2>Đăng nhập</h2>
       <form @submit.prevent="handleLogin" class="login-form">
-       
-
         <div class="input-wrapper">
           <input v-model="username" type="text" placeholder="Tên đăng nhập" class="input-field" required />
         </div>
-
         <div class="input-wrapper">
           <input v-model="password" type="password" placeholder="Mật khẩu" class="input-field" required />
         </div>
-
         <button type="submit" class="btn">Đăng nhập</button>
       </form>
       <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
-      <button @click="closeModal" class="close-btn">Đóng</button>
     </div>
   </div>
 </template>
@@ -96,15 +92,12 @@ import Swal from 'sweetalert2';
 
 
 <style>
-
-
-
 .modal {
   position: fixed;
   top: 0;
   left: 0;
-  width:10vw;
-  height:10vh;
+  width: 100vw;
+  height: 100vh;
   background: rgba(0, 0, 0, 0.4);
   display: flex;
   justify-content: center;
@@ -112,81 +105,82 @@ import Swal from 'sweetalert2';
   z-index: 999;
 }
 
-
 .modal-content {
-background: #fff;
-padding: 24px 24px;
- width: 30%;
-max-width: 90%;
- border-radius: 12px;
- box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-animation: slideDown 0.3s ease;
+  background: #fff;
+  padding: 24px 20px 20px;
+  width: 320px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  position: relative;
+  animation: slideDown 0.3s ease;
 }
 
 .modal-content h2 {
- font-size: 20px;
- font-weight: 600;
- color: #333;
-margin-bottom: 16px;
- text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.input-wrapper {
+  margin-bottom: 12px;
 }
 
 .input-field {
-width: 100%;
-padding: 10px 12px;
-font-size: 14px;
- border: 1px solid #ddd;
- border-radius: 8px;
- background-color: #f9f9f9;
- outline: none;
- transition: border-color 0.3s, box-shadow 0.3s;
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 .input-field:focus {
-border-color: #ee4d2d;
- box-shadow: 0 0 0 2px rgba(238, 77, 45, 0.1);
+  border-color: #ee4d2d;
+  box-shadow: 0 0 0 2px rgba(238, 77, 45, 0.1);
 }
 
 .btn {
- background-color: #ee4d2d;
-color: white;
- padding: 10px;
- font-size: 14px;
- border: none;
- border-radius: 8px;
- cursor: pointer;
-font-weight: 600;
-transition: background-color 0.3s;
+  background-color: #ee4d2d;
+  color: white;
+  padding: 10px;
+  font-size: 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  width: 100%;
+  transition: background-color 0.3s;
 }
 
 .btn:hover {
-background-color: #d84423;
+  background-color: #d84423;
 }
 
 .close-btn {
-margin-top: 10px;
- background: none;
- border: none;
- color: #888;
- font-size: 13px;
- cursor: pointer;
- text-align: center;
- width: 100%;
- text-decoration: underline;
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #888;
+  cursor: pointer;
 }
 
 .close-btn:hover {
-color: #333;
+  color: #333;
 }
 
 .error-message {
- color: red;
- font-size: 13px;
-margin-top: 6px;
-text-align: center;
+  color: red;
+  font-size: 13px;
+  margin-top: 10px;
+  text-align: center;
 }
-
-
 
 @keyframes slideDown {
   from {
@@ -198,7 +192,6 @@ text-align: center;
     transform: translateY(0);
   }
 }
-
 
 .swal2-slide-in-right {
   animation: slide-in-right 0.5s ease-out;
@@ -214,5 +207,20 @@ text-align: center;
     opacity: 1;
   }
 }
+.modal-close-x {
+ position: absolute;
+ top: 16px;
+ right: 16px;
+background: none;
+border: none;
+ font-size: 24px;
+font-weight: bold;
+ color: #999;
+cursor: pointer;
+transition: color 0.2s ease;
+}
 
+.modal-close-x:hover {
+color: #ee4d2d;
+}
 </style>

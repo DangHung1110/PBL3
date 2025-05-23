@@ -290,6 +290,11 @@ const checkLogin = () => {
   {
     router.replace("/Grab");
   }
+  else
+  if (role === "Admin") {
+    router.replace("/admin");
+  }
+ 
 };
 emitter.on("Login", checkLogin);
 

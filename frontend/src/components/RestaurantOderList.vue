@@ -175,33 +175,33 @@ h3 {
 }
 .col-unit{
    font-size:11px;
-   padding-left:13.5%;
+   padding-left:18%;
 }
 
 .col-quantity{
    font-size:11px;
-    padding-left:6%;
+    padding-left:6.4%;
 }
 .col-total{
    font-size:11px;
-    padding-left:5%;
+    padding-left:6%;
 }
 .col-action{
    font-size:11px;
-   padding-left:7%;
+   padding-left:8%;
 }
 
 .col-contact{
    font-size:11px;
- padding-left:6.5%;}
+ padding-left:5.5%;}
 
 .col-address{
    font-size:11px;
-  padding-left:5%;
+  padding-left:6%;
 }
 .col-contact2{
    font-size:11px;
- padding-left:5%;}
+ padding-left:6.8%;}
 
 
 

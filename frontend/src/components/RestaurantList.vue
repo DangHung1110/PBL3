@@ -102,12 +102,15 @@
 
 .circle-item {
   max-width: 300px;
+
   text-align: center;
 }
 
 .circle-image {
   width: 150px;
   height: 150px;
+  margin-left:22%;
+  
   object-fit: cover;
   border-radius: 50%;
   margin-bottom: 16px;

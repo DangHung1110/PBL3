@@ -106,7 +106,7 @@ const routes = [
           },
            {
             path: "Thongke",
-            name: "Thongke",
+            name: "Thongkegrab",
             component: GrabData,
           },
         ]

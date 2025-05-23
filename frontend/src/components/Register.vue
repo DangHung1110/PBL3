@@ -75,9 +75,10 @@
 
 
         <button type="submit" class="btn">Đăng ký</button>
+            <button @click="closeModal" class="modal-close-x">x</button>
       </form>
 
-      <button @click="closeModal" class="close-btn">Đóng</button>
+  
     </div>
   </div>
 </template>
@@ -261,6 +262,39 @@ h2 {
   cursor: pointer;
   font-size: 14px;
 }
+.styled-close-btn {
+ margin-top: 12px;
+ background-color: #ccc;
+ color: #333;
+padding: 10px;
+border: none;
+ border-radius: 8px;
+ width: 100%;
+font-size: 16px;
+cursor: pointer;
+transition: background-color 0.3s;
+}
+
+.styled-close-btn:hover {
+background-color: #aaa;
+}
+.modal-close-x {
+ position: absolute;
+ top: 16px;
+ right: 16px;
+background: none;
+border: none;
+ font-size: 24px;
+font-weight: bold;
+ color: #999;
+cursor: pointer;
+transition: color 0.2s ease;
+}
+
+.modal-close-x:hover {
+color: #ee4d2d;
+}
+
 
 
 </style>

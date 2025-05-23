@@ -31,7 +31,7 @@
                   <td>{{ item.RestaurantName }}</td>
                   <td>
                     <img
-                      :src="item.Url_image"
+                      :src="item.Url_Image"
                       alt="Ảnh món ăn"
                       class="food-image"
                     />
