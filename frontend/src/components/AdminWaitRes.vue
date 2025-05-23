@@ -50,6 +50,12 @@
 </div>
 
     </div>
+    <div v-if="getdata.length===0" class="card">
+      <div class="info">
+        <h2 class="res-name">Không có nhà hàng nào chờ duyệt</h2>
+      </div>
+
+    </div>
   </div>
 </template>
 
@@ -73,6 +79,7 @@ function closePreview() {
 onMounted(async () => {
   try {
     const data = await getwaitresdata();
+  
     getdata.value = data.map((item) => ({
       ID: item.idRes,
       Name: item.name,
