@@ -49,5 +49,29 @@ public class AdminService
         int rowsAffected = await cmd.ExecuteNonQueryAsync();
         return rowsAffected > 0;
     }
+    public async Task<List<GRABWAIT>> GetGrabData()
+    {
+        using var conn = GetConnection();
+        await conn.OpenAsync();
+        string sql = "SELECT* FROM GRABWAIT";
+        using var cmd = new MySqlCommand(sql, conn);
+        var ListGrab = new List<GRABWAIT>();
+        var data = await cmd.ExecuteReaderAsync();
+        while (data.Read())
+        {
+            GRABWAIT grab = new GRABWAIT();
+            grab.IDRes = data.GetInt32("IDGrabWait");
+            grab.Name = data.GetString("Name");
+            grab.Address = data.GetString("Address");
+            grab.Phone = data.GetString("Phone");
+            grab.Pass = data.GetString("Pass");
+            grab.Url_Image = data.GetString("Url_image");
+            grab.Url_Image2 = data.GetString("Url_image2");
+
+            ListGrab.Add(grab);
+        }
+        return ListGrab;
+
+    }
 
 }

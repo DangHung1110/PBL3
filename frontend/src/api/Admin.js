@@ -32,3 +32,14 @@ export const deletewaitresdata=async(id)=>{
         return null;
     }
 }
+export const getwaitgrabdata=async()=>{
+ try{
+    const response=await axios.get("http://localhost:5299/Admin/grabwait");
+    console.log(response.data);
+    return response.data;
+ }
+    catch(error){
+        console.error("Lỗi lấy dữ liệu grab chờ:",error);
+        return null;
+    }
+}

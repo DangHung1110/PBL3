@@ -30,7 +30,11 @@
           <span class="tab-icon">🏪</span>
           <span class="tab-text">Nhà hàng đối tác</span>
         </router-link>
-         <router-link to="/Admin/Grab" class="tab-button" active-class="tab-active">
+         <router-link to="/Admin/GrabWait" class="tab-button" active-class="tab-active">
+          <span class="tab-icon">🚗</span>
+          <span class="tab-text">Grab đối tác</span>
+        </router-link>
+             <router-link to="/Admin/Grab" class="tab-button" active-class="tab-active">
           <span class="tab-icon">🚗</span>
           <span class="tab-text">Grab đối tác</span>
         </router-link>

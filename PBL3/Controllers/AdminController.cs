@@ -48,5 +48,19 @@ namespace PBL3.Controllers
                 return StatusCode(500, new { Message = "Internal Server Error", Error = ex.Message });
             }
         }
+        [HttpGet("grabwait")]
+        public async Task<IActionResult> GetGrabData()
+        {
+            try
+            {
+                var grablist = await _adminService.GetGrabData();
+                return Ok(grablist);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "Internal Server Error", Error = ex.Message });
+            }
+        }
+
     }
 }

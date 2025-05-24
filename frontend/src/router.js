@@ -22,7 +22,7 @@ import AdminGrab from "./components/AdminGrab.vue";
 import AdminThongke from "./components/AdminThongke.vue";
 import AdminRes from "./components/AdminRes.vue";
 import AdminWaitRes from "./components/AdminWaitRes.vue";
-
+import AdminGrabWait from "./components/GrabWait.vue";
 const routes = [
     {
         path: "/",
@@ -137,6 +137,11 @@ const routes = [
             path: "Grab",
             name: "AdminGrab",
             component: AdminGrab,
+          },
+           {
+            path: "GrabWait",
+            name: "AdminGrabWait",
+            component: AdminGrabWait,
           },
         ]
     
