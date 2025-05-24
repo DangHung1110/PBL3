@@ -22,11 +22,11 @@
         <!-- Cột phải: Hình ảnh -->
         <div class="image-gallery">
           <div class="image-block">
-            <div class="image-label">Căn cước công dân đại diện</div>
+            <div class="image-label">Ảnh nhà hàng</div>
             <img :src="item.Url_Image" alt="Ảnh CCCD" @click="openPreview(item.Url_Image)" />
           </div>
           <div class="image-block">
-            <div class="image-label">Ảnh khu vực chế biến</div>
+            <div class="image-label">Căn cước công dân đại diện</div>
             <img :src="item.Url_Image2" alt="Ảnh khu chế biến" @click="openPreview(item.Url_Image2)" />
           </div>
           <div class="image-block">

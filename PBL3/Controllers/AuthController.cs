@@ -60,6 +60,19 @@ namespace PBL3.Controllers
                 return BadRequest(new { Message = "SignUpFail", ErrorCode = Check });
             }
         }
+        [HttpPost("grab/signupwait")]
+        public IActionResult SignUp4([FromBody] GRABWAIT grabwait)
+        {
+            int Check = _authservice.Signup4(grabwait);
+            if (Check == 0)
+            {
+                return Ok(new { Message = "SignUpSuccessful" });
+            }
+            else
+            {
+                return BadRequest(new { Message = "SignUpFail", ErrorCode = Check });
+            }
+        }
            [HttpPost("restaurant/signupinresafterwait")]
         public IActionResult SignUp3([FromBody] Restaurant restaurant)
         {

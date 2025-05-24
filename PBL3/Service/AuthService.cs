@@ -277,13 +277,81 @@ namespace PBL3.Service
 
                 var cmd2 = new MySqlCommand("INSERT INTO  RESTAURANT (IDRes,Name, Address, Phone, Pass, Url_Image,Role) VALUES(@IDRes,@Name, @Address, @Phone, @Pass, @Url_Image,@Role)", conn);
                 cmd2.Parameters.AddWithValue("@Url_Image", Url_Image);
-      cmd2.Parameters.AddWithValue("@IDRes",IDRes);
+                cmd2.Parameters.AddWithValue("@IDRes", IDRes);
                 cmd2.Parameters.AddWithValue("@Name", Name);
                 cmd2.Parameters.AddWithValue("@Address", Address);
                 cmd2.Parameters.AddWithValue("@Phone", Phone);
 
                 cmd2.Parameters.AddWithValue("@Pass", Pass);
                 cmd2.Parameters.AddWithValue("@Role", Role);
+
+                try
+                {
+                    int rowAffected = cmd2.ExecuteNonQuery();
+                    if (rowAffected > 0)
+                    {
+                        return 0;
+                    }
+                    else
+                    {
+                        return 1;
+                    }
+                }
+                catch (Exception ex)
+                {
+
+                    Console.WriteLine(ex.ToString());
+                    return 2;
+                }
+            }
+        }
+        public int Signup4([FromBody] GRABWAIT grabwait)
+        {
+
+            if (grabwait== null)
+            {
+                return 1;
+            }
+
+
+
+
+            string Name = grabwait.Name;
+            Console.WriteLine(Name);
+            string Address = grabwait.Address;
+            string Phone = grabwait.Phone;
+            string Pass = grabwait.Pass;
+            string Url_Image = grabwait.Url_Image;
+            string Url_Image2 = grabwait.Url_Image2;
+           
+            Console.WriteLine(Url_Image);
+            Console.WriteLine(Url_Image2);
+       
+
+
+
+            using var conn = GetConnection();
+            conn.Open();
+            var cmd = new MySqlCommand("SELECT COUNT(*) FROM Grab WHERE Name=@Name", conn);
+            cmd.Parameters.AddWithValue("@Name", Name);
+            var Check = Convert.ToInt32(cmd.ExecuteScalar());
+
+            if (Check > 0)
+            {
+                return 1;
+            }
+            else
+            {
+
+                var cmd2 = new MySqlCommand("INSERT INTO  GRABWAIT (Name, Address, Phone, Pass, Url_Image,Url_Image2) VALUES( @Name, @Address, @Phone, @Pass, @Url_Image,@Url_Image2)", conn);
+                cmd2.Parameters.AddWithValue("@Url_Image", Url_Image);
+                cmd2.Parameters.AddWithValue("@Url_Image2", Url_Image2);
+             
+                cmd2.Parameters.AddWithValue("@Name", Name);
+                cmd2.Parameters.AddWithValue("@Address", Address);
+                cmd2.Parameters.AddWithValue("@Phone", Phone);
+                cmd2.Parameters.AddWithValue("@Pass", Pass);
+                cmd2.Parameters.AddWithValue("@Status", Pass);
 
                 try
                 {

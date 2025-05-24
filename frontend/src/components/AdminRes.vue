@@ -42,12 +42,14 @@
           class="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition-transform duration-300"
         >
           <div class="h-48 bg-gray-200">
-            <img
-              src="https://via.placeholder.com/400x200?text=Restaurant+Image"
-              alt="Restaurant Image"
-              class="w-full h-full object-cover"
-            />
+           <img
+  :src="item.Url_Image"
+  alt="Restaurant Image"
+  class="w-full h-full object-cover"
+/>
+
           </div>
+          
           <div class="p-6">
             <h3 class="text-xl font-semibold text-gray-800">{{ item.Name }}</h3>
             <p class="text-gray-600 mt-2">{{ item.Address }}</p>
@@ -140,12 +142,15 @@ currentPage.value = page
 onMounted(async () => {
   try {
     const data = await getAllRes()
+    console.log(data);
     dulieu.value = data.map(item => ({
       ID: item.idRes,
       Name: item.name,
       Address: item.address,
-      Phone: item.phone
+      Phone: item.phone,
+      Url_Image: item.url_Image,
     }))
+    console.log(dulieu);
     filteredData.value = dulieu.value 
   } catch (error) {
     console.error('Lỗi khi lấy dữ liệu:', error)

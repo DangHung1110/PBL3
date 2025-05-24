@@ -9,6 +9,7 @@
           <select v-model="role" class="input-field">
             <option value="user">Người dùng</option>
             <option value="restaurant">Nhà hàng</option>
+              <option value="Grab">Grab</option>
           </select>
         </div>
 
@@ -56,12 +57,12 @@
     <!-- Cột phải: ảnh -->
     <div class="file-column">
       <div class="input-wrapper">
-        <label>Căn cước công dân người đại diện pháp lý</label>
+        <label>Ảnh nhà hàng</label>
         <input type="file"@change="handleImageUpload" class="input-field" />
       </div>
 
       <div class="input-wrapper">
-        <label>Ảnh chụp khu vực chế biến</label>
+        <label>Căn cước công dân người đại diện pháp lý</label>
         <input type="file" @change="handleImageUpload2" class="input-field" />
       </div>
 
@@ -69,6 +70,43 @@
         <label>Menu quán (Chụp ảnh các mặt)</label>
         <input type="file" @change="handleImageUpload3" class="input-field" />
       </div>
+    </div>
+  </div>
+</template>
+ <template v-if="role === 'Grab'">
+  <div class="restaurant-form-grid">
+    <!-- Cột trái: thông tin -->
+    <div class="info-column">
+      <div class="input-wrapper">
+        <input v-model="restaurantName" type="text" placeholder="Tên đối tác Grab" class="input-field" required />
+      </div>
+
+      <div class="input-wrapper">
+        <input v-model="phone" type="text" placeholder="Số điện thoại" class="input-field" required />
+      </div>
+
+      <div class="input-wrapper">
+        <input v-model="address" type="text" placeholder="Địa chỉ" class="input-field" required />
+      </div>
+
+      <div class="input-wrapper">
+        <input v-model="password" type="password" placeholder="Mật khẩu" class="input-field" required />
+      </div>
+    </div>
+
+    <!-- Cột phải: ảnh -->
+    <div class="file-column">
+      <div class="input-wrapper">
+        <label>Ảnh căn cước cống dân mặt trướctrước</label>
+        <input type="file"@change="handleImageUpload" class="input-field" />
+      </div>
+
+      <div class="input-wrapper">
+        <label>Ảnh căn cước công dân mặt sau</label>
+        <input type="file" @change="handleImageUpload2" class="input-field" />
+      </div>
+
+    
     </div>
   </div>
 </template>
@@ -89,6 +127,7 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { SignUpUser,SignUpRes } from "../api/signup.api.js"; // Import API
 import {ImageDeal} from "../api/signup.api.js"; // Import API
+import {SignUpGrab} from "../api/signup.api.js"; // Import API
 const router = useRouter();
 
     const username = ref("");
@@ -131,6 +170,16 @@ const handleImageUpload3 = (event) => {
       const Image3=await ImageDeal(imageUrl3.value);
       console.log(role.value, username.value, password.value, phone.value, address.value, restaurantName.value,Image1,Image2, Image3);
       await SignUpRes(role.value, username.value, password.value, phone.value, address.value, restaurantName.value,Image1,Image2, Image3);
+    }
+     else if (role.value === "Grab") {
+      if (!imageUrl.value || !imageUrl2.value) {
+        throw new Error("Vui lòng chọn tất cả các ảnh yêu cầu");
+      }
+      const Image1=await ImageDeal(imageUrl.value);
+      const Image2=await ImageDeal(imageUrl2.value);
+  
+      console.log(role.value, username.value, password.value, phone.value, address.value, restaurantName.value,Image1,Image2);
+      await SignUpGrab(role.value, username.value, password.value, phone.value, address.value, restaurantName.value,Image1,Image2);
     }
     alert("Đăng ký thành công!");
     router.push("/"); // chuyển hướng sau khi đăng ký thành công

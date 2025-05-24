@@ -37,6 +37,28 @@ export async function SignUpRes(role, username, password, phone, address,restaur
     throw error;
   }
 }
+export async function SignUpGrab(role, username, password, phone, address,restaurantName, imageUrl, imageUrl2) {
+  const data = {
+    Role: role,
+    Name: restaurantName,
+    Phone: phone,
+    Address: address,
+    Pass: password,
+    Url_Image: imageUrl,
+    Url_Image2: imageUrl2,
+
+  };
+  console.log(data);
+
+  try {
+    const response = await axios.post("http://localhost:5299/api/auth/grab/signupwait", data);
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi gọi API đăng ký:", error);
+    throw error;
+  }
+}
 export const ImageDeal = async (restaurantImageFile) => {
   if (!restaurantImageFile) {
     throw new Error("No file selected");
