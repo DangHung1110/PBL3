@@ -2,7 +2,7 @@
   <div class="wrapper">
     <h1 class="title">Danh sách Grab chờ duyệt</h1>
 
-    <div v-for="item in getdata" :key="item.ID" class="card">
+    <div v-for="item in getdata" :key="item.IDGrabWait" class="card">
       <div class="card-content">
         <!-- Cột trái: Thông tin -->
         <div class="info">
@@ -35,8 +35,8 @@
 
       <!-- Hành động -->
       <div class="actions">
-        <button class="btn btn-approve" @click="approve(item.ID)">Duyệt</button>
-        <button class="btn btn-reject" @click="reject(item.ID)">Từ chối</button>
+        <button class="btn btn-approve" @click="approve(item.IDGrabWait)">Duyệt</button>
+        <button class="btn btn-reject" @click="reject(item.IDGrabWait)">Từ chối</button>
       </div>
       <!-- Ảnh phóng to -->
 <div v-if="previewImage" class="image-overlay" @click.self="closePreview">
@@ -62,6 +62,7 @@ import { onMounted, ref } from "vue";
 import { getwaitgrabdata} from "../api/Admin.js";
 import { insertvalueinresdata } from "../api/Admin.js";
 import {deletewaitresdata} from "../api/Admin.js";
+import { insertvalueingrabdata } from "../api/Admin.js";
 const getdata = ref([]);
 const previewImage = ref(null)
 
@@ -76,7 +77,7 @@ function closePreview() {
 onMounted(async () => {
   try {
     const data = await getwaitgrabdata();
-  
+    console.log(data);
     getdata.value = data.map((item) => ({
       IDGrabWait: item.idGrabWait,
       Name: item.name,
@@ -87,6 +88,7 @@ onMounted(async () => {
       Url_Image2: item.url_Image2,
    
     }));
+    console.log(getdata.value);
   } catch (error) {
     console.error("Lỗi khi lấy dữ liệu:", error);
   }
@@ -94,24 +96,25 @@ onMounted(async () => {
 
 
 const approve=async (id)=>{
+  console.log(id);
   const data={
-    IDRes: String(id),
-    Name:getdata.value.find(item=>item.ID===id).Name,
-    Address:getdata.value.find(item=>item.ID===id).Address,
-    Phone:getdata.value.find(item=>item.ID===id).Phone,
-    Url_Image:getdata.value.find(item=>item.ID===id).Url_Image,
-    Pass:getdata.value.find(item=>item.ID===id).Pass,
-    Role:"Restaurant",
+    IDGrab: id,
+    Name:getdata.value.find(item=>item.IDGrabWait===id).Name,
+    Address:getdata.value.find(item=>item.IDGrabWait===id).Address,
+    Phone:getdata.value.find(item=>item.IDGrabWait===id).Phone,
+
+    Pass:getdata.value.find(item=>item.IDGrabWait===id).Pass,
+    Role:"Grab",
 
 
   }
   console.log(data);
     
     try{
-        const response=await insertvalueinresdata(data);
-        const response2=await deletewaitresdata(id);
-            getdata.value = getdata.value.filter(item => item.ID !== id);
-    console.log("Duyệt thành công:", response.data);
+        const response=await insertvalueingrabdata(data);
+     
+            getdata.value = getdata.value.filter(item => item.IDGrabWait !== id);
+
 
            
     console.log("Duyệt thành công:", response.data);

@@ -1,7 +1,7 @@
 
 using Microsoft.AspNetCore.Mvc;
 using PBL3.Service;
-
+using PBL3.Models;
 namespace PBL3.Controllers
 {
     [Route("Admin")]
@@ -59,6 +59,20 @@ namespace PBL3.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new { Message = "Internal Server Error", Error = ex.Message });
+            }
+        }
+        [HttpPost("grab/signupingrabafterwait")]
+     public async Task<IActionResult> signupingrabafterwait([FromBody] Grab grab)
+
+        {
+            bool Check = await _adminService.signupingrabafterwait(grab);
+            if (Check)
+            {
+                return Ok(new { Message = "SignUpSuccessful" });
+            }
+            else
+            {
+                return BadRequest(new { Message = "SignUpFail", ErrorCode = Check });
             }
         }
 

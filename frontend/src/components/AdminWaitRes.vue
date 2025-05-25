@@ -79,7 +79,7 @@ function closePreview() {
 onMounted(async () => {
   try {
     const data = await getwaitresdata();
-  
+  console.log(data.value);
     getdata.value = data.map((item) => ({
       ID: item.idRes,
       Name: item.name,
@@ -88,8 +88,10 @@ onMounted(async () => {
       Pass:item.pass,
       Url_Image: item.url_Image,
       Url_Image2: item.url_Image2,
-      Url_Image3: item.url_Image3,
+  Url_Image3: item.url_Image3,
     }));
+    console.log(getdata);
+    console.log(getdata.value);
   } catch (error) {
     console.error("Lỗi khi lấy dữ liệu:", error);
   }

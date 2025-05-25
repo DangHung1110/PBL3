@@ -43,3 +43,15 @@ export const getwaitgrabdata=async()=>{
         return null;
     }
 }
+export const insertvalueingrabdata =async(data)=>{
+    try{
+        const response=await axios.post("http://localhost:5299/Admin/grab/signupingrabafterwait",data);
+        console.log(response.data);
+        return response.data;
+    }
+    catch(error){
+        console.error("Lỗi thêm dữ liệu grab:",error);
+        return null;
+    }
+
+}

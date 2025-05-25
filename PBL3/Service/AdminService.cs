@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MySqlConnector;
 using PBL3.DTO;
-
+using PBL3.Models;
 namespace PBL3.Service;
 
 public class AdminService
@@ -51,6 +51,7 @@ public class AdminService
     }
     public async Task<List<GRABWAIT>> GetGrabData()
     {
+
         using var conn = GetConnection();
         await conn.OpenAsync();
         string sql = "SELECT* FROM GRABWAIT";
@@ -60,7 +61,7 @@ public class AdminService
         while (data.Read())
         {
             GRABWAIT grab = new GRABWAIT();
-            grab.IDRes = data.GetInt32("IDGrabWait");
+            grab.IDGrabWait = data.GetInt32("IDGrabWait");
             grab.Name = data.GetString("Name");
             grab.Address = data.GetString("Address");
             grab.Phone = data.GetString("Phone");
@@ -72,6 +73,31 @@ public class AdminService
         }
         return ListGrab;
 
+    }
+    public async Task<bool> signupingrabafterwait(Grab grab)
+    {    Console.WriteLine("IDGrab " + grab.IDGrab);
+        using var conn = GetConnection();
+        await conn.OpenAsync();
+        string sql = "INSERT INTO GRAB (Name, Phone, Pass,Role) VALUES ( @Name, @Phone, @Pass,@Role)";
+        using var cmd = new MySqlCommand(sql, conn);
+
+        cmd.Parameters.AddWithValue("@Name", grab.Name);
+
+        cmd.Parameters.AddWithValue("@Phone", grab.Phone);
+        cmd.Parameters.AddWithValue("@Pass", grab.Pass);
+        cmd.Parameters.AddWithValue("@Role", grab.Role);
+        int rowsAffected = await cmd.ExecuteNonQueryAsync();
+        Console.WriteLine("Rows affected: " + rowsAffected);
+            Console.WriteLine("Rows affected: " + grab.IDGrab);
+        if (rowsAffected > 0)
+        {
+            string deleteSql = "DELETE FROM GRABWAIT WHERE IDGrabWait = @IDGrabWait";
+            using var deleteCmd = new MySqlCommand(deleteSql, conn);
+            deleteCmd.Parameters.AddWithValue("@IDGrabWait", grab.IDGrab);
+            await deleteCmd.ExecuteNonQueryAsync();
+            return true;
+        }
+        return false;
     }
 
 }

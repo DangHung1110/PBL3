@@ -3,7 +3,7 @@ namespace PBL3.DTO
     public class GRABWAIT
     {
        
-        public int? IDRes { get; set; } 
+        public int? IDGrabWait { get; set; } 
         public string Name { get; set; }
         public string Address { get; set; }
         public string Phone { get; set; }

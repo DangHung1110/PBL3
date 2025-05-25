@@ -21,7 +21,7 @@ namespace PBL3.Controllers
         public IActionResult Login([FromBody] LoginDTO loginDTO)
         {
             string name = loginDTO.Name.Trim();
-            string pass = loginDTO.Password.Trim();;
+            string pass = loginDTO.Password.Trim(); ;
             Object result = _authservice.Login(name, pass);
             if (result != null && result.GetType().GetProperty("Role").GetValue(result).ToString() == "Customer")
             {
@@ -37,12 +37,12 @@ namespace PBL3.Controllers
             {
                 return Ok(new { Message = "Login Successful", UserID = result.GetType().GetProperty("IDGrab").GetValue(result), Role = result.GetType().GetProperty("Role").GetValue(result), UserName = result.GetType().GetProperty("Name").GetValue(result) });
             }
-            else 
-            if(result != null && result.GetType().GetProperty("Role").GetValue(result).ToString() == "Admin")
+            else
+            if (result != null && result.GetType().GetProperty("Role").GetValue(result).ToString() == "Admin")
             {
                 return Ok(new { Message = "Login Successful", Role = result.GetType().GetProperty("Role").GetValue(result), UserName = result.GetType().GetProperty("Name").GetValue(result) });
             }
-           
+
 
             return Unauthorized(new { Message = "Invalid Credentials" });
         }
@@ -73,7 +73,7 @@ namespace PBL3.Controllers
                 return BadRequest(new { Message = "SignUpFail", ErrorCode = Check });
             }
         }
-           [HttpPost("restaurant/signupinresafterwait")]
+        [HttpPost("restaurant/signupinresafterwait")]
         public IActionResult SignUp3([FromBody] Restaurant restaurant)
         {
             int Check = _authservice.Signup3(restaurant);
@@ -104,7 +104,7 @@ namespace PBL3.Controllers
         public IActionResult ImageDeal([FromForm] IFormFile resImage)
         {
             var Check = _authservice.ImageDeal(resImage);
-            if (Check!=null)
+            if (Check != null)
             {
                 return Ok(Check);
             }
@@ -113,5 +113,6 @@ namespace PBL3.Controllers
                 return BadRequest(new { Message = "Image_DealFail", ErrorCode = Check });
             }
         }
+        
     }
 }
