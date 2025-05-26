@@ -4,7 +4,8 @@ using PBL3.Models;
 using PBL3.DTO;
 using System.Data;
 namespace PBL3.Service
-{public class GrabService {
+{public class GrabService
+    {
         private readonly IConfiguration _iconfiguration;
         public GrabService(IConfiguration iconfiguration)
         {
@@ -92,7 +93,28 @@ namespace PBL3.Service
                 }
             }
             return thongkeGrabList;
-           
+
+        }
+        public async Task<List<Grab>> GetAllGrab()
+        {
+            using var conn = GetConnection();
+            await conn.OpenAsync();
+            string sql = "SELECT* FROM GRAB";
+            using var cmd = new MySqlCommand(sql, conn);
+            var ListGrab = new List<Grab>();
+            using var data = cmd.ExecuteReader();
+            while (data.Read())
+            {
+                Grab x = new Grab();
+                x.IDGrab = data.GetInt32("IDGrab");
+                x.Address= data.GetString("Address");
+                x.Name = data.GetString("Name");
+                x.Phone = data.GetString("Phone");
+                x.Pass = data.GetString("Pass");
+                x.Role = data.GetString("Role");
+                ListGrab.Add(x);
+            }
+            return ListGrab;
        }
 
 

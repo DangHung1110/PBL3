@@ -37,3 +37,15 @@ export const getthongkegrab=async(IDGrab)=>{
     throw error;
   }
 }
+export const GetAllGrab=async()=>{
+  try{
+    const response=await axios.get(`http://localhost:5299/api/Grab/GetAllGrab`);
+    console.log(response.data);
+    return response.data;
+  }
+  catch(error)
+  {
+    console.error("Lỗi khi lấy tất cả Grab",error);
+    throw error;
+  }
+}

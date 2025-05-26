@@ -79,7 +79,7 @@ public class AdminService
         Console.WriteLine("IDGrab " + grab.IDGrab);
         using var conn = GetConnection();
         await conn.OpenAsync();
-        string sql = "INSERT INTO GRAB (Name, Phone, Pass,Role) VALUES ( @Name, @Phone, @Pass,@Role)";
+        string sql = "INSERT INTO GRAB (Name,Address, Phone, Pass,Role) VALUES ( @Name,@Address, @Phone, @Pass,@Role)";
         using var cmd = new MySqlCommand(sql, conn);
 
         cmd.Parameters.AddWithValue("@Name", grab.Name);
@@ -87,6 +87,7 @@ public class AdminService
         cmd.Parameters.AddWithValue("@Phone", grab.Phone);
         cmd.Parameters.AddWithValue("@Pass", grab.Pass);
         cmd.Parameters.AddWithValue("@Role", grab.Role);
+        cmd.Parameters.AddWithValue("@Address", grab.Address);
         int rowsAffected = await cmd.ExecuteNonQueryAsync();
         Console.WriteLine("Rows affected: " + rowsAffected);
         Console.WriteLine("Rows affected: " + grab.IDGrab);

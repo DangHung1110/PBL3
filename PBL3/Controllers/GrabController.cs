@@ -71,13 +71,34 @@ namespace PBL3.Controllers
                     return NotFound(new { Message = "No data found for this Grab" });
                 }
             }
-        catch (Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine("Lỗi server: " + ex.Message);
                 return StatusCode(500, new { Message = "Server Error", Error = ex.Message });
             }
         }
-    }
+        [HttpGet("GetAllGrab")]
+        public async Task<IActionResult> GetAllGrab()
+        {
+            try
+            {
+                var grabList = await _grabservice.GetAllGrab();
+                if (grabList != null && grabList.Count > 0)
+                {
+                    return Ok(grabList);
+                }
+                else
+                {
+                    return NotFound(new { Message = "No Grab data found" });
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Lỗi server: " + ex.Message);
+                return StatusCode(500, new { Message = "Server Error", Error = ex.Message });
+            }
+        }
 
     }
+}
 
