@@ -60,8 +60,8 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import { getwaitgrabdata} from "../api/Admin.js";
-import { insertvalueinresdata } from "../api/Admin.js";
-import {deletewaitresdata} from "../api/Admin.js";
+
+import {deletewaitgrabdata} from "../api/Admin.js";
 import { insertvalueingrabdata } from "../api/Admin.js";
 const getdata = ref([]);
 const previewImage = ref(null)
@@ -127,10 +127,15 @@ const approve=async (id)=>{
     }
 
 }
+const reject=async(id)=>{
+  try{
+    const response=await deletewaitgrabdata(id);
+    getdata.value = getdata.value.filter(item => item.IDGrabWait !== id);
+  }
+  catch(error){
+    console.error("Lỗi khi từ chối nhà hàng:", error);
+  }}
 
-function reject(id) {
-  console.log("Từ chối nhà hàng", id);
-}
 </script>
 
 <style>

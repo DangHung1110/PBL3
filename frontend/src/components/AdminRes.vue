@@ -4,8 +4,12 @@
     <header class="bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg">
       <div class="container mx-auto px-4 py-6 flex items-center justify-between">
         <h1 class="text-xl md:text-2xl font-bold tracking-tight" style="color: #00B14F;">
-          THE BEST OR NOTHING
+          TỔNG SỐ NHÀ HÀNG : <a v-if="dulieu.length > 0">{{ dulieu.length }}</a>
         </h1>
+     
+
+
+
         <div class="relative w-full max-w-md">
         <input
   type="text"
@@ -151,7 +155,8 @@ onMounted(async () => {
       Url_Image: item.url_Image,
     }))
     console.log(dulieu);
-    filteredData.value = dulieu.value 
+    filteredData.value = dulieu.value,
+    console.log(dulieu.value.length);
   } catch (error) {
     console.error('Lỗi khi lấy dữ liệu:', error)
   }

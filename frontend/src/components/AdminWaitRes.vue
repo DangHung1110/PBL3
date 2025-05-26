@@ -26,7 +26,7 @@
             <img :src="item.Url_Image" alt="Ảnh CCCD" @click="openPreview(item.Url_Image)" />
           </div>
           <div class="image-block">
-            <div class="image-label">Căn cước công dân đại diện</div>
+            <div class="image-label">CCCD đại diện</div>
             <img :src="item.Url_Image2" alt="Ảnh khu chế biến" @click="openPreview(item.Url_Image2)" />
           </div>
           <div class="image-block">
@@ -130,10 +130,18 @@ const approve=async (id)=>{
 
 }
 
-function reject(id) {
-  console.log("Từ chối nhà hàng", id);
-}
+const reject=async(id)=>{
+  try{
+    const response=await deletewaitresdata(id);
+    getdata.value= getdata.value.filter(item => item.ID !== id);
+    console.log("Từ chối thành công:", response.data);
+  }
+  catch(error){
+    console.error("Lỗi khi từ chối nhà hàng:", error);
+}}
 </script>
+
+
 
 <style>
 .wrapper {

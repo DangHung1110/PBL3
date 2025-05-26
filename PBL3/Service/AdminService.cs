@@ -75,7 +75,8 @@ public class AdminService
 
     }
     public async Task<bool> signupingrabafterwait(Grab grab)
-    {    Console.WriteLine("IDGrab " + grab.IDGrab);
+    {
+        Console.WriteLine("IDGrab " + grab.IDGrab);
         using var conn = GetConnection();
         await conn.OpenAsync();
         string sql = "INSERT INTO GRAB (Name, Phone, Pass,Role) VALUES ( @Name, @Phone, @Pass,@Role)";
@@ -88,7 +89,7 @@ public class AdminService
         cmd.Parameters.AddWithValue("@Role", grab.Role);
         int rowsAffected = await cmd.ExecuteNonQueryAsync();
         Console.WriteLine("Rows affected: " + rowsAffected);
-            Console.WriteLine("Rows affected: " + grab.IDGrab);
+        Console.WriteLine("Rows affected: " + grab.IDGrab);
         if (rowsAffected > 0)
         {
             string deleteSql = "DELETE FROM GRABWAIT WHERE IDGrabWait = @IDGrabWait";
@@ -98,6 +99,16 @@ public class AdminService
             return true;
         }
         return false;
+    }
+    public async Task<bool> DeleteGrabData(int id)
+    {
+        using var conn = GetConnection();
+        await conn.OpenAsync();
+        string sql = "DELETE FROM GRABWAIT WHERE IDGrabWait = @IDGrabWait";
+        using var cmd = new MySqlCommand(sql, conn);
+        cmd.Parameters.AddWithValue("@IDGrabWait", id);
+        int rowsAffected = await cmd.ExecuteNonQueryAsync();
+        return rowsAffected > 0;
     }
 
 }

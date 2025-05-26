@@ -55,3 +55,13 @@ export const insertvalueingrabdata =async(data)=>{
     }
 
 }
+export const deletewaitgrabdata=async(id)=>{
+    try{
+        const response=await axios.delete(`http://localhost:5299/Admin/deletewaitgrabdata/${id}`);
+        console.log(response.data);
+        return response.data;
+    }
+    catch(error){
+        console.error("Lỗi xóa dữ liệu grab chờ:",error);
+        return null;
+    }}

@@ -62,7 +62,7 @@ namespace PBL3.Controllers
             }
         }
         [HttpPost("grab/signupingrabafterwait")]
-     public async Task<IActionResult> signupingrabafterwait([FromBody] Grab grab)
+        public async Task<IActionResult> signupingrabafterwait([FromBody] Grab grab)
 
         {
             bool Check = await _adminService.signupingrabafterwait(grab);
@@ -73,6 +73,26 @@ namespace PBL3.Controllers
             else
             {
                 return BadRequest(new { Message = "SignUpFail", ErrorCode = Check });
+            }
+        }
+        [HttpDelete("deletewaitgrabdata/{id}")]
+        public async Task<IActionResult> DeleteGrabData(int id)
+        {
+            try
+            {
+                var result = await _adminService.DeleteGrabData(id);
+                if (result)
+                {
+                    return Ok(new { Message = "Delete Successful" });
+                }
+                else
+                {
+                    return NotFound(new { Message = "Grab data not found" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "Internal Server Error", Error = ex.Message });
             }
         }
 
