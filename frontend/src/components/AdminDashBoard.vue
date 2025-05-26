@@ -63,7 +63,7 @@ const route = useRoute();
 const router = useRouter();
 const logout=()=>{
   localStorage.removeItem("Role");
-
+  localStorage.removeItem("UserName");
   router.replace("/login");
 
 }

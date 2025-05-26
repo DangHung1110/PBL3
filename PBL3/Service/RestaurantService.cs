@@ -275,7 +275,7 @@ public class RestaurantService
                     TotalPrice,
                     Status_Restaurant,
                     ORDERDETAIL.Phone AS CustomerPhone,
-                    Address,
+                    ORDERDETAIL.Address AS Address,
                     Grab.Phone AS GrabPhone
 
                 FROM ORDERDETAIL

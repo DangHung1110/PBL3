@@ -27,19 +27,21 @@ const routes = [
     {
         path: "/",
         component: HomeView,
+      
         children: [
-            { path: "", component: Restaurant }, // Trang chính
-            { path: "login", component: Login },
-            { path: "register", component: Register },
-            { path: "drinklist", component: DrinksList },
-            { path: "foodlist", component: FoodList },
+            { path: "", component: Restaurant,  }, // Trang chính
+            { path: "login", component: Login,  },
+            { path: "register", component: Register,   },
+            { path: "drinklist", component: DrinksList,},
+            { path: "foodlist", component: FoodList , },
             { path: "oderfood", component: OderFood },
-            { path: "oderfood/:id", component: OderFood },
+            { path: "oderfood/:id", component: OderFood},
         ],
     },
     {
         path: "/customer/:username",
         component: HomeView,
+             meta: { requiresAuth: true }  ,
         children: [
             { path: "", component: Restaurant }, // Trang chính
             { path: "drinklist", component: DrinksList },
@@ -50,22 +52,26 @@ const routes = [
     {
         path: "/restaurant/dashboard",
         name: "Dashboard",
+             meta: { requiresAuth: true ,role: 'Restaurant'}  ,
         component: RestaurantDashboard, // layout chứa sidebar + router-view
         children: [
           {
             path: "",
             name: "DashboardHome",
             component: Dashboard,
+             meta: { requiresAuth: true ,role: 'Restaurant'}
           },
           {
             path: "product",
             name: "Product",
             component: RestaurantProduct,
+                     meta: { requiresAuth: true,role: 'Restaurant' },
             children: [
               {
                 path: "addFood",
                 name: "AddFood",
                 component: AddFood,
+                         meta: { requiresAuth: true ,role: 'Restaurant'}
               },
             ],
           },
@@ -73,18 +79,21 @@ const routes = [
             path: "statistics",
             name: "statistics",
             component: RestaurantStatistics,
+                     meta: { requiresAuth: true ,role: 'Restaurant'}
             
           },
           {
             path: "invoices",
             name: "Invoices",
             component:RestaurantInvoices,
+                     meta: { requiresAuth: true }
           },
          
           {
             path: "RestaurantOrderList",
             name: "RestaurantOrderList",
             component: RestaurantOrderList,
+                     meta: { requiresAuth: true ,role: 'Restaurant'}
           },
         ],
       }
@@ -93,21 +102,25 @@ const routes = [
     path:"/orderHistory",
     component: OrderHistory,
     name: 'OrderHistory',
+             meta: { requiresAuth: true, role: 'Customer' },
    },
    {
     path:"/Grab",
     component: GrabDashBoard,
     name: 'GrabDashBoard',
+             meta: { requiresAuth: true ,role: 'Grab'},
      children: [
           {
             path: "",
             name: "GrabMain",
             component: GrabMain,
+                     meta: { requiresAuth: true,role: 'Grab' }
           },
            {
             path: "Thongke",
             name: "Thongkegrab",
             component: GrabData,
+                     meta: { requiresAuth: true,role: 'Grab'}
           },
         ]
    },
@@ -115,21 +128,25 @@ const routes = [
     path:"/Admin",
     component: AdminDashBoard,
     name: 'AdminDashBoard',
+             meta: { requiresAuth: true ,role: 'Admin'},
      children: [
           {
             path: "Res",
             name: "AdminRes",
             component: AdminRes,
+                     meta: { requiresAuth: true ,role: 'Admin'}
           },
            {
             path: "WaitRes",
             name: "AdminWaitRes",
             component: AdminWaitRes,
+                     meta: { requiresAuth: true,role: 'Admin' }
           },
            {
             path: "Thongke",
             name: "Thongke",
             component: AdminThongke,
+                     meta: { requiresAuth: true ,role: 'Admin'}
           },
       
          
@@ -137,11 +154,14 @@ const routes = [
             path: "Grab",
             name: "AdminGrab",
             component: AdminGrab,
+                     meta: { requiresAuth: true,role: 'Admin' }
           },
            {
             path: "GrabWait",
             name: "AdminGrabWait",
             component: AdminGrabWait,
+                     meta: { requiresAuth: true,role: 'Admin' }
+            
           },
         ]
     
@@ -154,22 +174,45 @@ const router = createRouter({
     routes,
 });
 
-// Trước khi chuyển route, kiểm tra xem user đã đăng nhập chưa
+
 router.beforeEach((to, from, next) => {
-    const username = localStorage.getItem("username"); // Kiểm tra user đã đăng nhập chưa
+  const username = localStorage.getItem("UserName");
+  const role = localStorage.getItem("Role");
 
-    if (username) {
-        // Nếu user đăng nhập và đang truy cập drinklist/foodlist ở root → Điều hướng đến /customer/:username/
-        if (to.path === "/drinklist") {
-            return next(`/customer/${username}/drinklist`);
-        }
-        if (to.path === "/foodlist") {
-            return next(`/customer/${username}/foodlist`);
-        }
+
+  if (to.meta.requiresAuth && !username) {
+    return next("/login");
+  }
+
+  if (username) {
+    if (to.path === "/drinklist") {
+      return next(`/customer/${username}/drinklist`);
     }
+    if (to.path === "/foodlist") {
+      return next(`/customer/${username}/foodlist`);
+    }
+  }
 
-    // Nếu chưa đăng nhập hoặc đường dẫn hợp lệ, tiếp tục bình thường
-    next();
+  if (to.meta.requiresAuth && to.meta.role) {
+    if (role !== to.meta.role) {
+  
+      switch (role) {
+       
+        case "Restaurant":
+          return next("/restaurant/dashboard");
+        case "Grab":
+          return next("/Grab");
+        case "Admin":
+          return next("/Admin");
+        default:
+          return next("/login");
+      }
+    }
+  }
+
+  // Nếu không có vấn đề gì → tiếp tục route
+  next();
 });
+
 
 export default router;

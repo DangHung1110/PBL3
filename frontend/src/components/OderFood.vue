@@ -1,32 +1,39 @@
 <template> 
   <transition name="popup-fade">
     <div class="popup-overlay" @click.self="closePopup">
-      <div class="popup-content">
-        <img :src="food?.image" alt="Food Image" class="popup-image" />
-        <div class="popup-text">
-          <h2>{{ food?.name }}</h2>
-          <p><strong>Giảm giá:</strong> {{ food?.discount }}%</p>
-          <p><strong>Giá:</strong> {{ food?.price }} VND</p>
-          <p><strong>Số lượng:</strong> {{ food?.quantity }}</p>
-          <p><strong>Nhà hàng:</strong> {{ restaurant?.name }}</p>
-          <p><strong>Địa chỉ:</strong> {{ restaurant?.address }}</p>
-        </div>
+      <div class="popup-content horizontal-layout">
+  <!-- Ảnh đồ ăn bên trái -->
+  <img :src="food?.image" alt="Food Image" class="popup-image" />
 
-        <div class="popup-actions">
-          <div class="quantity-control">
-            <button @click="quantityToAdd > 1 && quantityToAdd--">-</button>
-            <input type="number" v-model="quantityToAdd" min="1" :max="food?.quantity" />
-            <button @click="quantityToAdd < food?.quantity && quantityToAdd++">+</button>
-          </div>
-          <p><strong>Tổng giá:</strong> {{ calculatedPrice.toLocaleString() }} VND</p>
-        </div>
+  <!-- Thông tin và hành động bên phải -->
 
-        <div class="popup-actions">
-          <button class="add-to-cart-btn" @click="addToCart">Đặt Hàng</button>
-        </div>
+  <div class="right-section">
+    <div class="popup-text">
+         <h2 class="title">{{ food?.name }}</h2>
+      <p><strong>Giảm giá:</strong> {{ food?.discount }}%</p>
+      <p><strong>Giá:</strong> {{ food?.price }} VND</p>
+      <p><strong>Số lượng:</strong> {{ food?.quantity }}</p>
+      <p><strong>Nhà hàng:</strong> {{ restaurant?.name }}</p>
+      <p><strong>Địa chỉ:</strong> {{ restaurant?.address }}</p>
+    </div>
 
-        <button class="close-btn" @click="closePopup">×</button>
+    <div class="popup-actions">
+      <div class="quantity-control">
+        <button @click="quantityToAdd > 1 && quantityToAdd--">-</button>
+        <input type="number" v-model="quantityToAdd" min="1" :max="food?.quantity" />
+        <button @click="quantityToAdd < food?.quantity && quantityToAdd++">+</button>
       </div>
+      <p class="totalprice"><strong>Tổng giá:</strong> {{ calculatedPrice.toLocaleString() }} VND</p>
+      <div class="chinhbut">
+    <button class="add-to-cart-btn" @click="addToCart">Đặt Hàng</button>
+      </div>
+  
+    </div>
+  </div>
+
+  <button class="close-btn" @click="closePopup">×</button>
+</div>
+
     </div>
   </transition>
 </template>
@@ -201,6 +208,7 @@ const addToCart = async() => {
   align-items: center;
   justify-content: center;
   gap: 12px;
+  padding-left:20%;
 }
 
 .quantity-control button {
@@ -247,6 +255,7 @@ const addToCart = async() => {
   color: white;
   font-size: 16px;
   padding: 12px 30px;
+
   border: none;
   border-radius: 30px;
   cursor: pointer;
@@ -260,20 +269,26 @@ const addToCart = async() => {
 
 .close-btn {
   position: absolute;
-  top: 16px;
-  right: 20px;
-  background: none;
-  border: none;
-  font-size: 32px;
+  top: 12px;
+  right: 16px;
+  background: transparent; /* chắc chắn không có màu nền */
+  border: none;            /* bỏ border */
+  padding: 0;              /* xóa padding */
+  margin: 0;               /* xóa margin */
+  font-size: 28px;
   cursor: pointer;
-  color: #a9a9a9;
-  transition: color 0.3s, transform 0.2s;
+  color: #555;
+  transition: color 0.3s ease, transform 0.2s ease;
+  box-shadow: none;        /* bỏ shadow nếu có */
+  line-height: 1;          /* đảm bảo không dư khoảng cách dòng */
+}
+.close-btn:hover {
+  color: #e74c3c;
+  transform: scale(1.1);
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
-.close-btn:hover {
-  color: #ff6347;
-  transform: scale(1.2);
-}
+
 
 @keyframes scaleIn {
   0% {
@@ -298,6 +313,39 @@ const addToCart = async() => {
 .swal2-slide-in-right {
   animation: slide-in-right 0.5s ease-out;
 }
+.horizontal-layout {
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 20px;
+  width: 600px;
+  padding: 24px;
+}
+
+.popup-image {
+  width: 180px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.right-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.popup-text {
+  text-align:left;
+  padding-left:20%;
+}
+
+.popup-actions {
+  align-items: flex-start;
+}
+
+
 
 @keyframes slide-in-right {
   from {
@@ -309,7 +357,15 @@ const addToCart = async() => {
     opacity: 1;
   }
 }
-
+.title{
+  padding-right:10%;
+}
+.totalprice{
+  padding-left:20%;
+}
+.chinhbut{
+  padding-left:25%;
+}
 
 </style>
   

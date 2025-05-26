@@ -62,7 +62,7 @@ import Swal from 'sweetalert2';
     else if( response.role ==="Admin")
     {
       localStorage.setItem("Role", response.role);
-   
+    localStorage.setItem("UserName","Dương Tùng Bách");
       router.replace("/admin");
     }
     else {
