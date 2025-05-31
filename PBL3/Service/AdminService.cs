@@ -111,5 +111,33 @@ public class AdminService
         int rowsAffected = await cmd.ExecuteNonQueryAsync();
         return rowsAffected > 0;
     }
+    public async Task<bool> ThongkeCorp(ThongkeCorpDTO thongkeCorpDTO)
+    {
+        using var conn = GetConnection();
+        await conn.OpenAsync();
+        string sql = "INSERT INTO THONGKECORP(ORDERCONFIRMEDTIME,Cost) VALUES(@ORDERCONFIRMEDTIME,@Cost)";
+        using var cmd = new MySqlCommand(sql, conn);
+        cmd.Parameters.AddWithValue("@ORDERCONFIRMEDTIME", thongkeCorpDTO.ORDERCONFIRMEDTIME);
+        cmd.Parameters.AddWithValue("@Cost", thongkeCorpDTO.Cost);
+        int rowsAffected = await cmd.ExecuteNonQueryAsync();
+        return rowsAffected > 0;
+    }
+    public async Task<List<ThongkeCorpDTO>> GetRevenueAdmin()
+    {
+        using var conn = GetConnection();
+        await conn.OpenAsync();
+        string sql = "SELECT ORDERCONFIRMEDTIME,Cost FROM THONGKECORP";
+        using var cmd = new MySqlCommand(sql, conn);
+        var data = await cmd.ExecuteReaderAsync();
+        var revenueList = new List<ThongkeCorpDTO>();
+        while (data.Read())
+        {
+            ThongkeCorpDTO revenue = new ThongkeCorpDTO();
+            revenue.ORDERCONFIRMEDTIME = data.GetDateTime("ORDERCONFIRMEDTIME");
+            revenue.Cost = data.GetInt32("Cost");
+            revenueList.Add(revenue);
+        }
+        return revenueList;
+    }
 
 }

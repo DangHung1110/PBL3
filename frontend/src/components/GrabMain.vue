@@ -89,6 +89,7 @@ import Swal from "sweetalert2";
 import {Thongkegrab} from "../api/Grab.js"
 import { useRouter, useRoute } from "vue-router";
 import { ProductCount } from "../api/order.js";
+import { ThongkeCorp } from "../api/Admin.js";
 const router = useRouter();
 import { ref, onMounted, onUnmounted, computed } from "vue";
 import {GetGrabData} from "../api/Grab";
@@ -130,7 +131,7 @@ const formatDate=(dateString)=> {
   const senddata = {
     Quantity: Quantity,
     IDRes: IDRes,
-    DOANHSO: TotalPrice,
+    DOANHSO: TotalPrice-3000-(10*TotalPrice)/100,
     IDOrder:  IDOrder,
     IDCustomer: IDCustomer,
     OrderTime: OrderTime,
@@ -139,6 +140,11 @@ const formatDate=(dateString)=> {
     FoodName: FoodName,
     RestaurantName: RestaurantName,
   };
+  const GrabCorp={
+    OrderConfirmedTime:OrderConfirmedTime,
+    Cost:(TotalPrice*10)/100,
+
+  }
   const DataTKGrab={
       OrderTime: OrderTime,
     OrderConfirmedTime: OrderConfirmedTime,
@@ -151,6 +157,7 @@ const formatDate=(dateString)=> {
   try {
     const response=await Thongke(senddata);
     const response2=await Thongkegrab(DataTKGrab);
+    const response3=await ThongkeCorp(GrabCorp);
     console.log(response.data);
     Swal.fire({
       toast: true,

@@ -65,3 +65,15 @@ export const deletewaitgrabdata=async(id)=>{
         console.error("Lỗi xóa dữ liệu grab chờ:",error);
         return null;
     }}
+export const ThongkeCorp=async(ThongkeCorp)=>{
+
+    try{
+        const response=await axios.post("http://localhost:5299/Admin/ThongkeCorp",ThongkeCorp);
+        console.log(response.data);
+        return response.data;
+    }
+    catch(error){
+        console.error("Lỗi thống kê công ty:",error);
+        return null;
+    }
+}

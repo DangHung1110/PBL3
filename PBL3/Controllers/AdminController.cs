@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PBL3.Service;
 using PBL3.Models;
+using PBL3.DTO;
 namespace PBL3.Controllers
 {
     [Route("Admin")]
@@ -89,6 +90,39 @@ namespace PBL3.Controllers
                 {
                     return NotFound(new { Message = "Grab data not found" });
                 }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "Internal Server Error", Error = ex.Message });
+            }
+        }
+        [HttpPost("ThongkeCorp")]
+        public async Task<IActionResult> ThongkeCorp([FromBody] ThongkeCorpDTO thongkeCorpDTO)
+        {
+            try
+            {
+                var result = await _adminService.ThongkeCorp(thongkeCorpDTO);
+                if (result != null)
+                {
+                    return Ok(result);
+                }
+                else
+                {
+                    return NotFound(new { Message = " data not found" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "Internal Server Error", Error = ex.Message });
+            }
+        }
+        [HttpGet("GetRevenueAdmin")]
+        public async Task<IActionResult> GetRevenueAdmin()
+        {
+            try
+            {
+                var revenue = await _adminService.GetRevenueAdmin();
+                return Ok(revenue);
             }
             catch (Exception ex)
             {

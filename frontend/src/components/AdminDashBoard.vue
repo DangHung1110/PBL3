@@ -32,7 +32,7 @@
         </router-link>
          <router-link to="/Admin/GrabWait" class="tab-button" active-class="tab-active">
           <span class="tab-icon">🚗</span>
-          <span class="tab-text">Grab đối tác</span>
+          <span class="tab-text">Đăng kí Grab</span>
         </router-link>
              <router-link to="/Admin/Grab" class="tab-button" active-class="tab-active">
           <span class="tab-icon">🚗</span>
