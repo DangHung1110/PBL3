@@ -81,62 +81,93 @@ const filterByDate = () => {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
 .container {
   max-width: 900px;
   margin: 0 auto;
-  padding: 20px;
-  font-family: sans-serif;
+  padding: 32px 20px;
+  font-family: 'Inter', sans-serif;
+  background-color: #f9f9f9;
+  border-radius: 20px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.05);
 }
 
 h2 {
-  margin-bottom: 20px;
+  margin-bottom: 24px;
+  font-size: 28px;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+}
+
+input[type="date"] {
+  padding: 10px 14px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  font-size: 16px;
+  width: 100%;
+  max-width: 250px;
+  margin: 0 auto 24px;
+  display: block;
+  background-color: #fff;
+  transition: border 0.3s ease;
+}
+
+input[type="date"]:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 6px rgba(0, 123, 255, 0.2);
 }
 
 .order-card {
-  display: flex;
-  justify-content: space-between;
-  background: #fff;
-  padding: 16px;
-  border-radius: 10px;
-  margin-bottom: 16px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  background: #ffffff;
+  padding: 20px 24px;
+  border-radius: 16px;
+  margin-bottom: 20px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.order-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
 }
 
 .order-left {
   display: flex;
-  gap: 16px;
-}
-
-.dish-img {
-  width: 100px;
-  height: 100px;
-  object-fit: cover;
-  border-radius: 10px;
-  background: #f0f0f0;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .order-details p {
-  margin: 4px 0;
-}
-
-.highlight {
-  color: black;
-  font-weight: 600;
+  margin: 6px 0;
+  font-size: 15px;
+  color: #444;
 }
 
 .price {
-  color: red;
-  font-weight: bold;
+  color: #d6336c;
+  font-weight: 600;
+  font-size: 16px;
 }
 
 .time {
-  color: gray;
-  font-size: 0.9em;
+  color: #666;
+  font-size: 14px;
 }
 
-.quantity {
-  font-weight: bold;
-  font-size: 1.2em;
-  align-self: center;
+@media (max-width: 600px) {
+  .order-card {
+    padding: 16px;
+  }
+
+  h2 {
+    font-size: 24px;
+  }
+
+  .price {
+    font-size: 15px;
+  }
 }
 </style>

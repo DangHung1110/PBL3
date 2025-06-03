@@ -1,72 +1,9 @@
 <template>
-  <div class="food-list-container">
-    <div class="pagination">
-      <button @click="prevPage" class="arrow-button left">&#8592;</button>
-      <button @click="nextPage" class="arrow-button right">&#8594;</button>
-    </div>
-
-    <div class="food-list">
-      <div class="food-item" v-for="drink in paginatedDrinks" :key="drink.id">
-        <img
-          :src="drink.image"
-          class="food-image"
-          alt="Drink Image"
-          @error="handleImageError"
-        />
-        <div class="food-info">
-          <div class="food-name">{{ drink.name }}</div>
-          <div class="food-shop">{{ drink.restaurantId }}</div>
-          <div class="bottom-info">
-            <div class="food-price">Giá: {{ drink.price }}đ</div>
-            <div class="food-discount">Giảm giá: {{ drink.discount }}%</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from "vue";
-import { getDoUong } from "../api/FoodSevice.js"; // 👈 gọi đúng API đồ uống
 
-const drinks = ref([]);
-const currentPage = ref(1);
-const drinksPerPage = 6;
-
-onMounted(async () => {
-  const data = await getDoUong(); // 👈 gọi API đồ uống
-  console.log("Dữ liệu đồ uống:", data);
-  drinks.value = data.map(item => ({
-    id: item.idFood,
-    name: item.name,
-    restaurantId: item.idRes,
-    price: item.price,
-    discount: item.discount,
-    image: item.url_Image
-  }));
-});
-
-const paginatedDrinks = computed(() => {
-  const start = (currentPage.value - 1) * drinksPerPage;
-  return drinks.value.slice(start, start + drinksPerPage);
-});
-
-const totalPages = computed(() => {
-  return Math.ceil(drinks.value.length / drinksPerPage);
-});
-
-const nextPage = () => {
-  if (currentPage.value < totalPages.value) currentPage.value++;
-};
-
-const prevPage = () => {
-  if (currentPage.value > 1) currentPage.value--;
-};
-
-const handleImageError = (event) => {
-  event.target.src = "https://via.placeholder.com/120"; // ảnh mặc định khi lỗi
-};
 </script>
 
 <style scoped>

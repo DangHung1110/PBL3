@@ -49,3 +49,15 @@ export const GetAllGrab=async()=>{
     throw error;
   }
 }
+export const DeleteGrab=async(IDGrab)=>{
+  try{
+    const response=await axios.delete(`http://localhost:5299/api/Grab/DeleteGrab/${IDGrab}`)
+    console.log(response);
+    return response.data;
+  }
+  catch(error)
+  {
+     console.error("Lỗi khi xóa đi Grab",error);
+    throw error;
+  }
+}

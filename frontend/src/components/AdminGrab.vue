@@ -41,11 +41,21 @@ class="bg-white rounded-xl shadow p-4 flex items-center justify-between hover:bg
  <p class="text-gray-600 text-sm">{{ item.Address || 'Địa chỉ chưa cập nhật' }}</p>
 <p class="text-gray-500 text-sm">📞 {{ item.Phone }}</p>
 </div>
- <button
- class="ml-4 bg-green-500 text-white px-4 py-1.5 rounded-full text-sm hover:bg-green-600 transition"
->
-Grab đối tác
-</button>
+<div class="ml-4 flex gap-2">
+  <button
+    class="bg-green-500 text-white px-4 py-1.5 rounded-full text-sm hover:bg-green-600 transition"
+  >
+    Grab đối tác
+  </button>
+  <button
+    class="bg-red-500 text-white px-4 py-1.5 rounded-full text-sm hover:bg-red-600 transition"
+     @click="handleDeleteGrab(item.ID)">
+    Hủy liên kết
+  </button>
+</div>
+
+
+
 </li>
 </ul>
 
@@ -100,7 +110,8 @@ Grab đối tác
 <script setup>
 import { onMounted, ref, computed } from 'vue'
 import {  GetAllGrab } from '../api/grab.js' 
-
+import {DeleteGrab} from '../api/grab.js'
+import Swal from "sweetalert2";
 const dulieu = ref([])
 const filteredData = ref([]) 
 const currentPage = ref(1)
@@ -128,13 +139,58 @@ currentPage.value = page
 }
 }
 
+const handleDeleteGrab=async(IDGrab)=>{
+  console.log(IDGrab);
 
+ try{ const response=await DeleteGrab(IDGrab);
+  dulieu.value = dulieu.value.filter(item => item.ID !== IDGrab)
+    filteredData.value = filteredData.value.filter(item => item.ID !== IDGrab)
+
+  
+    const maxPages = Math.ceil(filteredData.value.length / itemsPerPage)
+    if (currentPage.value > maxPages) {
+      currentPage.value = maxPages || 1
+    }
+  Swal.fire({
+      toast: true,
+      icon: "success",
+      title: "THÔNG BÁO",
+      text: "Xác nhận thành công!",
+      timer: 3000,
+      position: "bottom-end",
+      timerProgressBar: true,
+      showConfirmButton: false,
+      showClass: {
+        popup: "swal2-slide-in-right",
+      },
+    });
+     return response.data;
+     
+ }
+ catch(error)
+ {console.log(error);
+    Swal.fire({
+      toast: true,
+      icon: "error",
+      title: "Lỗi",
+      text: "Grab vẫn đang trong quá trình hoạt động!",
+      timer: 3000,
+      position: "bottom-end",
+      timerProgressBar: true,
+      showConfirmButton: false,
+      showClass: {
+        popup: "swal2-slide-in-right",
+      },
+    });
+ }
+
+}
 onMounted(async () => {
   try {
     const data = await  GetAllGrab()
     console.log(data);
     dulieu.value = data.map(item => ({
-      ID: item.idRes,
+      ID: item.idGrab,
       Name: item.name,
         Address: item.address,
       Phone: item.phone,

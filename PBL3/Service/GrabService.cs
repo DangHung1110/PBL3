@@ -107,7 +107,7 @@ namespace PBL3.Service
             {
                 Grab x = new Grab();
                 x.IDGrab = data.GetInt32("IDGrab");
-                x.Address= data.GetString("Address");
+                x.Address = data.GetString("Address");
                 x.Name = data.GetString("Name");
                 x.Phone = data.GetString("Phone");
                 x.Pass = data.GetString("Pass");
@@ -115,7 +115,24 @@ namespace PBL3.Service
                 ListGrab.Add(x);
             }
             return ListGrab;
-       }
+        }
+      public async Task<bool> DeleteGrab(int IDGrab)
+{
+    using var conn = GetConnection();
+    await conn.OpenAsync();
+  string sql1 = "DELETE FROM Thongkegrab WHERE IDGrab = @IDGrab";
+        using var cmd1 = new MySqlCommand(sql1, conn);
+        cmd1.Parameters.AddWithValue("@IDGrab", IDGrab);
+        await cmd1.ExecuteNonQueryAsync();
+    string sql = "DELETE FROM Grab WHERE IDGrab = @IDGrab";
+    using var cmd = new MySqlCommand(sql, conn);
+    cmd.Parameters.AddWithValue("@IDGrab", IDGrab); 
+
+    int rowsAffected = await cmd.ExecuteNonQueryAsync(); 
+
+    return rowsAffected > 0; 
+}
+
 
 
 }

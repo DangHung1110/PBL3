@@ -98,6 +98,28 @@ namespace PBL3.Controllers
                 return StatusCode(500, new { Message = "Server Error", Error = ex.Message });
             }
         }
+        [HttpDelete("DeleteGrab/{IDGrab}")]
+        public async Task<IActionResult> DeleteGrab(int IDGrab)
+        {
+            try
+            {
+                var result = await _grabservice.DeleteGrab(IDGrab);
+                if (result != null)
+                {
+                    return Ok(result);
+                }
+                else
+                {
+                    return NotFound(new { Message = "Error when trying to Delete Grab" });
+                }
+            }
+             catch (Exception ex)
+            {
+                Console.WriteLine("Lỗi server: " + ex.Message);
+                return StatusCode(500, new { Message = "Server Error", Error = ex.Message });
+            }
+        }
+
 
     }
 }

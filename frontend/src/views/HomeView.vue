@@ -14,11 +14,9 @@
         <div class="home-page">
           <div class="category-buttons">
             <button class="category food" @click="navigateTo('/foodlist')">
-              <span class="icon">🍔</span> Đồ ăn
+              <span class="icon">🍔</span> Thực phẩm
             </button>
-            <button class="category drink" @click="navigateTo('/drinklist')">
-              <span class="icon">🥤</span> Đồ uống
-            </button>
+            
           </div>
           <div class="search-bar">
             <input

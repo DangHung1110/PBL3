@@ -16,83 +16,104 @@ namespace PBL3.Service
             return new MySqlConnection(_iconfiguration.GetConnectionString("DefaultConnection"));
         }
         public async Task<bool> Order(OrderDetail order)
-        {   try{
-            using var conn = GetConnection();
-            await conn.OpenAsync();
-            int grabnumber=0;
-            DateTime datetime=TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
-            // Kiểm tra tính hợp lệ
-            string checkQuery = @"
+        {
+            int grabnumberresult=-1;
+            try
+            {
+                using var conn = GetConnection();
+                await conn.OpenAsync();
+                int grabnumber = 0;
+                DateTime datetime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
+                // Kiểm tra tính hợp lệ
+                string checkQuery = @"
         SELECT f.IDFood, c.IDCustomer, r.IDRes 
         FROM FOOD f
         JOIN RESTAURANT r ON f.IDRes = r.IDRes
         JOIN CUSTOMER c ON c.IDCustomer = @idCustomer
         WHERE f.IDFood = @idFood AND r.IDRes = @idRes";
-            using var checkCmd = new MySqlCommand(checkQuery, conn);
-            checkCmd.Parameters.AddWithValue("@idCustomer", order.IDCustomer);
-            checkCmd.Parameters.AddWithValue("@idFood", order.IDFood);
-            checkCmd.Parameters.AddWithValue("@idRes", order.IDRes);
-            using var reader = await checkCmd.ExecuteReaderAsync();
-            if (!reader.HasRows)
-            {
-                return false;
-            }
-            try{
-                using var conn2=GetConnection();
-                await conn2.OpenAsync();
-                string sql=@"SELECT COUNT(*) FROM Grab";
-                using var cc=new MySqlCommand(sql,conn2);
-                grabnumber = Convert.ToInt32(await cc.ExecuteScalarAsync());
-            }
-            catch (MySqlException e)
-            {
-                Console.WriteLine(e.Message);
-            }
-         await reader.DisposeAsync();
-            if(order.Status_Restaurant=="pending")
-            {string insertQuery = @"
+                using var checkCmd = new MySqlCommand(checkQuery, conn);
+                checkCmd.Parameters.AddWithValue("@idCustomer", order.IDCustomer);
+                checkCmd.Parameters.AddWithValue("@idFood", order.IDFood);
+                checkCmd.Parameters.AddWithValue("@idRes", order.IDRes);
+                using var reader = await checkCmd.ExecuteReaderAsync();
+                if (!reader.HasRows)
+                {
+                    return false;
+                }
+                try
+                {
+                    using var conn2 = GetConnection();
+                    await conn2.OpenAsync();
+                    List<int> grabIds = new List<int>();
+                    string sql = @"SELECT IDGrab FROM Grab";
+                    using var cc = new MySqlCommand(sql, conn2);
+                    using var grabReader = await cc.ExecuteReaderAsync();
+                    while (await grabReader.ReadAsync())
+                    {
+                        grabIds.Add(grabReader.GetInt32("IDGrab"));
+                    }
+
+                    if (grabIds.Count == 0)
+                    {
+                        Console.WriteLine("No available Grab IDs.");
+                        return false;
+                    }
+
+                    Random random = new Random();
+                    grabnumberresult = grabIds[random.Next(grabIds.Count)];
+
+                }
+                catch (MySqlException e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+                await reader.DisposeAsync();
+                if (order.Status_Restaurant == "pending")
+                {
+                    string insertQuery = @"
     INSERT INTO ORDERDETAIL (IDCustomer, IDFood, IDRes, Quantity, TotalPrice,FoodName,RestaurantName,Url_image,Status_Restaurant,Status_User,OrderTime,OrderConfirmedTime,IDGrab,Phone,Address)
     VALUES (@idCustomer, @idFood, @idRes, @quantity, @totalPrice, @foodName, @restaurantName, @url_image,@Status_Restaurant,@Status_User,@OrderTime,@OrderConfirmedTime,@IDGrab,@Phone,@Address)";
-            using var insertCmd = new MySqlCommand(insertQuery, conn);
-            insertCmd.Parameters.AddWithValue("@idCustomer", order.IDCustomer);
-            insertCmd.Parameters.AddWithValue("@idFood", order.IDFood);
-            insertCmd.Parameters.AddWithValue("@idRes", order.IDRes);
-            insertCmd.Parameters.AddWithValue("@quantity", order.Quantity);
-            insertCmd.Parameters.AddWithValue("@totalPrice", order.TotalPrice);
-              insertCmd.Parameters.AddWithValue("@foodName", order.FoodName);
-                insertCmd.Parameters.AddWithValue("@restaurantName", order.RestaurantName);
-                insertCmd.Parameters.AddWithValue("@url_image", order.Url_image);
-                insertCmd.Parameters.AddWithValue("@Status_Restaurant", order.Status_Restaurant);
-                insertCmd.Parameters.AddWithValue("@Status_User", order.Status_User);
-                insertCmd.Parameters.AddWithValue("@OrderTime", datetime);
-                insertCmd.Parameters.AddWithValue("@OrderConfirmedTime", datetime);
-                insertCmd.Parameters.AddWithValue("@Phone",order.Phone);
-                   insertCmd.Parameters.AddWithValue("@Address",order.Address);
-                  Random random=new Random();
-                     int grabnumberresult=random.Next(1,grabnumber+1);
-                     Console.WriteLine(grabnumber);
-              
-                insertCmd.Parameters.AddWithValue("@IDGrab",grabnumberresult);
+                    using var insertCmd = new MySqlCommand(insertQuery, conn);
+                    insertCmd.Parameters.AddWithValue("@idCustomer", order.IDCustomer);
+                    insertCmd.Parameters.AddWithValue("@idFood", order.IDFood);
+                    insertCmd.Parameters.AddWithValue("@idRes", order.IDRes);
+                    insertCmd.Parameters.AddWithValue("@quantity", order.Quantity);
+                    insertCmd.Parameters.AddWithValue("@totalPrice", order.TotalPrice);
+                    insertCmd.Parameters.AddWithValue("@foodName", order.FoodName);
+                    insertCmd.Parameters.AddWithValue("@restaurantName", order.RestaurantName);
+                    insertCmd.Parameters.AddWithValue("@url_image", order.Url_image);
+                    insertCmd.Parameters.AddWithValue("@Status_Restaurant", order.Status_Restaurant);
+                    insertCmd.Parameters.AddWithValue("@Status_User", order.Status_User);
+                    insertCmd.Parameters.AddWithValue("@OrderTime", datetime);
+                    insertCmd.Parameters.AddWithValue("@OrderConfirmedTime", datetime);
+                    insertCmd.Parameters.AddWithValue("@Phone", order.Phone);
+                    insertCmd.Parameters.AddWithValue("@Address", order.Address);
+
+
+                    insertCmd.Parameters.AddWithValue("@IDGrab", grabnumberresult);
 
 
 
-            var result = await insertCmd.ExecuteNonQueryAsync();
-            return result > 0;}
-            else
-            { string changequery="UPDATE ORDERDETAIL SET Status_Restaurant = @Status_Restaurant WHERE IDOrder= @IDOrder";
-                using var changeCmd = new MySqlCommand(changequery, conn);
-                changeCmd.Parameters.AddWithValue("@Status_Restaurant", order.Status_Restaurant);
-                changeCmd.Parameters.AddWithValue("@IDOrder", order.IDOrder);
-                var result = await changeCmd.ExecuteNonQueryAsync();
-                return result > 0;
+                    var result = await insertCmd.ExecuteNonQueryAsync();
+                    return result > 0;
+                }
+                else
+                {
+                    string changequery = "UPDATE ORDERDETAIL SET Status_Restaurant = @Status_Restaurant WHERE IDOrder= @IDOrder";
+                    using var changeCmd = new MySqlCommand(changequery, conn);
+                    changeCmd.Parameters.AddWithValue("@Status_Restaurant", order.Status_Restaurant);
+                    changeCmd.Parameters.AddWithValue("@IDOrder", order.IDOrder);
+                    var result = await changeCmd.ExecuteNonQueryAsync();
+                    return result > 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                // Xử lý lỗi nếu cần thiết
+                Console.WriteLine(ex.Message);
+                return false;
             }
         }
-        catch(Exception ex)
-        {
-            // Xử lý lỗi nếu cần thiết
-            Console.WriteLine(ex.Message);
-            return false;
-        }}
          public async Task<bool> DeleteOrderDetail(int IDOrder)
         {
             using var conn = GetConnection();
